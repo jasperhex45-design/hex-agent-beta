@@ -260,7 +260,7 @@ def _validate_compilation_output_options(packet, design, runtime):
 def prepare_compilation(run: Path, plan_path: Path, target: str = 'image', tool: str | None = None):
     """Prepare model-aware input locally; the host supplies the intelligent prose."""
     from .contracts import Plan, Compilation
-    from .workflow import compilation_input, ensure_references_mutable, save_packet, validate_spec
+    from .workflow import compilation_input, ensure_references_mutable, save_packet, validate_spec, production_host_context
     from .design import validate_design
     from .generation_spec import host_capabilities, validate_tool_target
     with dispatch_lock(run):
@@ -303,9 +303,14 @@ def prepare_compilation(run: Path, plan_path: Path, target: str = 'image', tool:
         payload = compilation_input(packet, plan.spec, plan.design, revision=revision)
         write_json(run/'compilation-input.json', payload)
         write_json(run/'compilation.schema.json', Compilation.model_json_schema())
-        return {'packet_digest': packet['digest'], 'compilation_input': str(run/'compilation-input.json'),
-                'schema': str(run/'compilation.schema.json'),
-                'next': '宿主读取当前编译输入，为每个模型写完整正文和对应适配依据；无需用户选择写法。'}
+        result = {'packet_digest': packet['digest'], 'compilation_input': str(run/'compilation-input.json'),
+                  'schema': str(run/'compilation.schema.json'),
+                  'next': '宿主读取当前编译输入，为每个模型写完整正文和对应适配依据；无需用户选择写法。'}
+        context = production_host_context(packet, 'model_compile',
+            input_files=[result['compilation_input'], result['schema']], revision=revision)
+        if context is not None:
+            result['host_context'] = context
+        return result
 
 
 def _preflight_locked(run: Path, solution_path: Path):

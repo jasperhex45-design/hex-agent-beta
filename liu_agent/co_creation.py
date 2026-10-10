@@ -38,6 +38,16 @@ def copilot_enabled(packet):
     return packet.get('visual_research_version') == 2 and enabled(packet)
 
 
+def intake_enabled(packet):
+    """Version only the new intake behavior, without migrating saved tasks."""
+    if 'intake_policy_version' not in packet:
+        return False
+    version = packet['intake_policy_version']
+    if type(version) is not int or version != 1:
+        raise AgentError('未知 intake_policy_version；不能静默跳过需求理解')
+    return copilot_enabled(packet)
+
+
 def initial_assessment_required(packet):
     """Missing host judgment is not itself a reason to question the user."""
     return copilot_enabled(packet) and packet['need'].get('direction_review') is None
@@ -89,6 +99,7 @@ def validate_question(record, sources, *, selective=False):
 
 
 def validate_state(packet):
+    current_intake = intake_enabled(packet)
     if not enabled(packet):
         return
     from .contracts import Need
@@ -126,6 +137,15 @@ def validate_state(packet):
     messages = resolve_refs(sources, review.source_refs)
     if not review.reason.strip() or not messages or any(m['actor'] != 'user' for m in messages):
         raise AgentError('方向回查须保留本任务用户目标来源及具体理由')
+    if current_intake:
+        # A natural answer is evidence to understand, not an already authored
+        # direction. A fresh assessment must cite that answer (or a subsequent
+        # user instruction); restoring the old review cannot absorb the reply.
+        answered_at = [source_order[ref.source_id]
+                       for q in rows.values() if q.status == 'answered' and not q.options
+                       for ref in q.source_refs]
+        if answered_at and not any(source_order[m['id']] >= max(answered_at) for m in messages):
+            raise AgentError('自然澄清后的需求回查须引用最新回答或后续用户指令；先吸收回答更新 Need，不重复提问')
     if review.route == 'direct':
         if review.basis == 'unresolved_tradeoff' or review.question_id is not None:
             raise AgentError('未决重要取舍不能标为直接执行')
@@ -223,8 +243,17 @@ def observation_context(need):
 
 
 def validate_assessment(packet, need):
-    if observation_context(packet['need']) != observation_context(need.model_dump()):
-        raise AgentError('方向提案阶段不可暗改原目标或代答问题；先按真实来源修正需求')
+    previous = observation_context(packet['need'])
+    current = observation_context(need.model_dump())
+    if previous != current:
+        # DIRECTION also performs the new intake's missing host interpretation.
+        # It must be able to absorb a bound natural answer into Need before the
+        # normal refresh checks provenance, scope, locks and question history.
+        # An established direction proposal still cannot rewrite its own goal,
+        # and even initial interpretation cannot rewrite a recorded answer.
+        interpreting = intake_enabled(packet) and initial_assessment_required(packet)
+        if not interpreting or previous['answers'] != current['answers']:
+            raise AgentError('方向提案阶段不可暗改原目标或代答问题；先按真实来源修正需求')
     from .creative_directions import _verify_evidence
     for q in need.question_records:
         if q.status == 'open':
@@ -451,6 +480,11 @@ def answer(run, question_id, sources_file, source_id, expected_options_digest=No
                         answer_options_digest=expected_options_digest, delegation_scope=delegation_scope)
         else:
             data.update(status='answered', reason='用户已提供本题澄清；按原话更新理解与研究问题，不推断选项或长期偏好')
+            if intake_enabled(packet):
+                # This command binds the reply; it cannot semantically rewrite
+                # Need or the research question. Require host interpretation
+                # before research/design, while preserving the answered record.
+                need.direction_review = None
         updated = QuestionRecord.model_validate(data)
         validate_question(updated, sources, selective=True)
         need.question_records = [updated if q.id == question_id else q for q in need.question_records]
@@ -520,10 +554,18 @@ def instruction(packet):
     }
     text = '\n'.join(next((replacement for prefix, replacement in replacements.items()
                            if line.startswith(prefix)), line) for line in INSTRUCTION.split('\n'))
-    return text + '''
+    text += '''
 初始澄清解决后，按需求和审美判断找真实案例；参考形成动态风格候选，不把有限标签当风格全集。拿不准时补找不同关系的案例。候选均不适合、重要偏好仍未决或用户认为结果不好看时，启动有针对性的 Copilot 问答；不是自动重抽或机械要求两个草案。问题可直接问，也可展示有实际观察依据的候选。
 得到回答后把含义落实到 Need 与研究问题；是否已理解仍由宿主判断，不由字段存在证明。只把真正需要用户决定的问题交给用户；研究评估缺失由宿主继续完成。
 '''
+    if intake_enabled(packet):
+        text += '''
+本题 intake_policy_version=1。先从本轮原话、已有上下文和实际素材理解用户真正想做什么，区分已确定目标、明确委托的选择和仍影响方向的未知。图、海报、视频等媒介不是目标；只有“我要做一个图”且没有可用上下文或明确委托时，先问一个能确定主题、对象或用途的关键问题，再带着目标找参考。已给出的目标足够时直接推进，不按清单补问用途、受众、风格或技术参数，也不把未提供的可选信息当阻塞。
+沉默不是委托。“用户没说”不能写成 user_delegated；该依据须在 source_refs 引用真实委托，并在 reason 说明本题交出的选择范围。bounded_autonomy 用于已知目标内的可自主实现，不用来编造用户做图的目的。用户明确委托主题或表达也可自主研究；只有仍会改变真实目标、身份或范围的问题才交给用户，每轮只问一个，不强制提供选项。
+目标明确不等于视觉方案齐全。direction_review=direct 只表示不需先问用户；开放创作仍按当前视觉问题研究并实际看图，不能据此改为 specified_direction 免研究。用户已给可执行视觉方案、范围明确的局部编辑或明确不要研究时，沿实际研究策略处理，不把研究当固定仪式。
+无选项的自然答复登记后会回到 needs_intent_assessment，这是宿主吸收已有回答的步骤，不是再次提问。保留 answered 记录及真实来源，先更新 Need 的目标、主体、理解和研究问题，再写引用该回答或后续用户指令的 direction_review；仅登记 answered 或复制旧判断不等于已理解。仍有其它关键未知时保留队列，只问当前最关键的一项，不重复已解决的问题。
+'''
+    return text
 
 
 if __name__ == '__main__':

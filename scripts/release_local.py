@@ -40,6 +40,7 @@ REQUIRED_FILES = {
     'scripts/hex_entry.py', 'scripts/codex_hook.py',
     'configs/knowledge-windows.json', 'scripts/runtime/native_worker.py',
     'BETA.md', 'scripts/bootstrap.ps1', 'scripts/bootstrap.sh',
+    'docs/FEEDBACK_CREATION_CONTEXT.md', 'docs/ESSENTIAL_CREATION_FEEDBACK.md',
 }
 # These are runtime instructions, not a copy of the development workspace.
 # A fresh tester should not receive historical checks, outputs or private examples.
