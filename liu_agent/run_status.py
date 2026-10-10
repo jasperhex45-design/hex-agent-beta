@@ -301,10 +301,13 @@ def _export_files_valid(run: Path, *, verified_relative: bool = False) -> bool:
 def inspect_run(run: Path, *, _dispatch_lock_held: bool = False) -> dict:
     if (Path(run) / 'api-state.json').exists():
         from .api_recovery import inspect_api_run
-        return inspect_api_run(run, _dispatch_lock_held=_dispatch_lock_held)
-    from .workflow_policy import apply_to_status
-    return apply_to_status(run, _apply_generation_control(
-        run, _inspect_run(run, _dispatch_lock_held=_dispatch_lock_held)))
+        report = inspect_api_run(run, _dispatch_lock_held=_dispatch_lock_held)
+    else:
+        from .workflow_policy import apply_to_status
+        report = apply_to_status(run, _apply_generation_control(
+            run, _inspect_run(run, _dispatch_lock_held=_dispatch_lock_held)))
+    from .feedback import apply_unexported_feedback_to_status
+    return apply_unexported_feedback_to_status(run, report)
 
 
 def _apply_generation_control(run: Path, report: dict) -> dict:

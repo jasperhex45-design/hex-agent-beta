@@ -64,8 +64,8 @@ def host_instruction(packet):
 当前流程 full-flow-v1；交付类型 {selected['deliverable_kind']}。workflow status 是当前下一步的依据。
 使用 python -m hex_agent workflow drive --run RUN 推进本地检查；返回宿主步骤后继续执行该动作，再 drive。
 prompt_only 在设计、编译与冻结标准通过后直接 workflow complete，不提交图片调用。
-image/local_edit 必须取得真实图片；按当前用户原话登记 workflow requirements --file FILE 的文字检查适用性，绑定真实 source_ids 与冻结 criterion_id。只有明确画内文字要求才填 OCR exact_text；无要求说明 not_applicable，不能用空项躲过要求。
-workflow check 自动运行当前图片检查与必要 OCR；准备 workflow prepare-review 的输入后必须实际打开候选和必要参考，按冻结标准填写 review_record_template，使用 workflow record-review --report FILE 登记。
+image/local_edit 必须取得真实图片；用 workflow requirements --file FILE 登记文字检查适用性，绑定真实 source_ids 与冻结 criterion_id。用户要求保持默认 user_requirement；宿主自拟文字显式用 text.source_kind=design_proposal，引用 assistant 提案并绑定非 hard 设计标准，不冒充用户硬要求。只有明确应出现的画内文字才填 OCR exact_text；无要求说明 not_applicable，不能用空项躲过已冻结文字。
+workflow check 自动运行当前图片检查与必要 OCR；默认保留已安装的 Paddle 路线。实际使用系统 Tesseract 须显式 --ocr-backend tesseract --ocr-language eng，回执保留真实后端；不可用、低置信度或错误不算通过。准备 workflow prepare-review 的输入后必须实际打开候选和必要参考，按冻结标准填写 review_record_template，使用 workflow record-review --report FILE 登记。
 准备复核输入不等于看图；退出码正常不等于检查项通过。未满足或不确定时处理真实问题，保留原请求与失败记录，不以降低标准或自动补图获得通过。
 所有必要证据绑定当前需求、合同、候选与请求后，workflow complete 才可正式交付。机器看图判断仍是宿主报告，用户是否接受另行记录。
 此策略不改原 execution-profile：显式研究配置仍须原生 Eval/比较；默认生产配置只追加完整流程复核，不用机器判断决定补图或挑图。
@@ -202,15 +202,31 @@ def _validate_text(packet, contract, value):
         raise AgentError('text.applicability 必须明确 required 或 not_applicable')
     if not isinstance(value.get('reason'), str) or not value['reason'].strip():
         raise AgentError('文字检查是否适用必须说明本题依据')
+    kind = value.get('source_kind', 'user_requirement')
+    if kind not in ('user_requirement', 'design_proposal'):
+        raise AgentError('text.source_kind 必须为 user_requirement 或 design_proposal')
     ids = value.get('source_ids')
-    sources = {m['id'] for m in verified_sources(packet.get('input_sources')) if m['actor'] == 'user'}
+    actor = 'assistant' if kind == 'design_proposal' else 'user'
+    sources = {m['id']: m for m in verified_sources(packet.get('input_sources')) if m['actor'] == actor}
     if (not isinstance(ids, list) or not ids or any(not isinstance(i, str) for i in ids)
-            or len(set(ids)) != len(ids) or not set(ids) <= sources):
-        raise AgentError('文字检查要求必须指向当前任务真实用户消息 source_ids')
+            or len(set(ids)) != len(ids) or not set(ids) <= sources.keys()):
+        raise AgentError('文字检查要求必须指向当前任务真实' +
+                         (' assistant 提案' if kind == 'design_proposal' else '用户消息') + ' source_ids')
     items = validate_ocr_requirements(contract, value.get('items', []))
     if (state == 'required') != bool(items):
         raise AgentError('required 必须有逐字绑定标准的 OCR 项；not_applicable 必须为空')
-    return {'applicability': state, 'reason': value['reason'].strip(), 'source_ids': ids, 'items': items}
+    if kind == 'design_proposal':
+        checks = {row['id']: row for row in contract['checks']}
+        if state != 'required' or any(checks[row['criterion_id']]['dimension'] == 'hard' for row in items):
+            raise AgentError('design_proposal 只登记应出现的设计文字，不能替代用户硬要求或声明无文字要求')
+        if any(not any(row['exact_text'] in sources[ident]['text'] for ident in ids) for row in items):
+            raise AgentError('设计文字须逐字存在于所引用的 assistant 提案，不能事后补造来源')
+    result = {'applicability': state, 'reason': value['reason'].strip(), 'source_ids': ids, 'items': items}
+    # Omitted kind retains the exact legacy shape, so old sealed sidecars remain
+    # readable without a silent normalization or contract migration.
+    if 'source_kind' in value:
+        result['source_kind'] = kind
+    return result
 
 
 def requirements(run, file=None):
@@ -223,7 +239,7 @@ def requirements(run, file=None):
         return {'packet_digest': packet['digest'], 'contract_digest': contract['digest'],
                 'text': {'applicability': 'undetermined', 'items': [], 'reason': '', 'source_ids': []},
                 'sources': packet.get('input_sources', {}).get('messages', []), 'checks': contract['checks'],
-                'instruction': '根据真实原话填写 text。明确画内文字才 required；items 按 criterion_id/exact_text/text_required:true 绑定冻结标准。无此要求说明依据并选 not_applicable；勿把禁字要求反转为要生成文字。保存JSON后用 workflow requirements --file 登记。'}
+                'instruction': '根据真实来源填写 text。默认 user_requirement 引用 user 消息；自拟文字显式 source_kind=design_proposal，引用含 exact_text 的 assistant 提案并绑定非 hard 设计标准，不冒充用户要求。明确应出现文字才 required；items 按 criterion_id/exact_text/text_required:true 绑定冻结标准。无文字要求说明用户依据并选 not_applicable；勿把禁字要求反转为要生成文字。保存JSON后用 workflow requirements --file 登记。'}
     with dispatch_lock(run):
         packet, contract, _ = _task(run)
         value = read_json(Path(file))
@@ -233,7 +249,8 @@ def requirements(run, file=None):
         return _save(within(run, 'workflow/requirements.json'), {
             'format': 'hex.workflow-review-requirements.v1', 'packet_digest': packet['digest'],
             'contract_digest': contract['digest'], 'text': text,
-            'authority': 'host_interpretation_of_bound_user_sources'})
+            'authority': ('host_interpretation_of_bound_design_proposal' if text.get('source_kind') == 'design_proposal'
+                          else 'host_interpretation_of_bound_user_sources')})
 
 
 def _requirements(run, packet, contract):
@@ -262,7 +279,7 @@ def _envelope(packet, contract, candidate, req, report):
             'request_id': candidate['request_id'], 'requirements_digest': req['digest'], 'report': report}
 
 
-def check(run, request_id=None, *, ocr_timeout=180):
+def check(run, request_id=None, *, ocr_timeout=180, ocr_backend='paddleocr', ocr_language='eng'):
     from .run_lock import dispatch_lock
     from .task_review import check_task_image
     run = Path(run).resolve()
@@ -274,7 +291,8 @@ def check(run, request_id=None, *, ocr_timeout=180):
             raise AgentError('仍有结果未知的原请求；先查询原请求，不把当前候选当全部完成')
         candidate = _choose(candidates, request_id)
         report = check_task_image(run, within(run, candidate['file']),
-                                  ocr_requirements=req['text']['items'], ocr_timeout_seconds=ocr_timeout)
+                                  ocr_requirements=req['text']['items'], ocr_timeout_seconds=ocr_timeout,
+                                  ocr_backend=ocr_backend, ocr_language=ocr_language)
         if report.get('generation_binding', {}).get('state') != 'verified_existing_generation':
             raise AgentError('未绑定执行证据的本地诊断不能登记为完整流程检查')
         evidence = _save(_path(run, 'checks', candidate), _envelope(packet, contract, candidate, req, report))
@@ -663,6 +681,9 @@ def main(argv=None):
     parser.add_argument('--file', type=Path)
     parser.add_argument('--report', type=Path)
     parser.add_argument('--ocr-timeout', type=float, default=180)
+    parser.add_argument('--ocr-backend', choices=['paddleocr', 'tesseract'], default='paddleocr',
+                        help='check 专用：显式选择本地 OCR 后端，不自动降级')
+    parser.add_argument('--ocr-language', default='eng', help='Tesseract 已安装语言，例如 eng；不下载语言包')
     parser.add_argument('--max-steps', type=int, default=8)
     args = parser.parse_args(argv)
     try:
@@ -672,7 +693,8 @@ def main(argv=None):
         elif args.action == 'requirements':
             result = requirements(args.run, args.file)
         elif args.action == 'check':
-            result = check(args.run, args.request_id, ocr_timeout=args.ocr_timeout)
+            result = check(args.run, args.request_id, ocr_timeout=args.ocr_timeout,
+                           ocr_backend=args.ocr_backend, ocr_language=args.ocr_language)
         elif args.action == 'prepare-review':
             result = prepare_review(args.run, args.request_id)
         elif args.action == 'record-review':

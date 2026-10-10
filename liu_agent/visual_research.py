@@ -292,6 +292,7 @@ study 使用真实案例：先解决具体视觉问题，实际看图、observe 
 '''
     if packet['visual_research_version'] == 2:
         instruction += '''参考是随本题扩展的风格库，不是固定风格词菜单。先理解用途、想传达的感觉和真实限制，再带着视觉问题找案例；用实际形态、人物关系、空间、光色及表达效果筛选，不以来源名气代替判断。
+研究目标明确与已有可执行视觉方案分别判断。direction_review=direct 只表示不需先追问；题材、风格词、作品名或气质线索不自动允许 specified_direction。若具体画面来自宿主提案，按开放创作研究，不能把内部预设方案或已冻结的实验设计当作用户指定证据。是否需要提问仍由本题的重要未知决定，不因出现作品名而机械追问。
 在同一次 ReferenceAnalysis 中记录 selection_state 与 selection_reason：有具体可用关系时 acceptable；需要扩大差异化搜索时 exploring；探索后仍拿不准时 uncertain；没有合适案例时 no_suitable_reference。exploring 继续找不同真实案例并观察，不要求固定数量或固定两个草案；uncertain/no_suitable_reference 进入已有 copilot 问答澄清偏好或目标，再按回答研究。不能为了填 acceptable 而声称参考好看。
 需求开始就模糊且会改变主导表达时，先用 question_records 问清关键目标再找参考。需要共创时只问本题关键分歧；已回答的选择与限制保留，不把搜索扩展当作重选许可。
 有足够依据可直接形成一个最终方向；已由用户选定的共创方案只展开原选中草案。choices/reference_uses/checks 必须连接真正采用的观察；全部拒绝案例不能冒充找到了可用审美方向。代码只验证来源和决策连接，不证明美观或用户接受。

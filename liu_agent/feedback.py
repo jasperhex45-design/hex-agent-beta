@@ -12,6 +12,129 @@ def _binding(result: dict) -> dict:
             'packet_digest': result['packet_digest']}
 
 
+def _read_feedback(run: Path, binding: dict) -> dict | None:
+    """Verify a receipt independently of whether delivery has been exported."""
+    path = run/'user-feedback.json'
+    if not path.exists():
+        return None
+    receipt = read_json(path)
+    if not isinstance(receipt, dict) or not isinstance(receipt.get('feedback'), dict):
+        raise AgentError('用户反馈记录结构无效')
+    payload = receipt['feedback']
+    if receipt.get('digest') != digest(payload):
+        raise AgentError('用户反馈记录已改变，不能推断认可')
+    if any(payload.get(k) != v for k, v in binding.items()):
+        return None
+    if payload.get('decision') not in ('accepted_by_user', 'rejected_by_user'):
+        raise AgentError('用户反馈状态无效')
+    if any(not isinstance(payload.get(key), str) or not payload[key].strip()
+           for key in ('user_quote', 'source', 'recorded_at')):
+        raise AgentError('用户反馈缺少原话或来源')
+    if payload.get('format') == 'liu.user-feedback.v2':
+        if payload.get('source_evidence') == feedback_sources.EVIDENCE:
+            evidence = feedback_sources.verify_reference(run, payload, binding)
+        elif payload.get('source_evidence') == feedback_sources.LEGACY_EVIDENCE and not any(
+                key in payload for key in ('source_id', 'source_digest', 'decision_digest')):
+            evidence = {'source_evidence': feedback_sources.LEGACY_EVIDENCE,
+                        'acceptance_scope': feedback_sources.SCOPE}
+        else:
+            raise AgentError('反馈来源证据等级无效')
+        if payload.get('acceptance_scope') != feedback_sources.SCOPE:
+            raise AgentError('反馈范围无效，不能扩为全任务验收')
+    elif 'format' in payload or any(key in payload for key in ('source_id', 'source_digest', 'decision_digest')):
+        raise AgentError('未知反馈格式或来源证据')
+    else:
+        evidence = {'source_evidence': feedback_sources.LEGACY_EVIDENCE,
+                    'acceptance_scope': feedback_sources.SCOPE}
+    return {**payload, **evidence}
+
+
+def _generation_binding(run: Path, packet: dict, contract: dict, candidate: dict) -> dict:
+    from .task_review import _candidate, _generation_binding as make_binding
+    canonical, evidence, source_sha = _candidate(run, packet, contract, within(run, candidate['file']))
+    if canonical != candidate['sha256']:
+        raise AgentError('用户反馈候选与原生成图像摘要不一致')
+    return make_binding(canonical, evidence, source_sha)
+
+
+def _verify_generation_binding(run: Path, packet: dict, contract: dict,
+                               candidate: dict, feedback: dict) -> None:
+    if 'recording_phase' not in feedback and 'generation_binding' not in feedback:
+        return  # Existing exported-image receipts retain their original contract.
+    if (feedback.get('recording_phase') != 'before_completion'
+            or feedback.get('decision') != 'rejected_by_user'
+            or feedback.get('source_evidence') != feedback_sources.EVIDENCE
+            or feedback.get('generation_binding') != _generation_binding(run, packet, contract, candidate)):
+        raise AgentError('完成前的用户否决与原请求、候选或来源证据不一致')
+
+
+def _unexported_candidate(run: Path) -> tuple[dict, dict, dict]:
+    """A sole completed image is an unambiguous feedback target, not an export."""
+    from .workflow_policy import _task, _candidates
+    packet, contract, _ = _task(run)
+    candidates, pending = _candidates(run, packet, contract)
+    if pending or len(candidates) != 1 or packet['brief'].get('model_comparison'):
+        raise AgentError('完成前的否决需要本任务唯一已完成候选；不猜选多图或未决请求')
+    return packet, contract, candidates[0]
+
+
+def _save_feedback(run: Path, payload: dict, source_snapshot: dict | None) -> None:
+    path = run/'user-feedback.json'
+    history = read_json(run/'user-feedback-history.json') if (run/'user-feedback-history.json').exists() else []
+    if not isinstance(history, list):
+        raise AgentError('用户反馈历史结构无效')
+    if path.exists():
+        history.append(read_json(path))
+        write_json(run/'user-feedback-history.json', history)
+    if source_snapshot is not None:
+        write_json(run/feedback_sources.FILE, source_snapshot)
+    write_json(path, {'feedback': payload, 'digest': digest(payload)})
+
+
+def _record_unexported_rejection(run: Path, quote: str, source: str, *,
+                                 sources_file: Path | None, source_id: str | None) -> dict:
+    if not source_id:
+        raise AgentError('完成前登记否决须绑定真实用户消息快照；不能用无来源文字代替')
+    packet, contract, candidate = _unexported_candidate(run)
+    binding = {'candidate_sha256': candidate['sha256'], 'contract_digest': contract['digest'],
+               'packet_digest': packet['digest']}
+    snapshot, evidence = feedback_sources.prepare_snapshot(
+        run, sources_file, source_id, 'rejected_by_user', quote, binding)
+    generation = _generation_binding(run, packet, contract, candidate)
+    payload = {**binding, 'decision': 'rejected_by_user', 'user_quote': quote, 'source': source,
+               'origin': 'explicit_user_feedback_host_reported', 'recorded_at': now(),
+               'format': 'liu.user-feedback.v2', 'recording_phase': 'before_completion',
+               'generation_binding': generation, **evidence}
+    _save_feedback(run, payload, snapshot)
+    return {'human_acceptance': 'rejected_by_user', 'status': 'user_rejected', **binding,
+            'acceptance_scope': feedback_sources.SCOPE, 'task_acceptance': 'not_recorded',
+            'source_evidence': evidence['source_evidence'], 'generation_binding': generation,
+            'machine_status': 'not_changed_by_feedback', 'completion_granted': False,
+            'notice': '已记录你对这张图的否决；原图、请求与反馈保留，尚未完成的检查仍待处理，不必重复选择。'}
+
+
+def apply_unexported_feedback_to_status(run: Path, report: dict) -> dict:
+    """Expose a verified decision while preserving the actual incomplete stage."""
+    if (Path(run)/'result.json').exists() or not (Path(run)/'user-feedback.json').exists():
+        return report
+    try:
+        _, _, feedback = verified_feedback(Path(run))
+    except (AgentError, OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
+        report['blockers'].append('完成前用户反馈未核验：' + str(exc))
+        report.update(stage='blocked', generation_allowed=False,
+                      next_action={'command': None, 'description': '核对反馈与当前图像的来源绑定，不能推断已记录用户选择。'})
+        return report
+    report.update(human_acceptance=feedback['decision'], user_feedback=feedback,
+                  acceptance_scope=feedback_sources.SCOPE, task_acceptance='not_recorded',
+                  feedback_source_evidence=feedback['source_evidence'])
+    action = report.get('next_action')
+    if isinstance(action, dict) and not report['blockers']:
+        action = dict(action)  # Do not rewrite the completion subsystem's shared action.
+        action['description'] = '已记录本图否决，不必重复选择。' + action.get('description', '')
+        report['next_action'] = action
+    return report
+
+
 def apply_feedback(run: Path, result: dict) -> None:
     # Feedback changes the selected-image decision, never machine review or task acceptance.
     selected = next((t for t in result.get('trials', [])
@@ -35,43 +158,20 @@ def apply_feedback(run: Path, result: dict) -> None:
     path = run/'user-feedback.json'
     if not path.exists():
         return
-    receipt = read_json(path)
-    if not isinstance(receipt, dict) or not isinstance(receipt.get('feedback'), dict):
-        raise AgentError('用户反馈记录结构无效')
-    payload = receipt.get('feedback', {})
-    if receipt.get('digest') != digest(payload):
-        raise AgentError('用户反馈记录已改变，不能推断认可')
-    if any(payload.get(k) != v for k, v in _binding(result).items()):
+    payload = _read_feedback(run, _binding(result))
+    if payload is None:
         result['feedback_notice'] = '历史反馈绑定另一张图或另一套标准；本候选尚未获用户确认'
         return
-    if payload.get('decision') not in ('accepted_by_user', 'rejected_by_user'):
-        raise AgentError('用户反馈状态无效')
-    if any(not isinstance(payload.get(key), str) or not payload[key].strip()
-           for key in ('user_quote', 'source', 'recorded_at')):
-        raise AgentError('用户反馈缺少原话或来源')
-    if payload.get('format') == 'liu.user-feedback.v2':
-        if payload.get('source_evidence') == feedback_sources.EVIDENCE:
-            evidence = feedback_sources.verify_reference(run, payload, _binding(result))
-        elif payload.get('source_evidence') == feedback_sources.LEGACY_EVIDENCE and not any(
-                key in payload for key in ('source_id', 'source_digest', 'decision_digest')):
-            evidence = {'source_evidence': feedback_sources.LEGACY_EVIDENCE,
-                        'acceptance_scope': feedback_sources.SCOPE}
-        else:
-            raise AgentError('反馈来源证据等级无效')
-        if payload.get('acceptance_scope') != feedback_sources.SCOPE:
-            raise AgentError('反馈范围无效，不能扩为全任务验收')
-    elif 'format' in payload or any(key in payload for key in ('source_id', 'source_digest', 'decision_digest')):
-        raise AgentError('未知反馈格式或来源证据')
-    else:
-        evidence = {'source_evidence': feedback_sources.LEGACY_EVIDENCE,
-                    'acceptance_scope': feedback_sources.SCOPE}
+    if 'recording_phase' in payload or 'generation_binding' in payload:
+        from .workflow import read_packet
+        _verify_generation_binding(run, read_packet(run), result['acceptance'], selected, payload)
     result['human_acceptance'] = payload['decision']
-    result['user_feedback'] = {**payload, **evidence}
+    result['user_feedback'] = payload
     result['acceptance_scope'] = feedback_sources.SCOPE
-    result['feedback_source_evidence'] = evidence['source_evidence']
+    result['feedback_source_evidence'] = payload['source_evidence']
     result['feedback_notice'] = ('反馈仅适用于选中候选；不证明机器复查通过、全任务验收或长期偏好。'
         + ('来源为旧式宿主文字记录，未绑定可复核消息快照。'
-           if evidence['source_evidence'] == feedback_sources.LEGACY_EVIDENCE
+           if payload['source_evidence'] == feedback_sources.LEGACY_EVIDENCE
            else '消息与决策范围已经本地绑定；不是平台认证的用户身份或语义证明。'))
     if payload['decision'] == 'rejected_by_user':
         result['status'] = 'user_rejected'
@@ -125,6 +225,16 @@ def verified_candidate(run: Path, request_id: str | None = None, *,
 
 def verified_feedback(run: Path) -> tuple[dict, dict, dict]:
     """Return explicit feedback only while its image, request and checks still match."""
+    if not (run/'result.json').exists():
+        packet, contract, candidate = _unexported_candidate(run)
+        binding = {'candidate_sha256': candidate['sha256'], 'contract_digest': contract['digest'],
+                   'packet_digest': packet['digest']}
+        feedback = _read_feedback(run, binding)
+        if (not feedback or feedback.get('recording_phase') != 'before_completion'
+                or feedback.get('origin') != 'explicit_user_feedback_host_reported'):
+            raise AgentError('没有绑定当前已完成候选的完成前用户否决')
+        _verify_generation_binding(run, packet, contract, candidate, feedback)
+        return packet, candidate, feedback
     packet, result, trial = verified_candidate(run)
     apply_feedback(run, result)
     feedback = result.get('user_feedback')
@@ -167,6 +277,11 @@ def record_feedback(run: Path, decision: str, user_quote: str, source: str, *,
     from .host import dispatch_lock
     from .exporter import export_result
     with dispatch_lock(run):
+        if not (run/'result.json').exists():
+            if decision != 'rejected_by_user':
+                raise AgentError('接受仍须绑定已导出的选中候选；完成前可保存有来源的明确否决')
+            return _record_unexported_rejection(run, user_quote.strip(), source.strip(),
+                                                sources_file=sources_file, source_id=source_id)
         packet, result, trial = verified_candidate(run)
         binding = _binding(result)
         source_snapshot = None
@@ -181,16 +296,7 @@ def record_feedback(run: Path, decision: str, user_quote: str, source: str, *,
         payload = {**binding, 'decision': decision, 'user_quote': user_quote.strip(), 'source': source.strip(),
                    'origin': 'explicit_user_feedback_host_reported', 'recorded_at': now(),
                    'format': 'liu.user-feedback.v2', **evidence}
-        path = run/'user-feedback.json'
-        history = read_json(run/'user-feedback-history.json') if (run/'user-feedback-history.json').exists() else []
-        if not isinstance(history, list):
-            raise AgentError('用户反馈历史结构无效')
-        if path.exists():
-            history.append(read_json(path))
-            write_json(run/'user-feedback-history.json', history)
-        if source_snapshot is not None:
-            write_json(run/feedback_sources.FILE, source_snapshot)
-        write_json(path, {'feedback': payload, 'digest': digest(payload)})
+        _save_feedback(run, payload, source_snapshot)
         apply_feedback(run, result)
         apply_relative_preference(run, result)
         export_result(result, run)

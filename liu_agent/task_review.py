@@ -60,7 +60,7 @@ def review_card(run: Path) -> dict:
 
 
 def check_task_image(run: Path, image: Path, *, ocr_requirements: list | Path | str | None = None,
-                     ocr_timeout_seconds: float = 180) -> dict:
+                     ocr_timeout_seconds: float = 180, ocr_backend='paddleocr', ocr_language='eng') -> dict:
     """Inspect existing pixels, with local OCR only for explicit frozen text checks."""
     from .adapters.local_ocr_runtime import run_local_ocr, validate_ocr_requirements
     run, image = Path(run).resolve(), Path(image).resolve()
@@ -100,7 +100,7 @@ def check_task_image(run: Path, image: Path, *, ocr_requirements: list | Path | 
     if checks['state'] == 'completed' or not requirements:
         ocr = run_local_ocr(image, contract, requirements, contract_path=run / 'acceptance.json',
                             expected_candidate_sha256=checks.get('image', {}).get('sha256'),
-                            timeout_seconds=ocr_timeout_seconds)
+                            timeout_seconds=ocr_timeout_seconds, backend=ocr_backend, language=ocr_language)
     else:
         from .adapters.ocr_review import review_text
         ocr = review_text(image, contract, requirements, engine=None)
@@ -225,6 +225,9 @@ def main(argv=None):
                         help='check专用：宿主从冻结checks派生的明确画内文字要求JSON列表')
     parser.add_argument('--ocr-timeout', type=float, default=180,
                         help='本地OCR进程最长秒数，默认180；超时停止且不重试')
+    parser.add_argument('--ocr-backend', choices=['paddleocr', 'tesseract'], default='paddleocr',
+                        help='显式选择已安装的本地 OCR；默认保留 Paddle，不自动降级')
+    parser.add_argument('--ocr-language', default='eng', help='Tesseract 已安装语言；不下载语言包')
     parser.add_argument('--out', type=Path)
     args = parser.parse_args(argv)
     try:
@@ -240,7 +243,8 @@ def main(argv=None):
             result = review_card(run)
         elif args.command == 'check':
             result = check_task_image(run, args.image, ocr_requirements=args.ocr_requirements,
-                                      ocr_timeout_seconds=args.ocr_timeout)
+                                      ocr_timeout_seconds=args.ocr_timeout,
+                                      ocr_backend=args.ocr_backend, ocr_language=args.ocr_language)
         elif args.command == 'prepare-vlm':
             result = prepare_task_review(run, args.image)
         else:

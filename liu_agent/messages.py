@@ -264,12 +264,26 @@ def build_presentation(run: Path, result: dict | None = None, inspection: dict |
         review_text = ('机器研究意见已另行记录，不参与验收、排序或补图。' if review_refs else
                        '机器评审为可选研究记录；当前图片直接交由你判断。' if images else
                        '尚无候选图可供视觉判断；机器评审尚未进行。')
+        if images and packet.get('workflow_policy'):
+            try:
+                from .workflow_policy import registered_review
+                completed_ids = [row['id'] for row in facts['known_generation_attempts']
+                                 if row['status'] == 'completed']
+                records = [registered_review(run, request_id) for request_id in completed_ids]
+                review_text = ('当前候选的完整流程视觉复核已登记；具体未满足项、交付检查和用户选择分别保留。'
+                               if records and all(record is not None for record in records) else
+                               '本题的视觉复核是必要步骤，当前尚未完成全部候选的复核登记；出图不代表流程已完成。')
+            except (AgentError, OSError, ValueError, KeyError, TypeError) as exc:
+                review_text = '本题的视觉复核是必要步骤；当前复核证据尚未核验，不能声称已完成。'
+                errors.append('完整流程视觉复核未核验：' + str(exc))
     user_state, source_level = 'not_recorded', 'not_recorded'
     try:
-        if current and (run/'user-feedback.json').is_file():
+        if (run/'user-feedback.json').is_file():
             from .feedback import verified_feedback
             _, chosen, feedback = verified_feedback(run)
-            if selected and chosen['sha256'] == selected['sha256']:
+            matches = (selected and chosen['sha256'] == selected['sha256'] if current else
+                       len(images) == 1 and images[0]['sha256'] == chosen['sha256'])
+            if matches:
                 user_state = feedback['decision']
                 source_level = feedback.get('source_evidence', 'legacy_host_report_unverified')
                 claim('user_' + user_state, ['user-feedback.json', chosen['file']])

@@ -76,7 +76,7 @@ PY ENTRY workflow record-review --run RUN --report REVIEW
 PY ENTRY workflow complete --run RUN
 ```
 
-只有明确画内文字要求才登记 OCR 的 `required` 与原精确文案；否则按真实来源记 `not_applicable`，禁字要求不能反转为生成文字。多个候选时为每个应交付候选传真实 `--request-id`，不默认取最后一张。读取 `prepare-review` 的当前模板后实际打开候选及必要参考，填写观察再 `record-review`；模板本身不是已看图证据。
+对明确应出现的画内文字登记 OCR 的 `required` 与冻结文案。用户指定文字按默认用户来源；宿主自拟片名等用 `text.source_kind=design_proposal` 绑定真实 assistant 提案和非 hard 设计检查，不冒充用户要求。无文字要求才按用户来源记 `not_applicable`，禁字要求不能反转为生成文字。默认保留 Paddle；本机实际使用 Tesseract 时显式传 `workflow check --ocr-backend tesseract --ocr-language eng`，不可用或低置信度均保留失败/未知。多个候选时为每个应交付候选传真实 `--request-id`，不默认取最后一张。读取 `prepare-review` 的当前模板后实际打开候选及必要参考，填写观察再 `record-review`；模板本身不是已看图证据。
 
 失败或不确定时也展示当前原图和返回的 `feedback_card`；`workflow status` 保留有效 `candidate_receipts/feedback_cards`。可见差距与原因未知分开，反馈页存在不证明用户已经看见。看图反馈与必要关系的方法见 [原图反馈](docs/ESSENTIAL_CREATION_FEEDBACK.md)。
 
@@ -86,7 +86,7 @@ PY ENTRY workflow complete --run RUN
 
 先查原 `status` / `harness plan`，按真实 `resume` 下一步接续。已核验许可只是内部登记或父子预算关联缺失时，用已有恢复入口修复，不重复问用户。冻结后的续改用 `refresh --out` 建关联版本，保留真实父图、反馈、新 `change_scope/preserve` 与累计预算；必要时传 `--edit-reference` / `--parent-request-id`。变更参考、Need 或模型后重新观察与编译。
 
-真实接受、拒绝、局部认可和相对喜欢用原反馈入口保存；CLI 自动登记适用来源，不把相对更好当最终接受，也不把跨题反馈自动套入本题。专业反馈召回、来源失效和诊断边界按需读上述反馈文档。
+真实接受、拒绝、局部认可和相对喜欢用原反馈入口保存；CLI 自动登记适用来源，不把相对更好当最终接受，也不把跨题反馈自动套入本题。唯一已完成候选在正式导出前也可用 `record-feedback --decision rejected_by_user --sources FILE --source-id ID` 保存明确否决；仍核验原图、请求与来源，未完成的检查保留，不再要求用户重复评价。多候选不能猜选，拒绝不授予重做预算。专业反馈召回、来源失效和诊断边界按需读上述反馈文档。
 
 完整流程与 execution profile 独立；显式 legacy 执行策略仍完成原 native Eval/比较，默认生产策略不重复两套评审。没有 `workflow_policy` 的旧包沿 `status/resume/finalize` 恢复，不补新默认或宣称已通过新验收。明确停止用原 `stop-generation`，普通暂停用当前 `codex pause`；锁残留按来源接口的 `recover-lock` 核对，不删账本。
 
