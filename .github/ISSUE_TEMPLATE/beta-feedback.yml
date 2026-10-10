@@ -1,10 +1,10 @@
-name: HEX 内测反馈
+name: HEX Beta 反馈
 description: 用实际需求和结果图说明最关键的一处差距。
-title: "[内测] "
+title: "[Beta] "
 body:
   - type: markdown
     attributes:
-      value: "请只上传可向内测组分享的素材；不要上传密钥、账户文件或完整任务目录。无需先判断是哪个技术环节的问题。"
+      value: "本仓库的 Issues 内容公开，请只上传你有权公开的素材；不要上传客户保密图片、个人信息、密钥、账户文件或完整任务目录。无需先判断是哪个技术环节的问题。"
   - type: input
     id: environment
     attributes:

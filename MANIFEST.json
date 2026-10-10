@@ -1,9 +1,9 @@
 {
   "version": "0.3.8",
   "scope": "product_source_only",
-  "channel": "private_beta",
+  "channel": "public_beta",
   "source_commit": "436ba51ccb069ffba9d8cda5c4a6e66f84630f33",
-  "notice": "邀请制内测源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。访问控制由托管私有库负责；本包不改变现有许可，文件摘要不证明审美或工具可用性。",
+  "notice": "公开 Beta 源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。沿用现有许可；文件摘要用于核对内容，不证明审美效果或宿主工具可用性。",
   "files": [
     {
       "path": ".agents/skills/cl-hex-car-photography/SKILL.md",
@@ -43,7 +43,7 @@
     },
     {
       "path": ".github/ISSUE_TEMPLATE/beta-feedback.yml",
-      "sha256": "58844e08c90329a7229789e72d87126301be06f5b8f438b8d5314143d59faedb"
+      "sha256": "1ed7bcea6c673497bac985daadbbecf7cfdd5588e05a2c727662975554c34515"
     },
     {
       "path": ".gitignore",
@@ -59,7 +59,7 @@
     },
     {
       "path": "BETA.md",
-      "sha256": "66730368e4621a68b3867cdf47f3c0410ad65352a5bbf16b38b53462a1e99c38"
+      "sha256": "89218f43acd834127400349a45caf14fd895d35833155d94dfa39059cf598fe0"
     },
     {
       "path": "CODEX_START.md",
@@ -75,7 +75,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "22cf8bb0977c68a57fe8c6a989abd3b423c877d5606874485330f4b6b7e815f0"
+      "sha256": "50d65b773b1ae9bb93849f36c812c05819e7cbdd75968fb10dfbe34cf5d7dd64"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
