@@ -67,6 +67,26 @@ def _tokens(results, size):
     return tokens
 
 
+def match_tokens(size, requirements, items, tokens, confidence_threshold=0.8):
+    """Match already validated original-coordinate observations, without inference."""
+    width, height = size
+    for row, item in zip(requirements, items):
+        matches = [token for token in tokens if token['text'] == row['exact_text'] and
+                   token['confidence'] >= confidence_threshold]
+        if not matches:
+            item['evidence'] = '未找到高置信度逐字匹配；可能缺字、分行或识别失败，需看原图'
+            continue
+        item.update(verdict='met', evidence='本地OCR观察到逐字匹配；需结合原图复核', matches=matches)
+        if row.get('region'):
+            left, top, right, bottom = row['region']
+            contained = [token for token in matches if token['bbox_original'][0] >= left * width and
+                         token['bbox_original'][1] >= top * height and token['bbox_original'][2] <= right * width and
+                         token['bbox_original'][3] <= bottom * height]
+            item.update(verdict='met' if contained else 'not_met',
+                        evidence='匹配文本位于要求区域内' if contained else '检测到的匹配文字均超出要求区域，需原图复核',
+                        region=row['region'], region_source=row['region_source'])
+
+
 def review_text(image_path: Path, contract: dict, requirements: list, *, engine=None,
                 confidence_threshold=0.8, runtime_label='caller_supplied_local_PaddleOCR3') -> dict:
     """Call ``engine.predict(input=...)`` once; absence is uncertain, not proof."""
@@ -107,22 +127,7 @@ def review_text(image_path: Path, contract: dict, requirements: list, *, engine=
             result.update(state='failed', reason='OCR期间候选文件发生变化或不可读；识别结果未绑定')
             return result
         result['tokens'] = tokens
-        width, height = inspection['image']['size']
-        for row, item in zip(requirements, result['items']):
-            matches = [token for token in tokens if token['text'] == row['exact_text'] and
-                       token['confidence'] >= confidence_threshold]
-            if not matches:
-                item['evidence'] = '未找到高置信度逐字匹配；可能缺字、分行或识别失败，需看原图'
-                continue
-            item.update(verdict='met', evidence='本地OCR观察到逐字匹配；需结合原图复核', matches=matches)
-            if row.get('region'):
-                left, top, right, bottom = row['region']
-                contained = [token for token in matches if token['bbox_original'][0] >= left * width and
-                             token['bbox_original'][1] >= top * height and token['bbox_original'][2] <= right * width and
-                             token['bbox_original'][3] <= bottom * height]
-                item.update(verdict='met' if contained else 'not_met',
-                            evidence='匹配文本位于要求区域内' if contained else '检测到的匹配文字均超出要求区域，需原图复核',
-                            region=row['region'], region_source=row['region_source'])
+        match_tokens(inspection['image']['size'], requirements, result['items'], tokens, confidence_threshold)
         result['state'] = 'completed'
     except Exception as exc:
         # Keep attempted model consumption on failed inference. Do not silently

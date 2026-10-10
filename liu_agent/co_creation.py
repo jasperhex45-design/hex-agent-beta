@@ -360,6 +360,7 @@ def compiler_projection(payload, packet):
             result[key].pop('next_question', None)
             result[key].pop('direction_options', None)
             result[key].pop('direction_cards', None)
+            result[key].pop('intent_assessment', None)
             if key == 'need':
                 result[key].pop('direction_review', None)
     if result.get('method_context'):
@@ -387,6 +388,12 @@ def intake_projection(intake, packet):
     result['status'] = 'needs_input' if result['adaptive_questions'] else 'ready_for_reference_review'
     if initial_assessment_required(packet) and not result['adaptive_questions']:
         result['status'] = 'needs_intent_assessment'
+    if intake_enabled(packet):
+        review = packet['need'].get('direction_review')
+        # Expose the host's judgment and exact cited words without certifying
+        # their semantics or creating a second decision/confirmation ledger.
+        result['intent_assessment'] = ({**deepcopy(review),
+            'authority': 'host_judgment_not_user_confirmation'} if review else None)
     q = chosen_question(packet)
     if not q or q['status'] != 'open' or not q.get('options'):
         q = None
@@ -407,6 +414,17 @@ def intake_projection(intake, packet):
 def render(packet):
     intake = intake_projection(packet['intake'], packet)
     lines = ['本次目标：' + packet['need']['intent']]
+    assessment = intake.get('intent_assessment')
+    if assessment:
+        if assessment['route'] == 'direct':
+            basis = {'user_explicit': '当前原话足以支持研究目标',
+                     'user_delegated': '按来源中记录的本题委托继续',
+                     'bounded_autonomy': '由宿主在已知目标内暂定可自主决定的细节'}
+            lines.append('为何不先追问（宿主判断）：' + basis[assessment['basis']])
+        else:
+            lines.append('为何需要这次澄清（宿主判断）：')
+        lines.append(assessment['reason'])
+        lines.extend('对应用户原话：' + ref['quote'] for ref in assessment['source_refs'])
     q = intake.get('direction_options')
     if q:
         lines.append(q['question'])
@@ -431,9 +449,15 @@ def render(packet):
     elif intake['next_question']:
         lines.append(intake['next_question'])
     elif intake['status'] == 'needs_intent_assessment':
-        lines.append('宿主先依据原话判断研究目标是否明确；缺判断不等于需要用户补填信息。')
+        answered = any(q['status'] == 'answered' and not q.get('options')
+                       for q in packet['need'].get('question_records', []))
+        lines.append('已收到用户回答；宿主先把回答落实到需求与研究问题，不重复提问。'
+                     if intake_enabled(packet) and answered else
+                     '宿主先依据原话判断研究目标是否明确；缺判断不等于需要用户补填信息。')
+    elif assessment:
+        lines.append('按当前目标继续研究与设计；宿主补充的具体方案仍是待验证提案。')
     else:
-        lines.append('当前问题已解决，按已确认需求继续研究与设计。' if copilot_enabled(packet)
+        lines.append('按当前任务记录继续研究与设计。' if copilot_enabled(packet)
                      else '方向已明确，可以继续当前单一方案。')
     return '\n'.join(lines)
 
@@ -563,6 +587,7 @@ def instruction(packet):
 本题 intake_policy_version=1。先从本轮原话、已有上下文和实际素材理解用户真正想做什么，区分已确定目标、明确委托的选择和仍影响方向的未知。图、海报、视频等媒介不是目标；只有“我要做一个图”且没有可用上下文或明确委托时，先问一个能确定主题、对象或用途的关键问题，再带着目标找参考。已给出的目标足够时直接推进，不按清单补问用途、受众、风格或技术参数，也不把未提供的可选信息当阻塞。
 沉默不是委托。“用户没说”不能写成 user_delegated；该依据须在 source_refs 引用真实委托，并在 reason 说明本题交出的选择范围。bounded_autonomy 用于已知目标内的可自主实现，不用来编造用户做图的目的。用户明确委托主题或表达也可自主研究；只有仍会改变真实目标、身份或范围的问题才交给用户，每轮只问一个，不强制提供选项。
 目标明确不等于视觉方案齐全。direction_review=direct 只表示不需先问用户；开放创作仍按当前视觉问题研究并实际看图，不能据此改为 specified_direction 免研究。用户已给可执行视觉方案、范围明确的局部编辑或明确不要研究时，沿实际研究策略处理，不把研究当固定仪式。
+题材、风格词或作品气质可以提供研究线索，不自动说明构图、人物关系或光色已由用户指定。宿主补充的场景和主导关系保留为 assumptions/choices，内部共用方案或冻结决定不能补足 user_explicit 或 specified_direction 的用户依据。direction_review 的 reason 与引文会展示为宿主判断；来源可核对仍不证明理解正确，不把自主判断写成用户确认。
 无选项的自然答复登记后会回到 needs_intent_assessment，这是宿主吸收已有回答的步骤，不是再次提问。保留 answered 记录及真实来源，先更新 Need 的目标、主体、理解和研究问题，再写引用该回答或后续用户指令的 direction_review；仅登记 answered 或复制旧判断不等于已理解。仍有其它关键未知时保留队列，只问当前最关键的一项，不重复已解决的问题。
 '''
     return text
