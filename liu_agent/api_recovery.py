@@ -174,6 +174,11 @@ class DurableProvider:
         unresolved = [r for r in self.state['requests'] if r['state'] in ('pending', 'outcome_unknown')]
         if unresolved:
             raise AgentError('API存在pending/outcome_unknown请求；先核对真实结果，禁止重发')
+        if phase in ('direction', 'design', 'revise', 'compile', 'generate'):
+            from .user_feedback_context import frozen_context, require_current
+            require_current(context_packet, stage=phase)
+            if frozen_context(packet) != frozen_context(context_packet):
+                raise AgentError('API反馈上下文与当前任务快照不同；不能静默改写后继续新调用')
         for prior in self.state['requests']:
             if prior['phase'] == phase and prior['round'] == self.context['round']:
                 snapshot = _verified(within(self.run, prior['snapshot']))

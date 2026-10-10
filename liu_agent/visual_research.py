@@ -4,9 +4,22 @@ This gate verifies provenance and decision use, not aesthetic quality or whether
 the host really looked. No keyword classifier guesses user intent, no search or
 upload is performed, and old packets are never migrated on read.
 """
+from copy import deepcopy
+from urllib.parse import urlsplit
+
 from .contracts import VisualResearchAssessment
-from .io import AgentError
+from .io import AgentError, digest
 from .provenance import resolve_refs
+
+
+def creative_context_enabled(packet):
+    """Only new tasks opt into typed research and compilation evidence."""
+    version = packet.get('creative_context_version')
+    if 'creative_context_version' not in packet:
+        return False
+    if type(version) is not int or version != 1:
+        raise AgentError('未知 creative_context_version；不能降级跳过创作证据')
+    return True
 
 
 def enabled(packet):
@@ -19,6 +32,7 @@ def enabled(packet):
 
 
 def assessment(packet):
+    current_evidence = creative_context_enabled(packet)
     if not enabled(packet):
         return None
     raw = packet.get('need', {}).get('visual_research')
@@ -44,6 +58,14 @@ def assessment(packet):
         raise AgentError('研究判断须引用用户原话；宿主提案不等于用户指定方向')
     if (value.route != 'study' or value.trigger != 'open_brief') and not messages:
         raise AgentError('免研究或明确研究/否定方向的判断必须绑定真实用户来源')
+    if current_evidence and value.route == 'study':
+        if value.evidence_requirement is None:
+            raise AgentError('needs_visual_research：说明本题需要反馈复盘、视觉参考还是专业作品分析，不能混称已研究')
+        if value.evidence_requirement == 'feedback_review' and (
+                value.trigger == 'open_brief' or not messages):
+            raise AgentError('仅复盘已有图须有本题用户来源；未定方向的开放创作不能据此免除寻找视觉参考')
+        if value.evidence_requirement == 'professional_analysis' and not messages:
+            raise AgentError('专业分析职责须绑定本题用户来源，不能把宿主提案变成永久研究要求')
     return value
 
 
@@ -64,6 +86,95 @@ def validate_refresh(previous, current, sources, *, current_brief=None):
             old_ids = {row['id'] for row in verified_sources(previous.get('input_sources'))}
             if not any(ref.source_id not in old_ids for ref in new.source_refs):
                 raise AgentError('撤销明确研究要求需要新的用户指令，不能复用旧原话改判')
+    if creative_context_enabled(previous) and old and old.route == 'study' and new:
+        levels = {'feedback_review': 0, 'visual_reference': 1, 'professional_analysis': 2}
+        weaker = (new.route != 'study' or
+                  levels.get(new.evidence_requirement, -1) < levels.get(old.evidence_requirement, -1))
+        if weaker:
+            from .provenance import verified_sources
+            old_ids = {row['id'] for row in verified_sources(previous.get('input_sources'))}
+            if not any(ref.source_id not in old_ids for ref in new.source_refs):
+                raise AgentError('已有研究职责不能降为旧图复盘；降低证据要求须引用新的用户指令')
+
+
+def _https_url(value):
+    if not isinstance(value, str):
+        return False
+    try:
+        parsed = urlsplit(value)
+        return parsed.scheme == 'https' and bool(parsed.hostname) and not parsed.username and not parsed.password
+    except ValueError:
+        return False
+
+
+def _nonblank(value):
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _source_evidence(packet, ref, finding, requirement):
+    """Bind an observation to saved evidence; never authenticate expertise.
+
+    Generated results remain valid feedback evidence. A professional claim also
+    needs an observed work and an excerpt from a separately saved source record;
+    declaring ``seen`` or typing an attractive interpretation is insufficient.
+    """
+    kind = finding.get('source_kind')
+    if kind not in ('generated_candidate', 'user_reference', 'external_work'):
+        return None
+    proof = {'reference_id': ref['id'], 'source_kind': kind,
+             'source_url': ref.get('source_url', ''), 'credit': ref.get('credit', '')}
+    for key in ('sha256', 'metadata_digest'):
+        if key in ref:
+            proof[key] = ref[key]
+    if requirement == 'feedback_review':
+        return proof
+    if kind == 'generated_candidate':
+        return None
+    if requirement == 'visual_reference' and kind == 'user_reference':
+        return proof
+    # An external work must be inspectable by its saved pixels and attributable
+    # to an actual source, not only a host-attested conversation-image label.
+    if (kind != 'external_work' or not ref.get('sha256') or
+            not _https_url(ref.get('source_url')) or not _nonblank(ref.get('credit'))):
+        return None
+    if requirement == 'visual_reference':
+        return proof
+    if requirement != 'professional_analysis':
+        return None
+    url, excerpt = finding.get('professional_source_url'), finding.get('professional_excerpt')
+    if not _https_url(url) or not _nonblank(excerpt):
+        return None
+    sources = (packet.get('research') or {}).get('sources', [])
+    if not isinstance(sources, list):
+        return None
+    matches = [source for source in sources if isinstance(source, dict) and source.get('url') == url]
+    if len(matches) != 1:
+        return None
+    source = matches[0]
+    if (not all(_nonblank(source.get(key)) for key in ('title', 'author', 'excerpt')) or
+            not isinstance(source.get('reference_ids'), list) or ref['id'] not in source['reference_ids'] or
+            excerpt not in source['excerpt']):
+        return None
+    proof['professional_source'] = {
+        'url': url, 'title': source['title'], 'author': source['author'],
+        'excerpt': excerpt, 'source_document_digest': digest(source)}
+    return proof
+
+
+def evidence_context(packet):
+    """Compact frozen source context for the compiler; no live retrieval."""
+    if not creative_context_enabled(packet):
+        return {}
+    value = assessment(packet)
+    if value is None or value.route != 'study':
+        return {'version': 1, 'assessment': value.model_dump() if value else None, 'sources': []}
+    from .host_references import research_references
+    refs = {row['id']: row for row in research_references(packet)}
+    findings = {row['id']: row for row in (packet.get('reference_analysis') or {}).get('findings', [])}
+    sources = [_source_evidence(packet, refs[ident], findings[ident], value.evidence_requirement)
+               for ident in observed_sources(packet)]
+    return {'version': 1, 'assessment': value.model_dump(), 'sources': deepcopy(sources),
+            'authority': 'saved_source_and_observation_binding_not_verified_expertise_or_quality'}
 
 
 def observed_sources(packet):
@@ -76,6 +187,7 @@ def observed_sources(packet):
     refs = {r['id']: r for r in research_references(packet)}
     analysis = packet.get('reference_analysis') or {}
     observed = observed_ids(packet)
+    value = assessment(packet) if creative_context_enabled(packet) else None
     seen = []
     for finding in analysis.get('findings', []):
         ref = refs.get(finding['id'])
@@ -83,6 +195,9 @@ def observed_sources(packet):
                 and finding.get('role_in_task') not in ('identity', 'canvas')
                 and finding.get('seen') and finding.get('visible_facts', '').strip()
                 and ref['id'] in observed):
+            if value and value.route == 'study' and _source_evidence(
+                    packet, ref, finding, value.evidence_requirement) is None:
+                continue
             seen.append(ref['id'])
     return seen
 
@@ -121,6 +236,8 @@ def status(packet):
         selection = packet.get('reference_analysis') or {}
         result.update(selection_state=selection.get('selection_state'),
                       selection_reason=selection.get('selection_reason', ''))
+    if creative_context_enabled(packet):
+        result['evidence_requirement'] = value.evidence_requirement if value else None
     return result
 
 
@@ -133,6 +250,8 @@ def validate_design(packet, design):
     if current['state'] in ('not_required', 'skipped_by_user'):
         return current
     if not current['observed_reference_ids']:
+        if creative_context_enabled(packet):
+            raise AgentError('needs_visual_research：实际观察尚未满足本题研究职责；旧AI图仅能复盘，专业分析须绑定作品像素、出处及已保存正文中的摘录')
         raise AgentError('needs_visual_research：先取得并实际观察本题视觉案例；身份图或文字检索不能替代')
     if current['state'] == 'needs_selection_assessment':
         raise AgentError('needs_selection_assessment：实际看图后在 ReferenceAnalysis 记录 selection_state 与本题 selection_reason，不能把已看过当成有合适方向')
@@ -176,5 +295,9 @@ study 使用真实案例：先解决具体视觉问题，实际看图、observe 
 在同一次 ReferenceAnalysis 中记录 selection_state 与 selection_reason：有具体可用关系时 acceptable；需要扩大差异化搜索时 exploring；探索后仍拿不准时 uncertain；没有合适案例时 no_suitable_reference。exploring 继续找不同真实案例并观察，不要求固定数量或固定两个草案；uncertain/no_suitable_reference 进入已有 copilot 问答澄清偏好或目标，再按回答研究。不能为了填 acceptable 而声称参考好看。
 需求开始就模糊且会改变主导表达时，先用 question_records 问清关键目标再找参考。需要共创时只问本题关键分歧；已回答的选择与限制保留，不把搜索扩展当作重选许可。
 有足够依据可直接形成一个最终方向；已由用户选定的共创方案只展开原选中草案。choices/reference_uses/checks 必须连接真正采用的观察；全部拒绝案例不能冒充找到了可用审美方向。代码只验证来源和决策连接，不证明美观或用户接受。
+'''
+    if creative_context_enabled(packet):
+        instruction += '''本题使用 creative_context_version=1。在 Need.visual_research.evidence_requirement 区分 feedback_review（用户要求复盘已有图）、visual_reference（寻找可用视觉作品）和 professional_analysis（学习对具体作品的专业分析）；不要把旧AI图复盘替代后两种职责，已记录职责只有新的用户指令可以降低。
+observe 时每项 finding 填 source_kind：generated_candidate、user_reference 或 external_work。外部作品复用参考的 source_url、credit 与真实像素；同一张作品可以继续用，不为形式重复搜索。专业分析还须通过 attach-research 保存 sources 中该作品的 url/title/author/excerpt/reference_ids；finding.professional_source_url 指向其中唯一来源，professional_excerpt 摘录该来源正文。图片必须实际看过，摘要或 seen=true 不能替代它；来源记录和引用绑定也不自动证明专业判断适用于本题。
 '''
     return instruction

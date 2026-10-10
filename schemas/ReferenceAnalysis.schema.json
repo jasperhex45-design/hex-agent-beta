@@ -52,6 +52,48 @@
         "uncertainty": {
           "title": "Uncertainty",
           "type": "string"
+        },
+        "source_kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "generated_candidate",
+                "user_reference",
+                "external_work"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Kind"
+        },
+        "professional_source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Professional Source Url"
+        },
+        "professional_excerpt": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Professional Excerpt"
         }
       },
       "required": [
@@ -63,7 +105,10 @@
         "transfer",
         "do_not_transfer",
         "interpretation",
-        "uncertainty"
+        "uncertainty",
+        "source_kind",
+        "professional_source_url",
+        "professional_excerpt"
       ],
       "title": "RefFinding",
       "type": "object"

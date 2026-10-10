@@ -201,6 +201,7 @@ def build_parser():
     s.add_argument('--source-id', help='反馈快照中的用户消息ID')
     s.add_argument('--request-id', help='正向评价的当前候选，或相对偏好的较接近候选request_id')
     s.add_argument('--compared-request-id', help='相对偏好的另一候选request_id')
+    s.add_argument('--task-term', action='append', default=[], help='可选：宿主按真实任务限定反馈题材，不从评价推断永久风格')
     m=sub.add_parser('calibration', help='记录真实图片的用户成对审美选择；不调用模型、不推断偏好')
     ms=m.add_subparsers(dest='action', required=True)
     s=ms.add_parser('record', help='记录一次明确的 A/B 选择和被否决原因')
@@ -214,6 +215,10 @@ def build_parser():
     s.add_argument('--task-id', help='可选：绑定到一个已存在的任务目录或任务标识')
     s.add_argument('--method-id', action='append', default=[], help='可选：本次实验采用的艺术结构方法，可重复传入')
     s.add_argument('--grammar-id', action='append', default=[], help='可选：本次实验采用的空间语法，可重复传入')
+    s.add_argument('--recall-domain', action='append', default=[],
+                   choices=['person','illustration','poster','vehicle','character','prop','hybrid'],
+                   help='可选：明确的反馈适用领域；跨领域须同时有具体题材依据')
+    s.add_argument('--task-term', action='append', default=[], help='可选：反馈与后继任务都必须包含的具体题材词')
     s=ms.add_parser('verify', help='核对账本完整性和当前图片 hash')
     s.add_argument('--ledger', type=Path, required=True)
     s=ms.add_parser('summary', help='只统计记录覆盖，不生成偏好分数')
@@ -242,6 +247,17 @@ def _validate_production_options(args, packet=None):
                'template_query', 'allow_library_analysis')
     if any(getattr(args, name, None) for name in options):
         raise AgentError('生产配置尚未晋升经验检索，不能启用图库或模板召回；当前任务必要素材请通过 brief.references 或 add-reference 提供')
+
+
+def _register_feedback_recall(result, register, *args, **kwargs):
+    """A failed local index must not hide or rewrite already saved feedback."""
+    try:
+        result['feedback_recall'] = register(*args, **kwargs)
+    except (AgentError, OSError, ValueError, KeyError, TypeError) as exc:
+        result['feedback_recall'] = {
+            'status': 'registration_failed', 'detail': str(exc),
+            'notice': '原反馈已保存，但后继任务尚不能自动召回；修复本地索引后登记原来源，不补写用户意见。'}
+    return result
 
 
 def main(argv=None):
@@ -289,6 +305,9 @@ def main(argv=None):
                                    sources_file=args.sources, source_id=args.source_id,
                                    request_id=args.request_id,
                                    compared_request_id=args.compared_request_id)
+            from .user_feedback_context import config_path, register_run
+            result = _register_feedback_recall(result, register_run, config_path(kb), args.run,
+                                               task_terms=args.task_term or None)
         elif cmd=='grant-native-revision':
             from .native_budget import grant_revision
             result=grant_revision(args.from_run,args.run,args.source_id)
@@ -305,6 +324,10 @@ def main(argv=None):
                     rejected_reasons=calibration.parse_rejection(args.rejected_reason),
                     task_id=args.task_id, method_ids=args.method_id, grammar_ids=args.grammar_id,
                 )
+                from .user_feedback_context import config_path, register_pair
+                result = _register_feedback_recall(
+                    result, register_pair, config_path(kb), args.ledger, result['id'],
+                    domains=args.recall_domain or None, task_terms=args.task_term or None)
             elif args.action == 'verify':
                 result = calibration.verify(args.ledger)
             elif args.action == 'withdraw':
@@ -547,6 +570,10 @@ def main(argv=None):
             result['active_question'] = presentation['active_question']
         if args.format == 'human' and presentation:
             print(render_text(presentation))
+            recall = result.get('feedback_recall') or {}
+            if recall.get('status') == 'registration_failed':
+                print(recall['notice'])
+                print(recall['detail'])
         else:
             print(json.dumps(result,ensure_ascii=False,indent=2))
         return 0

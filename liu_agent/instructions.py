@@ -209,7 +209,7 @@ transfer/do_not_transfer 说明本任务可借用与必须保留或排除的内�
 # This attribution does not apply to this entire module or the prior rules.
 PRODUCTION_DESIGN = PRODUCTION_COMMON + '''
 根据当前难点按需读取专业方法，把采用的方法落实到这一个 Plan 中，并说明它改变哪个决定；不要求固定方法数量或固定创作步骤。专业方法提供启发，未锁定的构图、机位、动作和光色由原生 Agent 自主选择。内部记录用于可核验交接，不是交给用户填写的问卷。
-先判断整体画面靠什么成立，再安排辅助细节。在已有 choices.action/cooperation/tradeoff 中表达主导关系、辅助关系及冲突时舍弃什么，不增设评分或固定规则数量。事实硬约束不能作为可舍弃装饰。
+先判断整体画面靠什么成立，再安排辅助细节。只控制本题必要关系，无助于目标的细节在形成最终 choices 前省去；主辅配合与可变实现沿用 action/cooperation/tradeoff 记录，不增设分类表、评分或固定规则数量。事实硬约束不能作为可舍弃装饰。
 参考观察区分主体事实、可迁移视觉方法、需按新题调整的构图/景别/光向；只有用户要求锁定的部分必须保留，未锁定的初稿允许因参考改变。明确谁决定最终媒介：身份照片不自动把插画变摄影，电影光影不覆盖纸本边缘/颜料逻辑。无参考时仍自主设计，不虚构已观察证据。
 细碎高光、纹理、装饰与次要元素服务本题主关系；不能通用地削弱商业光泽或把轻微风格推到最强。偏好只在来源和适用条件明确时采用，本次要求优先；没有偏好资料不阻止设计，不声称已接通长期个人化。
 
@@ -219,8 +219,8 @@ PRODUCTION_DESIGN = PRODUCTION_COMMON + '''
 choices 只填本任务必要的 1–8 项，action/cooperation/tradeoff 具体，criterion_id 对应现有 checks。无已检索依据时 basis=agent_hypothesis、mechanism_ids=[]、core_knowledge_ids=[]；spec.selected_knowledge_ids=[]。未经验证经验不注入，spatial_grammar/aesthetic_binding/template_binding 默认 null。
 对本题主导 choice 做一次关系检验：去掉风格名和“有张力”等评价词后，能否指出谁与谁通过位置、尺度、动作受力、观看阻隔或光影形成当前意图？只选真正有效的关系，不逐轴堆满。再问若把这项关系拉平、解开或全部展示清楚，具体损失什么；将答案落实到 action/cooperation/tradeoff 和既有 expression/overall failure。安静、疏、局部不可见也能承载力度，不因追求张力新增情节、变更硬锁或推翻用户满意部分。
 参考只提供画法/光感时，检查当前动作、布局、效果范围是否实际上照搬了参考：每个这样继承的安排须有本题目标或明确参考职责支持；仅因样图如此不够。若它只是宿主初稿，允许重做该安排，把可迁移关系用于本题新结构。不要一面写“不复制布局”，一面把原姿势与效果规模锁入 action。
-action 写可画的动作，cooperation 解释元素如何共同产生所需作用，tradeoff 写主动舍弃的另一种视觉收益；事实准确和许可是底线，不充当设计取舍。按用途选择工艺重点：海报关注文字、图文形状与阅读尺度；摄影关注内容表达、主体状态/瞬间、构图层级、空间透视、光影、色彩、材质和整体配合中真正影响本题的关系；插画关注轮廓、形色节奏与绘制语言。这些是观察角度，不是必填八项或评分表；人物情态与动作须相互支持，透视缩短、主动模糊或裁切不等于结构错误，材料质感也不等于每处都锐利。
-checks 用 2–12 项可见标准覆盖当前目标，含 expression 和 overall；question/expected/failure 写清允许的取舍与失败界限，不能生成后改标准。spec.evidence_targets 与 checks 的 (id,question,expected) 同序一致；locked_facts 逐字同序保留 need.must_keep，operations 仅选 allowed_operations。
+action 写可画的必要关系及允许变化的实现边界，cooperation 解释元素如何共同产生所需作用，tradeoff 写可让位的视觉收益；事实准确和许可是底线，不充当设计取舍。按用途选择工艺重点：海报关注文字、图文形状与阅读尺度；摄影关注内容表达、主体状态/瞬间、构图层级、空间透视、光影、色彩、材质和整体配合中真正影响本题的关系；插画关注轮廓、形色节奏与绘制语言。这些是观察角度，不是必填八项或评分表；人物情态与动作须相互支持，透视缩短、主动模糊或裁切不等于结构错误，材料质感也不等于每处都锐利。
+checks 用 2–12 项可见标准覆盖当前目标，含 expression 和 overall；question/expected/failure 与 action 保持同一允许变化边界，检查必要关系而非把可变实现写死，不能生成后改标准。spec.evidence_targets 与 checks 的 (id,question,expected) 同序一致；locked_facts 逐字同序保留 need.must_keep，operations 仅选 allowed_operations。
 准确文字、数量、保留范围按真实来源检查；expression/overall 检查用户目标级的观看效果，不能把自主拍法升级为整体验收目标。全身、脸清楚、脚离地、某个倾角等若只是实现假设，留在相应 choice 与局部 check，并允许不同实现仍使整体成立；expected/failure 说明表达作用与失效边界，不只复述动作。复核“所列物件全部出现、拍法全部执行，画面仍可能怎样失败”；也检查非必要的清楚、完整、规整是否压过观看理由。冻结前纠正这种自设限制，生成后保留原标准与真实差距，不改标准凑通过。
 reference_uses 只引用实际观察，observed_relation 取可见依据。baseline_reference_ids 仅用本次已观察且允许作为生成基准的 positive；每张基准进入具体 choice 及同一 criterion 的 reference_ids。evaluation_only、负例或无上传权利的素材不成为生成输入；没有基准可空，遵守当前 reference_policy。
 逐项核对采用的参考靠什么成立：把本题允许借用且承担表达的实见主导关系转成 choices.action/cooperation，以及对应 expression/overall 的可见作用与失败条件，不只借同款姿势、材质或场景。若主动舍弃主导光色等关系，tradeoff 写明与本题原话/用途的实际冲突、损失和由什么新关系承接原先要借的表达；“更清晰、自然、细节可读”不是默认的替代依据。未成立的替代就回到参考或设计，不能仅用 do_not_transfer 宣告问题解决。真实用户硬锁优先，宿主自己选的展示要求仍是提案；不为保留参考效果越界。
@@ -228,7 +228,7 @@ generation_options 遵守 brief 明确值与实际能力；desired_aspect_ratio 
 '''
 
 PRODUCTION_COMPILE = PRODUCTION_COMMON + '''
-阶段：从既定 design/spec 编译目标提示词，不新增方案。targets 各一次；根据当前 model_profiles 和工具能力选择语言与写法，不发明模型版本、官方习惯或已连接接口。正文完整转译当前选择的 action/cooperation 与必要约束，不抄理论、研究或审核文字。
+阶段：从既定 design/spec 编译目标提示词，不新增方案。targets 各一次；根据当前 model_profiles 和工具能力选择语言与写法，不发明模型版本、官方习惯或已连接接口。正文覆盖全部已选 choices 的 action/cooperation、允许变化边界与必要约束，可合并重复表述，不抄理论、研究或审核文字；某项若应省去，先修订同一 Plan 再编译，不私自漏掉 choice 或把可变细节升级为必需。
 先从 need、spec 和 choices 提取共同语义：用途、主体及数量、动作与关系、准确文字、构图层级、媒介、必须保留和禁止改变项。任务 tags 只是宿主理解需求的辅助，须能追溯到这些输入；不把 tags 直接拼成正文，不由标签增加用户没要的风格或主体。
 多模型时，各 target 从同一份共同语义独立编写，按本模型档案和实际工具能力调整信息次序、表达密度和约束组织；不从另一模型正文换标题或仅改同义词。差异须服务执行，不能为了写法不同改变设计。只有一个 target 时仍完成同样的独立编写、约束核对和 adaptation；不要要求用户换模型，不降低目标，也不要套用其它模型的正文。
 编译须保留同一Plan的主导关系和必要取舍：观察点与距离、尺度和裁切、主体状态/瞬间，以及遮挡、疏密、省略、受力方向和强弱分工均可能是关键决定。将影响画面的 tradeoff 转成可见状态，而非照抄解释；不能为了“专业、清楚、精致”擅自恢复平视全身、自然比例或展示姿态，补全暗部、拉齐细节或放大所有特效。若与身份、准确文案等真实硬锁冲突，回到该Plan解决，不在正文偷偷换方案；无冲突则按目标模型原生表达保留关系，而非仅给“张力”标签。
@@ -244,7 +244,7 @@ PRODUCTION_EDIT_DESIGN = PRODUCTION_COMMON + '''
 阶段：完成当前范围内编辑的 Plan={spec,design}，不重开完整创作。沿用当前图已成立的表达、主体关系、机位和观看重点，只有用户明确要求变化的部分重新决定。当前真实原图、反馈、change_scope、preserve 与 must_keep 是依据；实际操作范围以 allowed_operations 为准。
 只在 change_scope 与 allowed_operations 内选择必要变化，说明它怎样改善当前问题以及是否影响保留项。根据当前难点按需读取专业方法，不要求固定方法数量或固定创作步骤。身份与风格职责分开，可观察不等于可上传，不能扩大修改范围。
 沿用既有内部结构：intent_claims 区分来源支持的原话与自主判断；expression、subject_environment_relation、reading_order 和 camera 记录继承关系或明确允许的变化。无法知道的焦距写 null，不要求用户填写技术参数。still 的 narrative=null。默认 creative_directions=null、direction_id=null，未经采用的 spatial_grammar/aesthetic_binding/template_binding 为 null。
-choices 只记录实际必要的 1–8 项变化，action 写可执行改动，cooperation 说明与保留部分怎样配合，tradeoff 只记录真实影响，没有新增取舍时明确写本次不改变，不编造牺牲。criterion_id 对应 checks；至少用 expression 与 overall 检查问题改善及原画面是否保住，不要求重新证明已成立的整套构图。
+choices 只记录实际必要的 1–8 项变化，可省的无效细节不进入最终 choices；action 写可执行改动及其允许变化边界，cooperation 说明与保留部分怎样配合，tradeoff 只记录真实影响，没有新增取舍时明确写本次不改变，不编造牺牲。criterion_id 对应 checks，expected/failure 沿用同一变化边界；至少用 expression 与 overall 检查问题改善及原画面是否保住，不要求重新证明已成立的整套构图。
 无当前已检索依据时 basis=agent_hypothesis，mechanism_ids/core_knowledge_ids/spec.selected_knowledge_ids 为空；不为了填字段制造方法来源。spec.locked_facts 逐字同序保留 need.must_keep，spec.evidence_targets 与 checks 对应，operations 不越界。必要输出设置依实际许可和工具能力，不把选择或内部文件交给用户处理。
 '''
 
@@ -282,6 +282,32 @@ def _workflow_instruction(packet: dict, text: str) -> str:
     return text.replace(previous, current) + '\n当前使用 full-flow-v1；按 workflow status / drive 的本题下一步继续，缺少必要证据不能宣称完成。\n'
 
 
+def _creation_evidence_instruction(stage: str, packet: dict) -> str:
+    if packet.get('creative_context_version') != 1:
+        return ''
+    if stage in ('PARSE', 'DIRECTION'):
+        return ('\n本任务区分研究目的：Need.visual_research.evidence_requirement 中，'
+                'feedback_review 只复盘旧候选与反馈，visual_reference 学习实际作品，'
+                'professional_analysis 学习作品及有来源的专业解读。用户明确要求专业学习时选择后者，'
+                '不能拿旧生成图的 seen=true 代替。研究依据须改变本题具体决定；不称字段完整即学会。\n')
+    if stage == 'OBSERVE':
+        return ('\n如实标明每项 RefFinding.source_kind：generated_candidate、user_reference 或 external_work。'
+                '专业分析须绑定同一作品的已看像素、reference.source_url/credit，以及 research.sources 中'
+                '真实保存的 url/title/author/excerpt/reference_ids；professional_source_url 与 professional_excerpt '
+                '引用该来源，不凭空补作者或摘录。\n')
+    if stage in ('DESIGN', 'STRATEGY', 'COMPILE', 'MODEL_COMPILE'):
+        return ('\n读取 user_feedback_context 的相关原话、图片绑定和适用范围。当前要求优先；相对喜欢、局部认可、'
+                '共同缺陷与最终接受保持区别。把相关反馈落实到既有 choices/checks 中的具体改变或有依据的取舍，'
+                '不只复述“注意光线/张力”，不把一次评价变成全题材禁用某种姿势或机位。'
+                '编译保留 camera、reading_order、choice 的作用与关联检查；参考解释用于理解取舍，'
+                '不把旧图姿势或专业作者姓名照抄为本题画面。\n')
+    if stage in ('EVALUATE', 'REVIEW'):
+        return ('\n可见失败与原因未知分开：光线层级或表达明显未成立时可判 not_met；'
+                '不知问题源于方案、编译还是执行，应记 diagnosis=unknown，不据此把可见失败改成 uncertain。'
+                '修改建议依据当前失败决定范围，最多两个主要方向，不默认只修局部；建议本身不增加生图授权。\n')
+    return ''
+
+
 def stage_instruction(stage: str, packet: dict) -> str:
     """Resolve a stage from its task policy, with exact legacy text compatibility."""
     from .io import AgentError
@@ -292,6 +318,7 @@ def stage_instruction(stage: str, packet: dict) -> str:
     name = stage.upper() if isinstance(stage, str) else ''
     from .co_creation import instruction as interaction_instruction, copilot_enabled
     interaction = interaction_instruction(packet)
+    interaction += _creation_evidence_instruction(name, packet)
     if name in ('PARSE', 'DESIGN', 'STRATEGY', 'DIRECTION'):
         from .visual_research import host_instruction as research_instruction
         interaction += research_instruction(packet)

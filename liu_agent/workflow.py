@@ -7,7 +7,7 @@ from .io import AgentError, read_json, write_json, atomic_text, sha, digest, now
 from .retrieval import Retriever, load_cards
 from .profiles import profiles, stale
 from . import instructions as ins
-from . import aesthetic_library, template_library, private_style, style_context
+from . import aesthetic_library, template_library, private_style, style_context, user_feedback_context
 from . import provenance
 from .creative_directions import selected_direction_input, compile_direction
 from .smart_intake import build_intake
@@ -135,7 +135,11 @@ def make_packet(brief_file: Path, out: Path, kb: Path, state: Path, need_file: P
               "profile_warnings": [f"{p.label}：资料复核日期已过期" for p in available.values() if p.id in brief.targets and stale(p)]}
     packet.update(source_contract_version=1, input_sources=provenance.merge_sources(None, sources_file),
                   reference_policy_version=1, model_adaptation_version=1, quality_contract_version=1,
-                  compilation_settings_version=1, reference_decisions_version=1)
+                  compilation_settings_version=1, reference_decisions_version=1,
+                  creative_context_version=1)
+    # Only newly prepared tasks opt in. Historical packets retain their exact
+    # frozen instructions and evidence; feedback is separate from experience.
+    user_feedback_context.initialize(packet, kb, enabled=style_context_enabled)
     if host_reference_descriptors:
         from .host_references import make_record, validate_context as validate_host_context
         packet['host_visible_references'] = [make_record(packet, row) for row in host_reference_descriptors]
@@ -306,8 +310,8 @@ def refresh_packet(packet: dict, out: Path, kb: Path, state: Path, need: Need, m
                                    'missing_dependencies': [], 'notice': '按当前任务自主设计，不强行引用经验。'}
                                   if production else retrieve_design(kb, packet))
     if production:
-        # Do not even load private library paths or old feedback into the
-        # production packet. This is a projection, not a second facts store.
+        # Unvalidated experience and private image libraries remain disabled.
+        # Explicit task-scoped user feedback has its own verified projection.
         packet['style_context_config'] = style_context.StyleContextConfig(enabled=False).model_dump()
     style_context.refresh(packet, kb, library=aesthetic_library_path, query=aesthetic_query,
                           enabled=False if production else style_context_enabled)
@@ -317,6 +321,9 @@ def refresh_packet(packet: dict, out: Path, kb: Path, state: Path, need: Need, m
         packet.pop('private_style_profile', None)
     from .reference_library import refresh as refresh_local_references
     refresh_local_references(packet)
+    if style_context_enabled is False and packet.get('user_feedback_context_version') == 1:
+        packet['user_feedback_config']['enabled'] = False
+    user_feedback_context.refresh(packet)
     packet["visual_coverage"] = ref_coverage(packet)
     packet.pop("digest", None)
     if packet.get('source_contract_version') == 1:
@@ -394,6 +401,8 @@ def _write_production_context(out: Path, packet: dict) -> None:
         **({'method_context': methods} if methods else {}),
         **({'local_reference_context': packet['local_reference_context']}
            if packet.get('local_reference_context') else {}),
+        **({'user_feedback_context': user_feedback_context.frozen_context(packet)}
+           if packet.get('user_feedback_context_version') == 1 else {}),
         'experience_retrieval': 'disabled',
         **({'knowledge_retrieval': {'config': packet['knowledge_retrieval_config'],
                                     'status': packet['retrieval'].get('status'),
@@ -406,7 +415,8 @@ def _write_production_context(out: Path, packet: dict) -> None:
 执行配置：{policy(packet)['profile']}。以 packet.json 的来源、需求、素材与执行策略为准。
 读取本目录 packet.json、need.json 和 creation-instructions.md；用户原话取 packet.input_sources。
 只在当前动作需要时读取对应 schema、实际参考原图与 compilation-input.json 的目标模型档案。
-研发历史、测试报告、旧失败答案和旧反馈库不属于本次生产加载内容。
+研发历史、测试报告和整套旧反馈库不属于本次生产加载内容。
+{'packet.user_feedback_context 仅包含与本题相关且绑定来源的用户原话；在设计及 compilation-input 中按其范围使用，不自动上传旧图。当前用户要求优先，相对喜欢不代表接受；缺失或失效的来源如实列出。' if packet.get('user_feedback_context_version') == 1 else ''}
 
 先理解当前需求，明确时直接设计；只有会改变路线的关键歧义才问一个问题。
 need_mode=offline_heuristic 时须完成真实理解并 refresh，不能拿关键词草稿生成。
@@ -994,6 +1004,10 @@ def design_input(packet: dict) -> dict:
             'references_in_order': packet['references'], 'allowed_operations': packet['allowed_operations'],
             'aesthetic_retrieval': packet.get('aesthetic_retrieval', {'hits': [], 'notice': '未启用审美卡片库'}),
             'template_retrieval': packet.get('template_retrieval', {'hits': [], 'notice': '未启用任务模板库'})}
+    if packet.get('creative_context_version') == 1:
+        payload['creative_context_version'] = 1
+    if packet.get('user_feedback_context_version') == 1:
+        payload['user_feedback_context'] = user_feedback_context.frozen_context(packet)
     from .host_references import export_context
     payload.update(export_context(packet))
     from .visual_decision import policy

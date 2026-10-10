@@ -197,6 +197,10 @@ def decision_digest(packet):
     data = {key: packet.get(key) for key in (
         'interaction_policy', 'brief', 'need', 'input_sources', 'references',
         'reference_policy', 'reference_analysis')}
+    if packet.get('creative_context_version') == 1:
+        from .user_feedback_context import frozen_context
+        data.update(creative_context_version=1, research=packet.get('research'),
+                    user_feedback_context=frozen_context(packet))
     if 'host_visible_references' in packet:
         from .host_references import validate_context
         validate_context(packet)

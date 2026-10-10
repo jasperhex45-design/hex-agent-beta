@@ -4,7 +4,7 @@
 
 **[下载 ZIP](https://github.com/jasperhex45-design/hex-agent-beta/archive/refs/heads/main.zip) · [GitHub 仓库](https://github.com/jasperhex45-design/hex-agent-beta) · [提交反馈](https://github.com/jasperhex45-design/hex-agent-beta/issues/new/choose)**
 
-当前版本以 [pyproject.toml](pyproject.toml) 为准。这是公开测试版，任何人都可下载试用；功能范围与真实质量边界见 [BETA.md](BETA.md)。
+当前版本以 [pyproject.toml](pyproject.toml) 为准。本版更新见 [CHANGELOG.md](CHANGELOG.md)。这是公开测试版，任何人都可下载试用；功能范围与真实质量边界见 [BETA.md](BETA.md)。
 
 ## 让 AI 助手帮你安装
 

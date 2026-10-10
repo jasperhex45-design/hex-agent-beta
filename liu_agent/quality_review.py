@@ -49,7 +49,9 @@ def task_evaluation_card(packet: dict, contract: dict, refs: list) -> dict:
         'review_order': ['overall', 'visual_coherence', 'expression', 'task_checks'],
         'items': items,
         'rules': ['按当前媒介与允许风格判断；不以统一写实、低饱和或平均均衡为目标',
-                  '没有可见证据用uncertain；机器建议不表示用户接受，不增加返修许可'],
+                  '没有可见证据用uncertain；机器建议不表示用户接受，不增加返修许可'] + (
+                      ['原因未知不等于画面无法判断；可见失败记not_met，归因证据不足另记diagnosis=unknown']
+                      if packet.get('creative_context_version') == 1 else []),
     }
 
 

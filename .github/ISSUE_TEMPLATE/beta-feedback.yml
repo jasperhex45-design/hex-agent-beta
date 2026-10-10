@@ -9,7 +9,7 @@ body:
     id: environment
     attributes:
       label: HEX 版本与使用环境
-      placeholder: "例如：0.3.8 / Codex / Image / Windows；不清楚的项可以写未知"
+      placeholder: "例如：0.3.9b1 / Codex / Image / Windows；不清楚的项可以写未知"
     validations:
       required: true
   - type: textarea

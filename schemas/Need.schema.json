@@ -693,6 +693,23 @@
           },
           "title": "Source Refs",
           "type": "array"
+        },
+        "evidence_requirement": {
+          "anyOf": [
+            {
+              "enum": [
+                "feedback_review",
+                "visual_reference",
+                "professional_analysis"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Requirement"
         }
       },
       "required": [
@@ -700,7 +717,8 @@
         "trigger",
         "reason",
         "visual_question",
-        "source_refs"
+        "source_refs",
+        "evidence_requirement"
       ],
       "title": "VisualResearchAssessment",
       "type": "object"

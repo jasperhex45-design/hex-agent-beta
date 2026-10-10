@@ -135,12 +135,21 @@ class SourceRef(Strict):
 
 class VisualResearchAssessment(Strict):
     """Host interpretation of this task, independent of generation references."""
+    model_config = ConfigDict(json_schema_extra=lambda s: s.update(required=list(s['properties'])))
     route: Literal['study', 'specified_direction', 'bounded_edit', 'user_waived']
     trigger: Literal['open_brief', 'explicit_research', 'rejected_direction',
                      'user_specified_target', 'local_change', 'user_prohibited_study']
     reason: str = Field(min_length=1)
     visual_question: str
     source_refs: list[SourceRef]
+    evidence_requirement: Literal['feedback_review', 'visual_reference', 'professional_analysis'] | None = None
+
+    @model_serializer(mode='wrap')
+    def legacy_dump(self, handler):
+        result = handler(self)
+        if 'evidence_requirement' not in self.model_fields_set:
+            result.pop('evidence_requirement', None)
+        return result
 
 
 class ConstraintEvidence(Strict):
@@ -468,6 +477,7 @@ class Solution(Strict):
     compilation: Compilation
 
 class RefFinding(Strict):
+    model_config = ConfigDict(json_schema_extra=lambda s: s.update(required=list(s['properties'])))
     id: str
     seen: bool
     useful: bool
@@ -477,6 +487,17 @@ class RefFinding(Strict):
     do_not_transfer: list[str]
     interpretation: str
     uncertainty: str
+    source_kind: Literal['generated_candidate', 'user_reference', 'external_work'] | None = None
+    professional_source_url: str | None = None
+    professional_excerpt: str | None = Field(default=None, max_length=2000)
+
+    @model_serializer(mode='wrap')
+    def legacy_dump(self, handler):
+        result = handler(self)
+        for field in ('source_kind', 'professional_source_url', 'professional_excerpt'):
+            if field not in self.model_fields_set:
+                result.pop(field, None)
+        return result
 
 class ReferenceAnalysis(Strict):
     model_config = ConfigDict(json_schema_extra=lambda s: s.update(required=list(s['properties'])))

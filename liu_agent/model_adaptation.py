@@ -144,6 +144,47 @@ def build_context(packet, spec, design, targets=None, revision=None) -> dict:
                            "role": revision["candidate_role"]})
     choices = [{key: choice.get(key) for key in ("id", "action", "cooperation", "tradeoff")}
                for choice in design.get("choices", [])]
+    from .visual_research import creative_context_enabled, evidence_context
+    if creative_context_enabled(packet):
+        from .host_references import research_references, observed_ids
+        from .user_feedback_context import frozen_context
+
+        checks = {check['id']: check for check in design.get('checks', [])}
+        if len(checks) != len(design.get('checks', [])):
+            raise AgentError('创作编译依据包含重复检查；先修正当前Plan')
+        references_by_id = {ref['id']: ref for ref in research_references(packet)}
+        observations = {row['id']: row for row in (packet.get('reference_analysis') or {}).get('findings', [])}
+        observed = observed_ids(packet)
+        for source_choice, choice in zip(design.get('choices', []), choices):
+            criterion = source_choice.get('criterion_id')
+            if criterion not in checks:
+                raise AgentError('创作编译须绑定当前choice对应的检查，不能只传动作标签')
+            evidence = []
+            for use in source_choice.get('reference_uses', []):
+                ident = use.get('reference_id')
+                if ident not in references_by_id or ident not in observations or ident not in observed:
+                    raise AgentError('创作编译所用参考缺少当前实际观察，不能用旧描述替代')
+                ref = references_by_id[ident]
+                observation = observations[ident]
+                if not observation.get('seen') or not observation.get('visible_facts', '').strip():
+                    raise AgentError('创作编译所用参考缺少可见事实，不能只声明采用')
+                evidence.append({
+                    'use': _plain(use),
+                    'reference': {key: ref[key] for key in
+                                  ('id', 'role', 'sha256', 'metadata_digest', 'source_url', 'credit', 'evaluation_only')
+                                  if key in ref},
+                    'observation': {key: observation[key] for key in
+                                    ('visible_facts', 'transfer', 'do_not_transfer', 'interpretation', 'uncertainty',
+                                     'source_kind', 'professional_source_url', 'professional_excerpt')
+                                    if key in observation}})
+            choice.update(goal=source_choice.get('goal'), criterion_id=criterion,
+                          check=_plain(checks[criterion]), reference_evidence=evidence)
+        task.update(creative_context_version=1,
+                    camera=_plain(design.get('camera')),
+                    reading_order=design.get('reading_order'),
+                    expression=design.get('expression'),
+                    visual_research=evidence_context(packet),
+                    user_feedback_context=_plain(frozen_context(packet)))
     result = {"version": 1, "design_digest": digest(design), "targets": {}}
     for target in targets:
         profile = _plain(packet["model_profiles"][target])
@@ -224,6 +265,14 @@ def validate_adaptation(packet, spec, design, compilation, targets=None) -> dict
         evidence.pop("choice_coverage")
         evidence["choices"] = [{"choice_id": choice["id"], **{key: choice[key] for key in ("action", "cooperation", "tradeoff")},
                                 "prompt_excerpt": excerpts_by_id[choice["id"]]} for choice in choices]
+        if context['task'].get('creative_context_version') == 1:
+            for source, bound in zip(choices, evidence['choices']):
+                bound.update({key: _plain(source[key]) for key in
+                              ('goal', 'criterion_id', 'check', 'reference_evidence')})
+            evidence['creative_context'] = {
+                key: _plain(context['task'][key]) for key in
+                ('creative_context_version', 'camera', 'reading_order', 'expression',
+                 'visual_research', 'user_feedback_context')}
         evidence.update(profile_digest=context["profile_digest"], runtime=context["runtime"],
                         authority="agent_proposed_not_visual_validated", semantic_preservation="not_proven_by_code")
         result[target] = evidence
