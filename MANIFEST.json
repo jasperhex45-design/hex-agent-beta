@@ -1,8 +1,8 @@
 {
-  "version": "0.3.9b2",
+  "version": "0.3.9b3",
   "scope": "product_source_only",
   "channel": "public_beta",
-  "source_commit": "87fbf5eb7b886cd11b15dc631117c09be60f480d",
+  "source_commit": "15767f30905636a8ef38f333d6ec45ba557c89e7",
   "notice": "公开 Beta 源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。公开访问不改变现有许可，文件摘要不证明审美或工具可用性。",
   "files": [
     {
@@ -67,11 +67,11 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "1b2c628a3c21af7ea56706fe4924cac5b817223d442a751ee789b76c15a778a5"
+      "sha256": "a609fec49707e0e2065cfdcd27fcd9efdb74d1d81adc7f95b41ebac147142128"
     },
     {
       "path": "CODEX_START.md",
-      "sha256": "a2178140924beae9cb1d7246a5da019a46dc2da8cfc653b05e4d66c7ef80d266"
+      "sha256": "a456095f4d4e8cc75c15cb4b11780d9d1f3072cfe9477385f9086d97b3b5d4d0"
     },
     {
       "path": "Hex.ps1",
@@ -379,7 +379,7 @@
     },
     {
       "path": "liu_agent/__init__.py",
-      "sha256": "c1b6f666965047bb91feed734149e5d33c3e209086e3d016fe332e22258d8aa0"
+      "sha256": "13b82685b7c49d4184db1279aa71c45636ba98e985883fe1105d94a780d6a6f5"
     },
     {
       "path": "liu_agent/__main__.py",
@@ -399,7 +399,7 @@
     },
     {
       "path": "liu_agent/adapters/local_ocr_runtime.py",
-      "sha256": "9832a3cdd30ed68acfbf8c1f97f01fb641aaeaf70a08aebd56fd8a75274be5cb"
+      "sha256": "dfa2302f736320cbdb6d7333e1bf6702fc507a4a893e0a03bbeca1bada95662a"
     },
     {
       "path": "liu_agent/adapters/native_retriever.py",
@@ -407,7 +407,7 @@
     },
     {
       "path": "liu_agent/adapters/ocr_review.py",
-      "sha256": "acef1c8e155c0f0412f6fce68c745715633bcfb6287aedf01aee99727af87370"
+      "sha256": "c37a3442b27511b4ad1c53214141c41b9aa05ad57f5eca77e46b3267a5049a29"
     },
     {
       "path": "liu_agent/adapters/ragflow_retriever.py",
@@ -483,7 +483,7 @@
     },
     {
       "path": "liu_agent/co_creation.py",
-      "sha256": "2a84fea8889bcf43e2dbb7d791296dc943ba6154e30a1c32635c4ec49e83e708"
+      "sha256": "532cf5c761052c1c4a92238253bce5dd3654420982585cfc5187f1e2722da79e"
     },
     {
       "path": "liu_agent/codex_integration.py",
@@ -543,7 +543,7 @@
     },
     {
       "path": "liu_agent/feedback.py",
-      "sha256": "5b8457147a705b790d66e1d10263a4a334a9f9213f02c93d8897d5ff8f24d3ad"
+      "sha256": "c78384ef8f82e1d281782c7720c2888d1193889b1b427ab8da22a9380a91dfdb"
     },
     {
       "path": "liu_agent/feedback_card.py",
@@ -607,7 +607,7 @@
     },
     {
       "path": "liu_agent/messages.py",
-      "sha256": "47f5a4af580e234c9dc0b8f48c69253d87770ff62f43d6e67eaa44564456a3ad"
+      "sha256": "6502edcbfd1f065c70cdfa69db2d7d87f4e63821343c356fbd8b0acdbd5ced6f"
     },
     {
       "path": "liu_agent/method_context.py",
@@ -723,7 +723,7 @@
     },
     {
       "path": "liu_agent/run_status.py",
-      "sha256": "c67aee652547de8c9c28075c532cc0237be3c25aa1bcd436bf6c7ba8b05c8856"
+      "sha256": "64f6ddfa4b827e293c5c55c6cdd52dfe9eef93cfeea2c5084230fec2f183ebc4"
     },
     {
       "path": "liu_agent/smart_intake.py",
@@ -735,7 +735,7 @@
     },
     {
       "path": "liu_agent/task_review.py",
-      "sha256": "b59e6bca1ee91db75f40c87aab4e59e21d5d80b211f99d45a7afed586f788da0"
+      "sha256": "a81a16605b949e3d7b58708930e969b0f45a413d646171d199bb53edf88357c4"
     },
     {
       "path": "liu_agent/task_verification.py",
@@ -771,7 +771,7 @@
     },
     {
       "path": "liu_agent/visual_research.py",
-      "sha256": "5eeb59318f6019b15c376ab1a74ff74b4e4916ea23228896e7ad0acdeeb4c34e"
+      "sha256": "c19de495ab341cc9d3be85c858295b0cd9421fde432cc6c4b411089dd4f3b238"
     },
     {
       "path": "liu_agent/visual_retrieval_trial.py",
@@ -787,11 +787,11 @@
     },
     {
       "path": "liu_agent/workflow_policy.py",
-      "sha256": "a02bfc9656819a9c20af15d946c70cf5dfcf4077e099565f5700a7123735e668"
+      "sha256": "12fd048627b09174c7d5e276b151d1f8bf42d216be48cc3c202c8ee70e3dc981"
     },
     {
       "path": "pyproject.toml",
-      "sha256": "c35f60255daabc81bd3c418a67fc17e86bab1daa6dd6775c31d181b6b14aa723"
+      "sha256": "62282f52c2ebf33397c5be56488160856df58ea2e2c1042d5bed0f784a6ea3c7"
     },
     {
       "path": "requirements.txt",
