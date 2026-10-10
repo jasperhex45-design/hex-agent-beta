@@ -1,0 +1,33 @@
+{
+  "format": "hex.native-model.v1",
+  "base_model": "BAAI/bge-small-zh-v1.5",
+  "base_revision": "7999e1d3359715c523056ef9478215996d62a620",
+  "license": "MIT (upstream BAAI model)",
+  "conversion_repository": "Xenova/bge-small-zh-v1.5",
+  "conversion_revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+  "conversion_notice": "ONNX conversion published by Xenova, not an ONNX release by BAAI.",
+  "pooling": "cls_l2_normalized",
+  "dimensions": 512,
+  "max_tokens": 512,
+  "query_prefix": "为这个句子生成表示以用于检索相关文章：",
+  "files": [
+    {
+      "file": "model.onnx",
+      "url": "https://huggingface.co/Xenova/bge-small-zh-v1.5/resolve/75c43b069aac4d136ba6bc1122f995fedcfd2781/onnx/model.onnx",
+      "bytes": 94851877,
+      "sha256": "69a0b846f4f116b5e6aabf9546ea6754d02264f3211a13a1bd69b31b8040749a"
+    },
+    {
+      "file": "tokenizer.json",
+      "url": "https://huggingface.co/BAAI/bge-small-zh-v1.5/resolve/7999e1d3359715c523056ef9478215996d62a620/tokenizer.json",
+      "bytes": 439125,
+      "sha256": "48cea5d44424912a6fd1ea647bf4fe50b55ab8b1e5879c3275f80e339e8fae26"
+    },
+    {
+      "file": "BAAI-MODEL-CARD.md",
+      "url": "https://huggingface.co/BAAI/bge-small-zh-v1.5/resolve/7999e1d3359715c523056ef9478215996d62a620/README.md",
+      "bytes": 27670,
+      "sha256": "c48a4eeea77f6b1d38b48ec1c5b8d4f86d5550cc43fa345a0db1b2ca1d082369"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": "candidate.example",
+  "version": 1,
+  "kind": "task",
+  "domains": [
+    "person"
+  ],
+  "title": "候选知识录入示例（请替换内容）",
+  "tags": [
+    "人物",
+    "人像",
+    "portrait",
+    "person",
+    "时尚",
+    "自拍"
+  ],
+  "when": "真实人物单图创作",
+  "avoid_when": "角色概念/二次元应转 character，不自动真人化",
+  "rules": [
+    "先决定人物在做什么以及看向哪里，再确定景别和环境",
+    "用脸部结构、表情与姿态表达个性，不用统一精致网红脸替代",
+    "肤质细节与成像尺度匹配，不为真实统一加雀斑皱纹"
+  ],
+  "failure_signals": [
+    "无目的摆拍",
+    "脸部与景别不匹配"
+  ],
+  "scopes": [
+    "create",
+    "edit",
+    "scene"
+  ],
+  "requires_reference_role": "",
+  "conflicts": [],
+  "status": "candidate",
+  "sources": [
+    {
+      "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+      "url": "",
+      "kind": "editorial",
+      "checked_at": "2026-09-19"
+    }
+  ],
+  "evidence": []
+}

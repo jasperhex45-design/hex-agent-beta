@@ -1,0 +1,1785 @@
+[
+  {
+    "id": "task.person.portrait",
+    "version": 1,
+    "kind": "task",
+    "domains": [
+      "person"
+    ],
+    "title": "人物摄影从表达意图开始",
+    "tags": [
+      "人物",
+      "人像",
+      "portrait",
+      "person",
+      "时尚",
+      "自拍"
+    ],
+    "when": "真实人物单图创作",
+    "avoid_when": "角色概念/二次元应转 character，不自动真人化",
+    "rules": [
+      "先决定人物在做什么以及看向哪里，再确定景别和环境",
+      "用脸部结构、表情与姿态表达个性，不用统一精致网红脸替代",
+      "肤质细节与成像尺度匹配，不为真实统一加雀斑皱纹"
+    ],
+    "failure_signals": [
+      "无目的摆拍",
+      "脸部与景别不匹配"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "task.person.replacement",
+    "version": 1,
+    "kind": "task",
+    "domains": [
+      "person"
+    ],
+    "title": "换人先分离身份与现场关系",
+    "tags": [
+      "人物",
+      "换人",
+      "替换",
+      "replacement",
+      "场景"
+    ],
+    "when": "替换已有图中的可见人物",
+    "avoid_when": "没有现场图不可声称完成局部替换",
+    "rules": [
+      "场景图提供位置、透视、遮挡与现场光；身份图提供具体人物",
+      "服装是否替换取决于用户要求，不默认只换脸，也不擅自换衣服",
+      "检查脸部亮度、阴影方向、接触遮挡与原场景一致"
+    ],
+    "failure_signals": [
+      "人物独立棚光",
+      "衣服被无关替换",
+      "只改脸遗漏要求"
+    ],
+    "scopes": [
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "scene",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "task.vehicle.creation",
+    "version": 1,
+    "kind": "task",
+    "domains": [
+      "vehicle"
+    ],
+    "title": "汽车画面由意图组织空间",
+    "tags": [
+      "汽车",
+      "车辆",
+      "vehicle",
+      "car",
+      "生活方式",
+      "海报"
+    ],
+    "when": "汽车创意/品牌场景提案",
+    "avoid_when": "不得把所有汽车图强行限定为路拍或固定角度",
+    "rules": [
+      "先区分用户要纪实、生活方式、广告还是风格化渲染",
+      "用主体尺度、背景空间、光照与环境动线服务创意",
+      "有身份图才声称依据具体车型；无图仅做概念设计"
+    ],
+    "failure_signals": [
+      "无参考声称精确车型",
+      "背景与任务意图脱节"
+    ],
+    "scopes": [
+      "create",
+      "scene",
+      "edit"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "task.vehicle.replacement",
+    "version": 1,
+    "kind": "task",
+    "domains": [
+      "vehicle"
+    ],
+    "title": "车辆素材与环境分工",
+    "tags": [
+      "汽车",
+      "替换背景",
+      "固定角度",
+      "vehicle",
+      "background"
+    ],
+    "when": "已有车辆素材的换环境任务",
+    "avoid_when": "用户允许重构时不强行固定机位",
+    "rules": [
+      "车辆身份图限定可见比例、灯组、轮毂等事实",
+      "用户锁定机位时，让环境适应透视而不压缩车身",
+      "反射和接地阴影随新环境调整，但主体固有色服从任务要求"
+    ],
+    "failure_signals": [
+      "为冲击力缩短车身",
+      "迁移风格参考车型"
+    ],
+    "scopes": [
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "identity",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "task.character.sheet",
+    "version": 1,
+    "kind": "task",
+    "domains": [
+      "character"
+    ],
+    "title": "角色资产用一致性而非新造型拼图",
+    "tags": [
+      "角色",
+      "设定",
+      "三视图",
+      "turnaround",
+      "character"
+    ],
+    "when": "角色设定板或多角度资产",
+    "avoid_when": "单幅叙事场景无需硬塞设定板",
+    "rules": [
+      "同一角色的比例、标志性轮廓、衣装构件在各视图一致",
+      "区分现实人物身份与虚构角色设计，媒介按需求保留",
+      "需要资产时减少强透视和戏剧光，先让构造可读"
+    ],
+    "failure_signals": [
+      "不同视角像不同角色",
+      "擅自把2D变成3D"
+    ],
+    "scopes": [
+      "create",
+      "edit"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "task.character.scene",
+    "version": 1,
+    "kind": "task",
+    "domains": [
+      "character"
+    ],
+    "title": "角色场景以动作和叙事关系支撑美感",
+    "tags": [
+      "角色",
+      "叙事",
+      "动作",
+      "character",
+      "scene"
+    ],
+    "when": "角色放入有情绪的场景",
+    "avoid_when": "不是每个任务都要史诗或战斗",
+    "rules": [
+      "一个主动作与一个主情绪建立视觉重心",
+      "环境尺度、光向和笔触/材质与角色一致",
+      "明确接触点、重力方向和遮挡，避免贴纸式置入"
+    ],
+    "failure_signals": [
+      "主体与场景画风不同",
+      "姿态没有受力依据"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "task.prop.hero",
+    "version": 1,
+    "kind": "task",
+    "domains": [
+      "prop"
+    ],
+    "title": "道具/产品主视觉",
+    "tags": [
+      "道具",
+      "产品",
+      "静物",
+      "prop",
+      "product",
+      "瓶子"
+    ],
+    "when": "单一道具、产品展示或概念图",
+    "avoid_when": "未要求摄影时允许手绘、3D或平面表达",
+    "rules": [
+      "优先明确功能、主要轮廓与一个最重要材质特征",
+      "用背景明暗或颜色衬托轮廓，不依赖装饰堆叠",
+      "镜头和灯面尺寸服务于表面可读性"
+    ],
+    "failure_signals": [
+      "主体被装饰淹没",
+      "材质统一塑料化"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "task.prop.functional",
+    "version": 1,
+    "kind": "task",
+    "domains": [
+      "prop"
+    ],
+    "title": "道具设计的结构与使用逻辑",
+    "tags": [
+      "道具",
+      "装备",
+      "结构",
+      "functional",
+      "prop",
+      "设计"
+    ],
+    "when": "虚构道具/配件需要可信构造",
+    "avoid_when": "纯抽象造型不强行工业化",
+    "rules": [
+      "先定义持握/开启/承重等主要使用关系",
+      "把功能结构与装饰纹样分开，限制无意义零件",
+      "材质连接点、厚度和尺度互相一致"
+    ],
+    "failure_signals": [
+      "接口悬空",
+      "为复杂而堆零件"
+    ],
+    "scopes": [
+      "create",
+      "edit"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "style.restrained",
+    "version": 1,
+    "kind": "style",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "克制与秩序只是审美的一种选择",
+    "tags": [
+      "克制",
+      "简约",
+      "留白",
+      "安静",
+      "restrained",
+      "minimal"
+    ],
+    "when": "用户明确要安静、简约或秩序感",
+    "avoid_when": "用户要浓烈、张扬、复杂叙事时不作为默认",
+    "rules": [
+      "减少竞争焦点，主体与空白共同组织节奏",
+      "色彩可以浓但数量有意控制，不能将低饱和当作唯一手段",
+      "细节集中在表达意图需要的位置"
+    ],
+    "failure_signals": [
+      "无理由降饱和",
+      "无意义空白"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [
+      "style.vivid",
+      "style.playful"
+    ],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "style.vivid",
+    "version": 1,
+    "kind": "style",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "浓郁色彩也可以有明确主次",
+    "tags": [
+      "浓郁",
+      "鲜明",
+      "活力",
+      "大胆",
+      "vivid",
+      "saturated"
+    ],
+    "when": "需要生命力、张力、明快或浓郁配色",
+    "avoid_when": "明确灰调、褪色或低调任务应另选",
+    "rules": [
+      "确定一个主色域和一个对照色域，区分面积和亮度",
+      "高饱和集中在有意义的位置，保留中性色作为缓冲",
+      "用明暗层次与材质差异避免所有物体挤在同一视觉强度"
+    ],
+    "failure_signals": [
+      "所有颜色同样抢眼",
+      "肤色或产品固有色被污染"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [
+      "style.restrained"
+    ],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "style.playful",
+    "version": 1,
+    "kind": "style",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "趣味来自具体形式反差",
+    "tags": [
+      "有趣",
+      "俏皮",
+      "奇想",
+      "playful",
+      "趣味"
+    ],
+    "when": "用户要轻松、有趣或概念性表达",
+    "avoid_when": "严肃纪实或精准资产复刻不强加荒诞",
+    "rules": [
+      "选一个可读的反常尺度、形态或情境关系",
+      "材质、颜色和构图围绕同一个创意玩笑",
+      "保留主体可辨认性，避免把所有元素同时变异"
+    ],
+    "failure_signals": [
+      "不相关元素堆砌",
+      "主体识别被趣味掩盖"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [
+      "style.restrained"
+    ],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "style.dark",
+    "version": 1,
+    "kind": "style",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "深沉影调保留关键可读性",
+    "tags": [
+      "暗调",
+      "深沉",
+      "神秘",
+      "dark",
+      "low key"
+    ],
+    "when": "用户要求深沉、神秘或低调画面",
+    "avoid_when": "明快通透任务不要默认压暗",
+    "rules": [
+      "暗部负责环境气氛，必要轮廓或关键信息有可读光位",
+      "用有限的亮部面积控制注意力",
+      "暗不等于黑成一片，允许有意隐藏非关键细节"
+    ],
+    "failure_signals": [
+      "主体关键信息全部消失",
+      "一味提黑位变灰"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "style.everyday",
+    "version": 1,
+    "kind": "style",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "生活感来自情境与观察方式",
+    "tags": [
+      "生活感",
+      "路拍",
+      "日常",
+      "松弛",
+      "everyday",
+      "candid",
+      "lifestyle"
+    ],
+    "when": "需要可信日常使用情境",
+    "avoid_when": "不将随拍用于所有产品广告或风格化角色",
+    "rules": [
+      "明确一个可信的使用/停留/交互情境",
+      "相机像处于场景中，而非无缘由的完美陈列",
+      "颗粒、模糊与杂物只有符合相机和任务时才加入"
+    ],
+    "failure_signals": [
+      "为真实故意劣化画质",
+      "空泛生活方式模板"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "style.editorial",
+    "version": 1,
+    "kind": "style",
+    "domains": [
+      "person",
+      "vehicle",
+      "prop"
+    ],
+    "title": "时尚编辑感来自立场与形式",
+    "tags": [
+      "时尚",
+      "编辑",
+      "态度",
+      "editorial",
+      "fashion"
+    ],
+    "when": "有态度、有取景意图的商业表达",
+    "avoid_when": "普通证件或准确资产记录不强加时尚姿势",
+    "rules": [
+      "用取景距离、裁切、姿态/朝向与衣料或材料关系表达立场",
+      "给画面一个有意的非均衡关系，不等于处处倾斜",
+      "单一视觉语言统一主体与背景"
+    ],
+    "failure_signals": [
+      "模板模特姿势",
+      "空喊高级而无构图选择"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "style.sculpted3d",
+    "version": 1,
+    "kind": "style",
+    "domains": [
+      "character",
+      "prop"
+    ],
+    "title": "雕塑式3D也可以是正确目标",
+    "tags": [
+      "风格化3D",
+      "雕塑",
+      "块面",
+      "sculpted",
+      "3d"
+    ],
+    "when": "用户明确需要风格化三维材质",
+    "avoid_when": "真实摄影任务不默认改为CG；2D线性风格也不适用",
+    "rules": [
+      "形体块面、表面粗糙度与光线尺度一致",
+      "用大形体表现角色/道具性格，再补局部纹理",
+      "材质精致不等于所有表面镜面化"
+    ],
+    "failure_signals": [
+      "写实皮肤混入卡通块面",
+      "无意义全局高光"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [
+      "style.linear2d"
+    ],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "style.linear2d",
+    "version": 1,
+    "kind": "style",
+    "domains": [
+      "character",
+      "prop"
+    ],
+    "title": "线性手绘的统一视觉规则",
+    "tags": [
+      "二维",
+      "手绘",
+      "线条",
+      "2d",
+      "ink",
+      "线性厚涂"
+    ],
+    "when": "明确2D、线稿或笔触主导设计",
+    "avoid_when": "没有用户要求不将摄影转插画",
+    "rules": [
+      "轮廓线、内部转折与块面阴影使用同一套取舍",
+      "笔触密度集中于视觉焦点而非铺满所有地方",
+      "保留媒介感，不混入塑料PBR质感"
+    ],
+    "failure_signals": [
+      "线条语言不一致",
+      "局部变成3D塑料"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [
+      "style.sculpted3d"
+    ],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "composition.hierarchy",
+    "version": 1,
+    "kind": "composition",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop",
+      "poster"
+    ],
+    "title": "主次与视觉路径",
+    "tags": [
+      "主次",
+      "构图",
+      "composition",
+      "hierarchy",
+      "海报"
+    ],
+    "when": "需要明确观看顺序的画面",
+    "avoid_when": "不是一律把主体居中放大",
+    "rules": [
+      "指定第一眼、第二眼和停留点，分别用尺度、对比或线条组织",
+      "配角/文字/背景的强度不能无理由超过主体",
+      "海报是否要文字与标识必须来自当前需求"
+    ],
+    "failure_signals": [
+      "多个同强焦点",
+      "文字与主体互相遮挡"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "composition.tension",
+    "version": 1,
+    "kind": "composition",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "构图张力不必扭曲主体",
+    "tags": [
+      "张力",
+      "冲击",
+      "强透视",
+      "tension",
+      "dynamic"
+    ],
+    "when": "需要动势和视觉冲击",
+    "avoid_when": "锁定机位时只在许可区域制造张力",
+    "rules": [
+      "用前后景尺度差、斜向动线、裁切和负空间建立张力",
+      "机位锁定时不改变主体透视，以环境设计和光比补充",
+      "动势必须与重心、接触和叙事一致"
+    ],
+    "failure_signals": [
+      "主体被拉伸压缩",
+      "乱倾斜没有视觉重心"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "composition.space",
+    "version": 1,
+    "kind": "composition",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "空间层次与空气感",
+    "tags": [
+      "空间",
+      "层次",
+      "空气感",
+      "depth",
+      "foreground"
+    ],
+    "when": "场景需要深度或主体融入",
+    "avoid_when": "纯平面插图、平铺图无需强行景深",
+    "rules": [
+      "用遮挡、相对尺度、明暗与远近对比组织层次",
+      "空气透视按距离变化，不给近景也统一蒙灰",
+      "景深是光学选择而非默认模糊所有背景"
+    ],
+    "failure_signals": [
+      "画面像贴纸",
+      "所有景别同样清晰或同样灰"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "composition.turnaround",
+    "version": 1,
+    "kind": "composition",
+    "domains": [
+      "person",
+      "character",
+      "prop"
+    ],
+    "title": "多视图资产以可比性为核心",
+    "tags": [
+      "三视图",
+      "多视图",
+      "正侧背",
+      "turnaround",
+      "资产"
+    ],
+    "when": "用户需要正侧背等可复用资产",
+    "avoid_when": "单幅时尚摄影不强制固定站姿",
+    "rules": [
+      "各视图保持相同尺度、地面基线与外形逻辑",
+      "使用足够中性的光线让结构清晰可比",
+      "不在每个视角重新设计面部或配件"
+    ],
+    "failure_signals": [
+      "前后结构不对应",
+      "不必要的强透视"
+    ],
+    "scopes": [
+      "create",
+      "edit"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "lighting.soft",
+    "version": 1,
+    "kind": "lighting",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "大面积柔光的方向与过渡",
+    "tags": [
+      "柔光",
+      "窗边",
+      "柔和",
+      "soft",
+      "window"
+    ],
+    "when": "需要柔和但有方向的明暗过渡",
+    "avoid_when": "需要硬朗强对比时不可用平均美容光替代",
+    "rules": [
+      "明确大面积光源来自哪一侧、哪种环境",
+      "阴影过渡柔和但仍存在明暗排序",
+      "镜面/透明材料的亮形与光源面积一致"
+    ],
+    "failure_signals": [
+      "全局平均照明",
+      "没有环境来源的独立轮廓光"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "lighting.hard",
+    "version": 1,
+    "kind": "lighting",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "硬光可以形成清晰图形",
+    "tags": [
+      "硬光",
+      "直射",
+      "正午",
+      "hard light",
+      "sun"
+    ],
+    "when": "需要利落、强形式或晴天力量感",
+    "avoid_when": "不在仅调色任务中改变原阴影",
+    "rules": [
+      "一个明确方向产生干净的投影边缘",
+      "明暗图形与构图共同服务主体",
+      "亮部保留必要信息，不把过曝当唯一阳光表达"
+    ],
+    "failure_signals": [
+      "阴影方向相互冲突",
+      "高光全部剪白"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "lighting.practical",
+    "version": 1,
+    "kind": "lighting",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "混合光中明确主光和点缀",
+    "tags": [
+      "夜景",
+      "混合光",
+      "霓虹",
+      "practical",
+      "night"
+    ],
+    "when": "存在灯光、屏幕或街道环境光的夜景",
+    "avoid_when": "无实际暖光来源时不强制造青橙",
+    "rules": [
+      "区分主光、环境反射与小面积发光点",
+      "冷暖分布服从光源位置，肤色/材质不被全局染成同色",
+      "在暗部保留对主体有用的信息"
+    ],
+    "failure_signals": [
+      "每个边缘都发光",
+      "所有物体同样青橙"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "lighting.reference",
+    "version": 1,
+    "kind": "lighting",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "融合时先匹配现场的光",
+    "tags": [
+      "融合",
+      "光感",
+      "现场",
+      "match light",
+      "relighting"
+    ],
+    "when": "将已有主体置入场景时",
+    "avoid_when": "纯创作任务可以设计新光，不被旧场景束缚",
+    "rules": [
+      "先观察主光方向和亮度排序，再处理环境色反射",
+      "对齐阴影密度、接触阴影与遮挡关系",
+      "不用独立美容光把主体从环境中提出来"
+    ],
+    "failure_signals": [
+      "人物悬浮",
+      "反射与场景方向矛盾"
+    ],
+    "scopes": [
+      "edit",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "scene",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "material.skin",
+    "version": 1,
+    "kind": "material",
+    "domains": [
+      "person"
+    ],
+    "title": "肤质细节服从年龄身份和拍摄尺度",
+    "tags": [
+      "肤质",
+      "皮肤",
+      "真实感",
+      "skin",
+      "face"
+    ],
+    "when": "真实人物摄影或融合",
+    "avoid_when": "风格化角色不默认真实毛孔",
+    "rules": [
+      "肤色、软组织明暗、局部油光按场景与年龄呈现",
+      "近景可读细小不均匀，远景保留整体明暗而不是贴纹理",
+      "不无端增加痣、皱纹、雀斑或妆感"
+    ],
+    "failure_signals": [
+      "毛孔贴图",
+      "局部比其他图像超清"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "material.paint",
+    "version": 1,
+    "kind": "material",
+    "domains": [
+      "vehicle",
+      "prop"
+    ],
+    "title": "车漆/清漆与环境反射分开",
+    "tags": [
+      "车漆",
+      "漆面",
+      "清漆",
+      "paint",
+      "gloss"
+    ],
+    "when": "真实有涂层的汽车或道具",
+    "avoid_when": "粗糙材质或哑光任务不强加油亮感",
+    "rules": [
+      "固有色由色漆表达，镜面高光由清漆和环境表达",
+      "反射形状对应环境亮暗面，不能随机画条纹",
+      "主体形体的转折不被杂乱反光淹没"
+    ],
+    "failure_signals": [
+      "清漆变金属镜面",
+      "固有色完全被反射覆盖"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "material.glass",
+    "version": 1,
+    "kind": "material",
+    "domains": [
+      "prop",
+      "vehicle"
+    ],
+    "title": "透明材质的边缘、厚度与折射",
+    "tags": [
+      "玻璃",
+      "透明",
+      "水晶",
+      "glass",
+      "transparency",
+      "瓶"
+    ],
+    "when": "玻璃瓶、窗面或透明道具",
+    "avoid_when": "磨砂/不透明材质不能共用清玻璃规则",
+    "rules": [
+      "用透射和边缘反射共同表达玻璃，而非一圈发光描边",
+      "厚度、接缝、底部折射与物体形状一致",
+      "背景穿过玻璃的变化有秩序，可见内容不乱复制"
+    ],
+    "failure_signals": [
+      "双重边缘",
+      "透明物变成塑料实心块"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "material.metal",
+    "version": 1,
+    "kind": "material",
+    "domains": [
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "金属靠环境反射和加工痕迹可读",
+    "tags": [
+      "金属",
+      "拉丝",
+      "磨损",
+      "metal",
+      "brushed"
+    ],
+    "when": "金属零件、道具和表面设计",
+    "avoid_when": "不把所有材质都转成铬金属",
+    "rules": [
+      "区分镜面、拉丝、铸造和涂层，不混为一种亮灰面",
+      "反射跨度符合粗糙度，边缘有厚度",
+      "磨损只在合理接触或使用区域发生"
+    ],
+    "failure_signals": [
+      "随机噪声假磨损",
+      "所有零件同一粗糙度"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "material.cloth",
+    "version": 1,
+    "kind": "material",
+    "domains": [
+      "person",
+      "character",
+      "prop"
+    ],
+    "title": "布料服从织物属性与受力",
+    "tags": [
+      "布料",
+      "服装",
+      "衣料",
+      "cloth",
+      "fabric"
+    ],
+    "when": "人物衣装或织物道具",
+    "avoid_when": "硬壳盔甲不应使用柔布折叠逻辑",
+    "rules": [
+      "轻薄/厚重/挺括分别控制悬垂与折线大小",
+      "褶皱围绕支点和重力而非随机平铺",
+      "面料纹理尺度与画面景别一致"
+    ],
+    "failure_signals": [
+      "无重力折叠",
+      "布料像塑料薄片"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "constraint.roles",
+    "version": 1,
+    "kind": "constraint",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "参考角色不互相污染",
+    "tags": [
+      "参考",
+      "素材",
+      "角色分工",
+      "reference",
+      "role"
+    ],
+    "when": "有多张参考且用途不同",
+    "avoid_when": "没有参考图不宣称依据参考锁定",
+    "rules": [
+      "每张参考只提取当前指定用途的信息",
+      "身份/场景/姿态/服装/光照/色彩明确分开",
+      "有冲突先保用户明确事实，未定项写假设"
+    ],
+    "failure_signals": [
+      "参考车被迁入",
+      "人物衣装被无关参考替换"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "constraint.identity",
+    "version": 1,
+    "kind": "constraint",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "有身份素材时保护可见身份",
+    "tags": [
+      "身份",
+      "一致性",
+      "identity",
+      "保留"
+    ],
+    "when": "有明确身份图的复用或替换",
+    "avoid_when": "无身份图不禁止一切创意变化",
+    "rules": [
+      "保护身份图中可见且用户要求保持的特征",
+      "不可见部分标为生成推测，不伪称还原",
+      "风格不能擅自覆盖身份事实"
+    ],
+    "failure_signals": [
+      "无参考声称精确还原",
+      "身份漂移"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "identity",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "constraint.geometry",
+    "version": 1,
+    "kind": "constraint",
+    "domains": [
+      "vehicle",
+      "prop",
+      "character"
+    ],
+    "title": "几何和机位锁定以用户授权为准",
+    "tags": [
+      "机位",
+      "角度",
+      "结构",
+      "几何",
+      "geometry",
+      "固定"
+    ],
+    "when": "用户明确锁定机位/结构的编辑",
+    "avoid_when": "用户需要新视角/重设计时不可强行套固定图",
+    "rules": [
+      "将必须不变的比例、视角或结构写为独立条件",
+      "允许调整的环境/灯光不改变这些事实",
+      "锁定是生成目标而非模型能保证的像素承诺"
+    ],
+    "failure_signals": [
+      "只会复述严格保持",
+      "把透视变化误认为调色"
+    ],
+    "scopes": [
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "constraint.coloronly",
+    "version": 1,
+    "kind": "constraint",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "纯调色与重新布光不同",
+    "tags": [
+      "只调色",
+      "颜色",
+      "曝光",
+      "color only",
+      "调色"
+    ],
+    "when": "用户只要求色彩或曝光调整",
+    "avoid_when": "天气/光束/阴影改造须另行许可",
+    "rules": [
+      "保留主体形状、构图、机位和原有光向",
+      "调色改变色彩映射和影调，不新增太阳、云、雾或光束",
+      "材质底色锁定与环境风格需要局部分离处理"
+    ],
+    "failure_signals": [
+      "调色变换天",
+      "新增无来源体积光"
+    ],
+    "scopes": [
+      "color_only"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "failure.contradiction",
+    "version": 1,
+    "kind": "failure",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "互斥指令导致随机折中",
+    "tags": [
+      "冲突",
+      "矛盾",
+      "contradiction",
+      "规则"
+    ],
+    "when": "出现方向相反的视觉要求",
+    "avoid_when": "有意冷暖分区不属于冲突",
+    "rules": [
+      "避免同一区域同时低饱和又高饱和、纯调色又新增光向",
+      "保留一个主风格，辅助维度有明确分区",
+      "将冲突写成待选方向，不靠堆禁止词掩盖"
+    ],
+    "failure_signals": [
+      "风格平均化",
+      "修改越多越随机"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "failure.invented_detail",
+    "version": 1,
+    "kind": "failure",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "未知细节不能写成已还原",
+    "tags": [
+      "细节",
+      "还原",
+      "低清",
+      "unknown detail"
+    ],
+    "when": "源图不清、遮挡或目标有精确识别需求",
+    "avoid_when": "自由概念图可设计但需标清",
+    "rules": [
+      "区分可见事实、合理设计和不能确认的部分",
+      "必要关键细节缺失时提出补图而不是编造确定结构",
+      "低清不等于靠提示词能恢复原生信息"
+    ],
+    "failure_signals": [
+      "猜测当事实",
+      "伪造已经验证"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "failure.drift",
+    "version": 1,
+    "kind": "failure",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "局部反馈不要推翻整套方向",
+    "tags": [
+      "修改",
+      "反馈",
+      "变灰",
+      "revision",
+      "drift"
+    ],
+    "when": "用户对已有结果提出局部修订",
+    "avoid_when": "明确要求重做方向时允许换方案",
+    "rules": [
+      "冻结正确的视觉关系",
+      "把批评映射到具体维度再修订",
+      "保留旧结果与修订依据，避免删除未达标目标"
+    ],
+    "failure_signals": [
+      "整图换风格",
+      "自评通过而证据缺失"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "failure.surface",
+    "version": 1,
+    "kind": "failure",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "材质与风格应一致而非统一禁CG",
+    "tags": [
+      "塑料",
+      "假",
+      "材质",
+      "surface",
+      "cg"
+    ],
+    "when": "材质表现与当前目标不匹配",
+    "avoid_when": "目标本来是塑料产品/3D风格时不可一律排斥",
+    "rules": [
+      "先定义目标材料与媒介，再定位假感来源",
+      "从光源形状、粗糙度、结构和成像尺度修正",
+      "不要为了反AI而增加一切噪点、皱纹和模糊"
+    ],
+    "failure_signals": [
+      "无差别反CG",
+      "不同材质趋同"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene",
+      "relight"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "task.poster.editorial",
+    "version": 1,
+    "kind": "task",
+    "domains": [
+      "poster"
+    ],
+    "title": "海报编辑版式与图文层级",
+    "tags": [
+      "海报",
+      "版式",
+      "排版",
+      "图文",
+      "editorial",
+      "layout"
+    ],
+    "when": "交付物是海报、杂志页或需要标题与图像共同组织阅读",
+    "avoid_when": "用户只需要无文字的摄影图或图像内容本身",
+    "rules": [
+      "先确定主图、次图、留白和阅读顺序，再决定标题位置",
+      "把参考图的图块节奏和信息层级迁移，不复制原文字、品牌和人物",
+      "文字无法稳定生成时，将图像与排字分层处理并记录限制"
+    ],
+    "failure_signals": [
+      "把海报当作普通人物图再加标题",
+      "所有图块等重",
+      "标题可读但阅读层级不成立"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "本项目编辑种子；是可测试的设计假设，不是用户已认可的审美结论",
+        "url": "",
+        "kind": "editorial",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  }
+]

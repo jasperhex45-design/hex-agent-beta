@@ -1,0 +1,15 @@
+{
+  "title": "轻巧的未来照明道具",
+  "request": "做一个未来便携灯具的概念图，可靠而轻巧，不要随便塞一堆灯带，要能从结构看出怎么拿和怎么用。",
+  "domain": "prop",
+  "scope": "create",
+  "targets": [
+    "image",
+    "nano",
+    "midjourney",
+    "seedream"
+  ],
+  "must_keep": [],
+  "avoid": [],
+  "references": []
+}

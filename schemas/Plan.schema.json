@@ -1,0 +1,1143 @@
+{
+  "$defs": {
+    "AestheticBinding": {
+      "additionalProperties": false,
+      "description": "Bridge a seen aesthetic card to this task's actual design.",
+      "properties": {
+        "selected_card_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Selected Card Ids",
+          "type": "array"
+        },
+        "dominant_decision": {
+          "minLength": 8,
+          "title": "Dominant Decision",
+          "type": "string"
+        },
+        "supporting_mechanism": {
+          "minLength": 8,
+          "title": "Supporting Mechanism",
+          "type": "string"
+        },
+        "visible_test": {
+          "minLength": 12,
+          "title": "Visible Test",
+          "type": "string"
+        },
+        "failure_test": {
+          "minLength": 12,
+          "title": "Failure Test",
+          "type": "string"
+        },
+        "adoption_reason": {
+          "minLength": 8,
+          "title": "Adoption Reason",
+          "type": "string"
+        },
+        "not_selected_reason": {
+          "minLength": 2,
+          "title": "Not Selected Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "selected_card_ids",
+        "dominant_decision",
+        "supporting_mechanism",
+        "visible_test",
+        "failure_test",
+        "adoption_reason",
+        "not_selected_reason"
+      ],
+      "title": "AestheticBinding",
+      "type": "object"
+    },
+    "CameraChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "shot_size": {
+          "title": "Shot Size",
+          "type": "string"
+        },
+        "viewpoint_and_distance": {
+          "title": "Viewpoint And Distance",
+          "type": "string"
+        },
+        "focal_equivalent_mm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Focal Equivalent Mm"
+        },
+        "framing_and_scale": {
+          "title": "Framing And Scale",
+          "type": "string"
+        },
+        "focus_and_depth": {
+          "title": "Focus And Depth",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shot_size",
+        "viewpoint_and_distance",
+        "focal_equivalent_mm",
+        "framing_and_scale",
+        "focus_and_depth",
+        "reason"
+      ],
+      "title": "CameraChoice",
+      "type": "object"
+    },
+    "DesignCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "dimension": {
+          "enum": [
+            "expression",
+            "composition",
+            "light_color",
+            "material",
+            "relationship",
+            "overall",
+            "narrative"
+          ],
+          "title": "Dimension",
+          "type": "string"
+        },
+        "question": {
+          "title": "Question",
+          "type": "string"
+        },
+        "expected": {
+          "title": "Expected",
+          "type": "string"
+        },
+        "failure": {
+          "title": "Failure",
+          "type": "string"
+        },
+        "reference_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reference Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "dimension",
+        "question",
+        "expected",
+        "failure",
+        "reference_ids"
+      ],
+      "title": "DesignCheck",
+      "type": "object"
+    },
+    "DesignChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "goal": {
+          "title": "Goal",
+          "type": "string"
+        },
+        "mechanism_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Mechanism Ids",
+          "type": "array"
+        },
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "cooperation": {
+          "title": "Cooperation",
+          "type": "string"
+        },
+        "tradeoff": {
+          "title": "Tradeoff",
+          "type": "string"
+        },
+        "criterion_id": {
+          "title": "Criterion Id",
+          "type": "string"
+        },
+        "reference_uses": {
+          "items": {
+            "$ref": "#/$defs/ReferenceUse"
+          },
+          "title": "Reference Uses",
+          "type": "array"
+        },
+        "basis": {
+          "default": "retrieved_mechanism",
+          "enum": [
+            "retrieved_mechanism",
+            "agent_hypothesis"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "core_knowledge_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Core Knowledge Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "goal",
+        "mechanism_ids",
+        "action",
+        "cooperation",
+        "tradeoff",
+        "criterion_id",
+        "reference_uses",
+        "basis",
+        "core_knowledge_ids"
+      ],
+      "title": "DesignChoice",
+      "type": "object"
+    },
+    "DesignPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "expression": {
+          "title": "Expression",
+          "type": "string"
+        },
+        "carrier": {
+          "enum": [
+            "person",
+            "object",
+            "relationship",
+            "environment",
+            "ensemble"
+          ],
+          "title": "Carrier",
+          "type": "string"
+        },
+        "intent_claims": {
+          "items": {
+            "$ref": "#/$defs/IntentClaim"
+          },
+          "title": "Intent Claims",
+          "type": "array"
+        },
+        "subject_environment_relation": {
+          "title": "Subject Environment Relation",
+          "type": "string"
+        },
+        "reading_order": {
+          "title": "Reading Order",
+          "type": "string"
+        },
+        "camera": {
+          "$ref": "#/$defs/CameraChoice"
+        },
+        "choices": {
+          "items": {
+            "$ref": "#/$defs/DesignChoice"
+          },
+          "title": "Choices",
+          "type": "array"
+        },
+        "spatial_grammar": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SpatialGrammar"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/DesignCheck"
+          },
+          "title": "Checks",
+          "type": "array"
+        },
+        "baseline_reference_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Baseline Reference Ids",
+          "type": "array"
+        },
+        "assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "narrative": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NarrativeChoice"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "aesthetic_binding": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AestheticBinding"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "template_binding": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TemplateBinding"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "creative_directions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DirectionSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "direction_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction Id"
+        },
+        "generation_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GenerationOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "knowledge_skip_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Knowledge Skip Reason"
+        },
+        "decision_context_digest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decision Context Digest"
+        }
+      },
+      "required": [
+        "expression",
+        "carrier",
+        "intent_claims",
+        "subject_environment_relation",
+        "reading_order",
+        "camera",
+        "choices",
+        "spatial_grammar",
+        "checks",
+        "baseline_reference_ids",
+        "assumptions",
+        "narrative",
+        "aesthetic_binding",
+        "template_binding",
+        "creative_directions",
+        "direction_id",
+        "generation_options",
+        "knowledge_skip_reason",
+        "decision_context_digest"
+      ],
+      "title": "DesignPlan",
+      "type": "object"
+    },
+    "DirectionDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "intent_summary": {
+          "minLength": 1,
+          "title": "Intent Summary",
+          "type": "string"
+        },
+        "viewer_relation": {
+          "minLength": 1,
+          "title": "Viewer Relation",
+          "type": "string"
+        },
+        "subject_state": {
+          "minLength": 1,
+          "title": "Subject State",
+          "type": "string"
+        },
+        "spatial_organization": {
+          "minLength": 1,
+          "title": "Spatial Organization",
+          "type": "string"
+        },
+        "dominant_decision": {
+          "minLength": 1,
+          "title": "Dominant Decision",
+          "type": "string"
+        },
+        "supporting_decisions": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Supporting Decisions",
+          "type": "array"
+        },
+        "reference_evidence": {
+          "items": {
+            "$ref": "#/$defs/DirectionEvidence"
+          },
+          "maxItems": 5,
+          "title": "Reference Evidence",
+          "type": "array"
+        },
+        "expected_effect": {
+          "minLength": 1,
+          "title": "Expected Effect",
+          "type": "string"
+        },
+        "tradeoff": {
+          "minLength": 1,
+          "title": "Tradeoff",
+          "type": "string"
+        },
+        "authority": {
+          "const": "agent_hypothesis",
+          "default": "agent_hypothesis",
+          "title": "Authority",
+          "type": "string"
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
+        "first_visual_focus": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Visual Focus"
+        },
+        "subject_relation": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Relation"
+        },
+        "proposal_kind": {
+          "default": "direction",
+          "enum": [
+            "direction",
+            "same_direction_variant"
+          ],
+          "title": "Proposal Kind",
+          "type": "string"
+        },
+        "base_direction_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base Direction Id"
+        },
+        "variation_axes": {
+          "items": {
+            "enum": [
+              "camera_angle",
+              "color_temperature",
+              "focal_length"
+            ],
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Variation Axes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "intent_summary",
+        "viewer_relation",
+        "subject_state",
+        "spatial_organization",
+        "dominant_decision",
+        "supporting_decisions",
+        "reference_evidence",
+        "expected_effect",
+        "tradeoff",
+        "authority",
+        "purpose",
+        "first_visual_focus",
+        "subject_relation",
+        "proposal_kind",
+        "base_direction_id",
+        "variation_axes"
+      ],
+      "title": "DirectionDraft",
+      "type": "object"
+    },
+    "DirectionEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "reference",
+            "host_visible_reference",
+            "feedback"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "evidence_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Digest",
+          "type": "string"
+        },
+        "quote": {
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "evidence_digest",
+        "quote"
+      ],
+      "title": "DirectionEvidence",
+      "type": "object"
+    },
+    "DirectionSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "drafts": {
+          "items": {
+            "$ref": "#/$defs/DirectionDraft"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Drafts",
+          "type": "array"
+        },
+        "selected_id": {
+          "minLength": 1,
+          "title": "Selected Id",
+          "type": "string"
+        },
+        "selection_reason": {
+          "minLength": 1,
+          "title": "Selection Reason",
+          "type": "string"
+        },
+        "alternatives_reason": {
+          "default": "",
+          "title": "Alternatives Reason",
+          "type": "string"
+        },
+        "question_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Question Id"
+        }
+      },
+      "required": [
+        "drafts",
+        "selected_id",
+        "selection_reason",
+        "alternatives_reason",
+        "question_id"
+      ],
+      "title": "DirectionSelection",
+      "type": "object"
+    },
+    "EvidenceTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "criterion": {
+          "title": "Criterion",
+          "type": "string"
+        },
+        "visible_evidence": {
+          "title": "Visible Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "criterion",
+        "visible_evidence"
+      ],
+      "title": "EvidenceTarget",
+      "type": "object"
+    },
+    "GenerationOptions": {
+      "additionalProperties": false,
+      "description": "Output settings proposed for this task, not an aesthetic grade.",
+      "properties": {
+        "desired_aspect_ratio": {
+          "default": "auto",
+          "title": "Desired Aspect Ratio",
+          "type": "string"
+        },
+        "requested_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested Size"
+        },
+        "quality": {
+          "default": "auto",
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Quality",
+          "type": "string"
+        },
+        "output_format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "jpeg",
+            "webp"
+          ],
+          "title": "Output Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "desired_aspect_ratio",
+        "requested_size",
+        "quality",
+        "output_format"
+      ],
+      "title": "GenerationOptions",
+      "type": "object"
+    },
+    "IntentClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "quote": {
+          "title": "Quote",
+          "type": "string"
+        },
+        "interpretation": {
+          "title": "Interpretation",
+          "type": "string"
+        },
+        "inferred": {
+          "title": "Inferred",
+          "type": "boolean"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "quote",
+        "interpretation",
+        "inferred",
+        "source_refs"
+      ],
+      "title": "IntentClaim",
+      "type": "object"
+    },
+    "NarrativeChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "scene_function": {
+          "title": "Scene Function",
+          "type": "string"
+        },
+        "shot_function": {
+          "title": "Shot Function",
+          "type": "string"
+        },
+        "point_of_view": {
+          "title": "Point Of View",
+          "type": "string"
+        },
+        "previous_link": {
+          "title": "Previous Link",
+          "type": "string"
+        },
+        "next_link": {
+          "title": "Next Link",
+          "type": "string"
+        },
+        "information_reveal": {
+          "title": "Information Reveal",
+          "type": "string"
+        },
+        "staging": {
+          "title": "Staging",
+          "type": "string"
+        },
+        "camera_movement": {
+          "title": "Camera Movement",
+          "type": "string"
+        },
+        "rhythm": {
+          "title": "Rhythm",
+          "type": "string"
+        },
+        "continuity": {
+          "title": "Continuity",
+          "type": "string"
+        },
+        "unknown_context": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unknown Context",
+          "type": "array"
+        }
+      },
+      "required": [
+        "scene_function",
+        "shot_function",
+        "point_of_view",
+        "previous_link",
+        "next_link",
+        "information_reveal",
+        "staging",
+        "camera_movement",
+        "rhythm",
+        "continuity",
+        "unknown_context"
+      ],
+      "title": "NarrativeChoice",
+      "type": "object"
+    },
+    "ReferenceUse": {
+      "additionalProperties": false,
+      "properties": {
+        "reference_id": {
+          "title": "Reference Id",
+          "type": "string"
+        },
+        "observed_relation": {
+          "title": "Observed Relation",
+          "type": "string"
+        },
+        "disposition": {
+          "default": "adopt",
+          "enum": [
+            "adopt",
+            "reject"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference_id",
+        "observed_relation",
+        "disposition",
+        "reason"
+      ],
+      "title": "ReferenceUse",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "quote": {
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "quote"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "SpatialGrammar": {
+      "additionalProperties": false,
+      "description": "Experimental cross-cultural structure hypothesis, never a style label.",
+      "properties": {
+        "id": {
+          "pattern": "^grammar\\.[a-z0-9_-]{3,80}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "source_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Digest",
+          "type": "string"
+        },
+        "status": {
+          "const": "experimental",
+          "title": "Status",
+          "type": "string"
+        },
+        "spatial_model": {
+          "minLength": 3,
+          "title": "Spatial Model",
+          "type": "string"
+        },
+        "viewer_path": {
+          "minLength": 3,
+          "title": "Viewer Path",
+          "type": "string"
+        },
+        "negative_space_function": {
+          "minLength": 3,
+          "title": "Negative Space Function",
+          "type": "string"
+        },
+        "dominant_vectors": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Dominant Vectors",
+          "type": "array"
+        },
+        "layer_plan": {
+          "minLength": 3,
+          "title": "Layer Plan",
+          "type": "string"
+        },
+        "scale_relation": {
+          "minLength": 3,
+          "title": "Scale Relation",
+          "type": "string"
+        },
+        "time_model": {
+          "minLength": 3,
+          "title": "Time Model",
+          "type": "string"
+        },
+        "surface_scope": {
+          "minLength": 3,
+          "title": "Surface Scope",
+          "type": "string"
+        },
+        "cultural_reference": {
+          "const": "structural_only",
+          "title": "Cultural Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_digest",
+        "status",
+        "spatial_model",
+        "viewer_path",
+        "negative_space_function",
+        "dominant_vectors",
+        "layer_plan",
+        "scale_relation",
+        "time_model",
+        "surface_scope",
+        "cultural_reference"
+      ],
+      "title": "SpatialGrammar",
+      "type": "object"
+    },
+    "TemplateBinding": {
+      "additionalProperties": false,
+      "description": "Bind a task-conditioned template to an actual design decision.",
+      "properties": {
+        "template_id": {
+          "pattern": "^template\\.[a-z0-9_-]{3,80}$",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "adopted_structure": {
+          "minLength": 12,
+          "title": "Adopted Structure",
+          "type": "string"
+        },
+        "adoption_reason": {
+          "minLength": 8,
+          "title": "Adoption Reason",
+          "type": "string"
+        },
+        "visible_test": {
+          "minLength": 12,
+          "title": "Visible Test",
+          "type": "string"
+        },
+        "pitfalls_applied": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Pitfalls Applied",
+          "type": "array"
+        },
+        "not_selected_reason": {
+          "minLength": 2,
+          "title": "Not Selected Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id",
+        "adopted_structure",
+        "adoption_reason",
+        "visible_test",
+        "pitfalls_applied",
+        "not_selected_reason"
+      ],
+      "title": "TemplateBinding",
+      "type": "object"
+    },
+    "VisualSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "concept": {
+          "title": "Concept",
+          "type": "string"
+        },
+        "feeling": {
+          "title": "Feeling",
+          "type": "string"
+        },
+        "composition": {
+          "title": "Composition",
+          "type": "string"
+        },
+        "lighting": {
+          "title": "Lighting",
+          "type": "string"
+        },
+        "color": {
+          "title": "Color",
+          "type": "string"
+        },
+        "material": {
+          "title": "Material",
+          "type": "string"
+        },
+        "capture": {
+          "title": "Capture",
+          "type": "string"
+        },
+        "locked_facts": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Locked Facts",
+          "type": "array"
+        },
+        "changes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Changes",
+          "type": "array"
+        },
+        "operations": {
+          "items": {
+            "enum": [
+              "color",
+              "exposure",
+              "lighting",
+              "weather",
+              "geometry",
+              "layout",
+              "content",
+              "texture"
+            ],
+            "type": "string"
+          },
+          "title": "Operations",
+          "type": "array"
+        },
+        "selected_knowledge_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Selected Knowledge Ids",
+          "type": "array"
+        },
+        "assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "evidence_targets": {
+          "items": {
+            "$ref": "#/$defs/EvidenceTarget"
+          },
+          "title": "Evidence Targets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "concept",
+        "feeling",
+        "composition",
+        "lighting",
+        "color",
+        "material",
+        "capture",
+        "locked_facts",
+        "changes",
+        "operations",
+        "selected_knowledge_ids",
+        "assumptions",
+        "evidence_targets"
+      ],
+      "title": "VisualSpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "spec": {
+      "$ref": "#/$defs/VisualSpec"
+    },
+    "design": {
+      "$ref": "#/$defs/DesignPlan"
+    }
+  },
+  "required": [
+    "spec",
+    "design"
+  ],
+  "title": "Plan",
+  "type": "object"
+}

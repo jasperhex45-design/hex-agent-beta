@@ -1,0 +1,201 @@
+{
+  "$defs": {
+    "DirectionEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "reference",
+            "host_visible_reference",
+            "feedback"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "evidence_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Digest",
+          "type": "string"
+        },
+        "quote": {
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "evidence_digest",
+        "quote"
+      ],
+      "title": "DirectionEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "intent_summary": {
+      "minLength": 1,
+      "title": "Intent Summary",
+      "type": "string"
+    },
+    "viewer_relation": {
+      "minLength": 1,
+      "title": "Viewer Relation",
+      "type": "string"
+    },
+    "subject_state": {
+      "minLength": 1,
+      "title": "Subject State",
+      "type": "string"
+    },
+    "spatial_organization": {
+      "minLength": 1,
+      "title": "Spatial Organization",
+      "type": "string"
+    },
+    "dominant_decision": {
+      "minLength": 1,
+      "title": "Dominant Decision",
+      "type": "string"
+    },
+    "supporting_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 3,
+      "title": "Supporting Decisions",
+      "type": "array"
+    },
+    "reference_evidence": {
+      "items": {
+        "$ref": "#/$defs/DirectionEvidence"
+      },
+      "maxItems": 5,
+      "title": "Reference Evidence",
+      "type": "array"
+    },
+    "expected_effect": {
+      "minLength": 1,
+      "title": "Expected Effect",
+      "type": "string"
+    },
+    "tradeoff": {
+      "minLength": 1,
+      "title": "Tradeoff",
+      "type": "string"
+    },
+    "authority": {
+      "const": "agent_hypothesis",
+      "default": "agent_hypothesis",
+      "title": "Authority",
+      "type": "string"
+    },
+    "purpose": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Purpose"
+    },
+    "first_visual_focus": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "First Visual Focus"
+    },
+    "subject_relation": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subject Relation"
+    },
+    "proposal_kind": {
+      "default": "direction",
+      "enum": [
+        "direction",
+        "same_direction_variant"
+      ],
+      "title": "Proposal Kind",
+      "type": "string"
+    },
+    "base_direction_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Base Direction Id"
+    },
+    "variation_axes": {
+      "items": {
+        "enum": [
+          "camera_angle",
+          "color_temperature",
+          "focal_length"
+        ],
+        "type": "string"
+      },
+      "maxItems": 3,
+      "title": "Variation Axes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "intent_summary",
+    "viewer_relation",
+    "subject_state",
+    "spatial_organization",
+    "dominant_decision",
+    "supporting_decisions",
+    "reference_evidence",
+    "expected_effect",
+    "tradeoff",
+    "authority",
+    "purpose",
+    "first_visual_focus",
+    "subject_relation",
+    "proposal_kind",
+    "base_direction_id",
+    "variation_axes"
+  ],
+  "title": "DirectionDraft",
+  "type": "object"
+}

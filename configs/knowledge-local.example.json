@@ -1,0 +1,5 @@
+{
+  "backend": "local",
+  "max_queries": 3,
+  "max_hits": 6
+}

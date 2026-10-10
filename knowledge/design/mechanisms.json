@@ -1,0 +1,2012 @@
+[
+  {
+    "id": "intent.meaning",
+    "version": 1,
+    "title": "先确定想被读到的意义",
+    "family": "intent",
+    "source_ids": [
+      "S08",
+      "S04"
+    ],
+    "problem": "主体都有了，观众却不知道这张图要表达什么。",
+    "application_rule": "先写观众应读到的关系或感受，再决定哪个实体/区域承载它。",
+    "applies_when": "所有任务；对多主体、隐喻或留白任务尤为重要。",
+    "actions": [
+      "写一条“看到什么→感到什么”的验收命题。",
+      "列一个内容齐全但表达失败的反例。",
+      "允许关系、空间或群像本身成为主角，不强制唯一实体。"
+    ],
+    "depends_on": [],
+    "incompatible_with": [
+      "把最大/最亮区域直接当成最重要内容。"
+    ],
+    "expected_visible_evidence": [
+      "只看图片时，能描述目标关系，不依赖提示词解释。"
+    ],
+    "controlled_test": "保持主体种类不变，只调整二者的关系，比较意图可读性。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "attention.roles",
+    "version": 1,
+    "title": "角色分工与观看顺序",
+    "family": "attention",
+    "source_ids": [
+      "S01",
+      "S08"
+    ],
+    "problem": "每个元素都很突出，合起来没有主次。",
+    "application_rule": "分开记录叙事重要性、画面占比和预计注意顺序。",
+    "applies_when": "任务有主次，或用户明确要求并重。",
+    "actions": [
+      "给实体标lead/support/context/joint_lead。",
+      "计划首读/次读位置与连接方式；群像可为并行阅读。",
+      "用亮暗、清晰度、色差与语义共同检查竞争点。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "用人20%车60%背景20%冒充测得的注意力。"
+    ],
+    "expected_visible_evidence": [
+      "首要信息突出，次要元素有辅助作用而非独立抢眼。"
+    ],
+    "controlled_test": "固定占比，只降低一个背景竞争亮点，比较主要信息是否更容易读出。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "attention.figure_ground",
+    "version": 1,
+    "title": "主体与背景的分离",
+    "family": "composition",
+    "source_ids": [
+      "S01",
+      "S05"
+    ],
+    "problem": "物体轮廓与背景黏连，主体虽大却难辨。",
+    "application_rule": "在需要辨认的轮廓处选择一种有效的分离手段，不全边缘加光。",
+    "applies_when": "需要主体清晰；不用于有意隐匿的形象。",
+    "actions": [
+      "指定需识别的边缘。",
+      "选择局部明度差、色差、清晰度差或负空间。",
+      "允许不重要边缘融入背景，检查是否契合意图。"
+    ],
+    "depends_on": [
+      "attention.roles"
+    ],
+    "incompatible_with": [
+      "机械给所有主体描亮边。"
+    ],
+    "expected_visible_evidence": [
+      "关键轮廓可辨，非主角仍处于次级。"
+    ],
+    "controlled_test": "关闭轮廓光而仅改相邻背景明度，比较是否仍可分离。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "attention.contrast_budget",
+    "version": 1,
+    "title": "对比资源分配",
+    "family": "attention",
+    "source_ids": [
+      "S01",
+      "S07"
+    ],
+    "problem": "锐度、亮度、饱和度同时到顶，画面喧闹。",
+    "application_rule": "决定哪类对比承担首要表达，其余对比支持或安静；不是固定数值预算。",
+    "applies_when": "强冲击或多元素任务。",
+    "actions": [
+      "标记主要对比：尺度/明暗/色相/形状/语义。",
+      "检查最强对比的区域是否与目标一致。",
+      "允许高密度，但为重复和例外建立秩序。"
+    ],
+    "depends_on": [
+      "attention.roles"
+    ],
+    "incompatible_with": [
+      "所有局部同时最大化。"
+    ],
+    "expected_visible_evidence": [
+      "能说清冲击来自哪种关系，不只是“什么都很强”。"
+    ],
+    "controlled_test": "仅去掉一种次要强对比，查看表达是否更聚焦。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "composition.balance",
+    "version": 1,
+    "title": "对称、偏置与视觉平衡",
+    "family": "composition",
+    "source_ids": [
+      "S01"
+    ],
+    "problem": "构图套三分法但不服务主题。",
+    "application_rule": "按稳定、对抗或失衡等目的选择平衡方式；不把中心或三分法评为绝对好坏。",
+    "applies_when": "画面需要明确组织。",
+    "actions": [
+      "稳定方案比较中轴/成对分布。",
+      "有意不稳定时用偏置主体与反向小元素组织张力。",
+      "检查边缘重量和空白是否解释得通。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "一切居中都呆板；一切不对称都高级。"
+    ],
+    "expected_visible_evidence": [
+      "结构与要传达的稳定或不稳定一致。"
+    ],
+    "controlled_test": "同一主体比较中心与偏置两稿，评价目标不是新奇程度。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "composition.vectors",
+    "version": 1,
+    "title": "线条、动作与目光的方向关系",
+    "family": "composition",
+    "source_ids": [
+      "S01",
+      "S02",
+      "S04"
+    ],
+    "problem": "有很多斜线，但把视线带出了主体。",
+    "application_rule": "场景线、身体线、目光方向尽量建立同一阅读关系；需要对抗时明确对向关系。",
+    "applies_when": "动势、引导或人—物联系。",
+    "actions": [
+      "标记主方向向量。",
+      "确认引导线终点不是无关角落。",
+      "身体或道具形成反向时说明其叙事作用。"
+    ],
+    "depends_on": [
+      "attention.roles"
+    ],
+    "incompatible_with": [
+      "任意倾斜画框就当作动感。"
+    ],
+    "expected_visible_evidence": [
+      "线条/姿态使目标联系可读，边界不产生无意逃逸。"
+    ],
+    "controlled_test": "保持光色不变，只改变一个引导方向或人物目光。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "composition.negative_space",
+    "version": 1,
+    "title": "负空间的具体任务",
+    "family": "composition",
+    "source_ids": [
+      "S01",
+      "S02"
+    ],
+    "problem": "有留白，但只像没有填满。",
+    "application_rule": "为负空间指定呼吸、运动出口、尺度衬托、文字容纳或隔离作用。",
+    "applies_when": "需要空间关系或版式位置。",
+    "actions": [
+      "命名空白功能。",
+      "检查它与主体朝向、运动和文字位置的关系。",
+      "没有功能时比较收紧构图，不以留白面积论高级。"
+    ],
+    "depends_on": [
+      "attention.roles"
+    ],
+    "incompatible_with": [
+      "所有画面必须大留白。"
+    ],
+    "expected_visible_evidence": [
+      "遮住空白或收紧裁切会改变目标表达。"
+    ],
+    "controlled_test": "只改变空白的方位，保持主体尺寸，比较意义。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "composition.rhythm",
+    "version": 1,
+    "title": "重复、变化与节奏",
+    "family": "composition",
+    "source_ids": [
+      "S01",
+      "S02"
+    ],
+    "problem": "丰富细节像随机堆放。",
+    "application_rule": "建立可感知重复，再用少量变化制造节奏和重点；密度高低均可成立。",
+    "applies_when": "多物体、背景纹理、群像。",
+    "actions": [
+      "确定重复单位：色块、形状、间距或姿态。",
+      "标出变化点的任务。",
+      "检查例外是否成为错误焦点。"
+    ],
+    "depends_on": [
+      "attention.contrast_budget"
+    ],
+    "incompatible_with": [
+      "为了干净删除所有有意义的丰富性。"
+    ],
+    "expected_visible_evidence": [
+      "多元素具有可描述秩序，而不是靠主观“丰富高级”。"
+    ],
+    "controlled_test": "统一一组无关变化，只保留目标变化点。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "composition.depth",
+    "version": 1,
+    "title": "深度层次与深焦分开设计",
+    "family": "composition",
+    "source_ids": [
+      "S04",
+      "S03"
+    ],
+    "problem": "想有空间却只加背景虚化。",
+    "application_rule": "先安排近中远位置与遮挡关系，再决定哪些深度必须清楚。",
+    "applies_when": "表现空间、规模或人物与环境关系。",
+    "actions": [
+      "用物体位置定义空间层，不强制每图三层。",
+      "为遮挡写可读边界。",
+      "景深不能糊掉叙事关键层。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "把深空间当成所有物体都清楚；把虚化等同空间感。"
+    ],
+    "expected_visible_evidence": [
+      "即便弱化色彩，前后关系仍可读；需要的信息保持可见。"
+    ],
+    "controlled_test": "固定机位布局，仅改变清晰范围，检查空间叙事损失。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "composition.frame",
+    "version": 1,
+    "title": "画幅、裁切与边缘关系",
+    "family": "composition",
+    "source_ids": [
+      "S03",
+      "S01"
+    ],
+    "problem": "换横竖版后手势或物体关系被截断。",
+    "application_rule": "画幅是关系容器；先检查必须可见的行动与形状，再决定裁切。",
+    "applies_when": "人像、道具展示、横竖适配。",
+    "actions": [
+      "列不可被裁的语义节点。",
+      "检查主体与画框的切线、边缘拥挤和截断。",
+      "刻意裁切需说明强化何种感受。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "相同构图无条件改比例。"
+    ],
+    "expected_visible_evidence": [
+      "裁切后核心动作/关系仍成立，非必要边缘不会抢读。"
+    ],
+    "controlled_test": "用相同候选做两个裁切，分开评审信息损失和视觉力度。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "camera.viewpoint",
+    "version": 1,
+    "title": "距离决定相对尺度，焦距服务取景",
+    "family": "camera",
+    "source_ids": [
+      "S06"
+    ],
+    "problem": "写24mm强透视却没有指定相机与主体的相对位置。",
+    "application_rule": "联合设计观察位置、距离和画幅，再用焦距描述取景；不以焦距数值充当美感。",
+    "applies_when": "允许机位改变的生成或重构。",
+    "actions": [
+      "先写相机相对前后物体的位置。",
+      "说明哪些近远相对尺度需要增强或收敛。",
+      "焦距如给数值，标为全画幅等效并写明是提案，非实测EXIF。"
+    ],
+    "depends_on": [
+      "composition.depth"
+    ],
+    "incompatible_with": [
+      "原机位/透视锁定且仍移动相机。",
+      "固定视点仅改焦距就声称改变透视关系。"
+    ],
+    "expected_visible_evidence": [
+      "预期近远尺度与视点一致；关键物体比例未被不必要夸张。"
+    ],
+    "controlled_test": "同视点裁切对比与移动视点对比分开进行，避免混为一种变量。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "camera.height_angle",
+    "version": 1,
+    "title": "高度、俯仰与画框倾斜分开",
+    "family": "camera",
+    "source_ids": [
+      "S03"
+    ],
+    "problem": "所有力量感都做成仰拍和歪地平线。",
+    "application_rule": "分别定义机位高度、光轴俯仰、画框滚转以及观看关系。",
+    "applies_when": "地位、体量、秩序或不稳定的表达。",
+    "actions": [
+      "高度相对于主体关键位置描述。",
+      "俯仰解释可见顶面/底面变化。",
+      "滚转只在明确需要失衡时使用。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "低机位自动意味着强大；不看主体关系。"
+    ],
+    "expected_visible_evidence": [
+      "视点强化目标，没制造意外喜剧或比例破坏。"
+    ],
+    "controlled_test": "仅改高度/俯仰一项，保持布局，评价目标是否强化。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "camera.shot_scale",
+    "version": 1,
+    "title": "景别与心理距离",
+    "family": "camera",
+    "source_ids": [
+      "S03"
+    ],
+    "problem": "人占满了画面但没有情绪关系。",
+    "application_rule": "选择让表情、全身姿态或环境关系被读到的景别，而非越近越有冲击。",
+    "applies_when": "人像/角色及叙事物件。",
+    "actions": [
+      "情绪细节优先时保留眼神与嘴部可辨性。",
+      "行动优先时保留必要身体链条。",
+      "环境关系优先时容许主体小。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "需要全身动作却只拍脸。"
+    ],
+    "expected_visible_evidence": [
+      "所需信息在实际显示尺寸下可辨，不靠放大猜测。"
+    ],
+    "controlled_test": "比较近景与环境人像，评价各自丢失了哪项意义。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "camera.focus",
+    "version": 1,
+    "title": "焦点与可读信息",
+    "family": "camera",
+    "source_ids": [
+      "S03",
+      "S04"
+    ],
+    "problem": "为了高级浅景深，把人与物的联系糊掉。",
+    "application_rule": "焦点分配服从叙事读数，不机械追求背景奶油化。",
+    "applies_when": "多层场景或关键细节。",
+    "actions": [
+      "列出必须清晰的实体/接触点。",
+      "指定其余层是否可以退让。",
+      "多人共同行动时检查双方是否都可辨。"
+    ],
+    "depends_on": [
+      "composition.depth"
+    ],
+    "incompatible_with": [
+      "单张图要求先后拉焦却没有时间轴。"
+    ],
+    "expected_visible_evidence": [
+      "所需表情、产品特征和交互节点都达到足够可读性。"
+    ],
+    "controlled_test": "保持位置，增加关键层清晰范围，观察关系是否更完整。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "camera.still_motion",
+    "version": 1,
+    "title": "把动态语言译成静帧证据",
+    "family": "camera",
+    "source_ids": [
+      "S03",
+      "S04"
+    ],
+    "problem": "静态图的提示词写一镜到底、环绕、推轨，却没有落在画面。",
+    "application_rule": "静帧用动作相位、姿态方向、运动模糊分布和空间出口表达运动。",
+    "applies_when": "速度、动作或瞬间感。",
+    "actions": [
+      "选择开始/临界/完成中的一个相位。",
+      "明确哪些区域清晰、哪些呈方向性模糊。",
+      "不用镜头运动过程冒充单帧构图。"
+    ],
+    "depends_on": [
+      "composition.vectors"
+    ],
+    "incompatible_with": [
+      "证件式静止姿态与强动作描述并存。"
+    ],
+    "expected_visible_evidence": [
+      "不读文字能看出动作方向或正在发生的状态。"
+    ],
+    "controlled_test": "仅改动作相位，避免同时换衣装/地点掩盖效果。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "staging.gesture",
+    "version": 1,
+    "title": "人物张力的身体链条",
+    "family": "staging",
+    "source_ids": [
+      "S04",
+      "S03"
+    ],
+    "problem": "表情凶狠但身体、手势和视点互相矛盾。",
+    "application_rule": "把情绪目标转成姿态、视线、手部动作及重心关系的共同方案。",
+    "applies_when": "人物/角色为主要情绪承载者。",
+    "actions": [
+      "先确定情绪，不默认愤怒等于力量。",
+      "指定一处主动作及其身体支持。",
+      "面部细节和景别要能承载所选情绪。"
+    ],
+    "depends_on": [
+      "camera.shot_scale"
+    ],
+    "incompatible_with": [
+      "只有夸张表情，没有动作动机。"
+    ],
+    "expected_visible_evidence": [
+      "姿态和面部表达同一方向，关键接触/支撑自洽。"
+    ],
+    "controlled_test": "保持场景，仅改变主动作，评价情绪是否清楚。",
+    "domains": [
+      "person",
+      "character"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "staging.relation",
+    "version": 1,
+    "title": "人物与物体的互动不是拼贴",
+    "family": "staging",
+    "source_ids": [
+      "S04",
+      "S08"
+    ],
+    "problem": "人好看、物好看，但在同图没有关系。",
+    "application_rule": "给两者定义功能关系，并让目光、接触或行动明确表达。",
+    "applies_when": "人车、人道具、双人物任务。",
+    "actions": [
+      "写“谁在对什么做什么”，或明确刻意疏离。",
+      "选择可见连接：视线/动作/尺度/遮挡/方向。",
+      "根据连接是否可读决定相对深度与景别。"
+    ],
+    "depends_on": [
+      "intent.meaning",
+      "composition.depth"
+    ],
+    "incompatible_with": [
+      "默认把人放角落就算有故事。"
+    ],
+    "expected_visible_evidence": [
+      "移除一方会损失明确意义，而不只是减少装饰。"
+    ],
+    "controlled_test": "保持双方外观，比较有关系与无关系的站位。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "staging.silhouette",
+    "version": 1,
+    "title": "人物与角色的轮廓辨识",
+    "family": "staging",
+    "source_ids": [
+      "S02",
+      "S04"
+    ],
+    "problem": "细节复杂但缩小后动作和造型消失。",
+    "application_rule": "用外轮廓与内负形检查姿态/道具是否可读；不等于必须剪影风格。",
+    "applies_when": "角色设定、全身动作、道具。",
+    "actions": [
+      "先看主体外轮廓。",
+      "检查手臂、道具、衣摆的必要间隙。",
+      "优先修遮挡，再添细节。"
+    ],
+    "depends_on": [
+      "attention.figure_ground"
+    ],
+    "incompatible_with": [
+      "为了轮廓清晰擅自改指定身份或道具结构。"
+    ],
+    "expected_visible_evidence": [
+      "缩小后仍能辨认主要姿态或功能特征。"
+    ],
+    "controlled_test": "固定材质配色，仅改变一个轮廓重叠处。",
+    "domains": [
+      "person",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "staging.art_direction",
+    "version": 1,
+    "title": "服装、道具和环境共同服务意图",
+    "family": "staging",
+    "source_ids": [
+      "S04"
+    ],
+    "problem": "视觉元素各自精致但时代、功能、气质不统一。",
+    "application_rule": "造型和场景是表达变量，不是漂亮配件清单。",
+    "applies_when": "人物、角色、道具及其环境任务。",
+    "actions": [
+      "写各物件的意义和不可替换理由。",
+      "识别色块、尺度和材质是否协同。",
+      "无必要元素可删；有意冲突需保留其意义。"
+    ],
+    "depends_on": [
+      "intent.meaning",
+      "attention.roles"
+    ],
+    "incompatible_with": [
+      "为了风格自动改变用户指定物件。"
+    ],
+    "expected_visible_evidence": [
+      "每个显著元素都解释得通，风格冲突不是无意错误。"
+    ],
+    "controlled_test": "移除一件装饰，检查是否损害叙事还是提升聚焦。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "light.modeling",
+    "version": 1,
+    "title": "用明暗塑形，不只是提亮",
+    "family": "lighting",
+    "source_ids": [
+      "S05"
+    ],
+    "problem": "主体很亮但平，没有体积。",
+    "application_rule": "明确哪些转折面用亮暗变化说明形状；保留足够信息而非抹掉全部阴影。",
+    "applies_when": "体积、质地或面部立体需要。",
+    "actions": [
+      "选择主光相对受光面的方向。",
+      "指定必须能读出的结构转折。",
+      "检查暗面是层次还是内容消失。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "同时要求明显体积和所有表面同亮。"
+    ],
+    "expected_visible_evidence": [
+      "所需形状由连续明暗转折表达，不靠过度锐化。"
+    ],
+    "controlled_test": "只调整主光方向，比较形状可读性。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "light.softness",
+    "version": 1,
+    "title": "光源相对尺度与阴影边缘",
+    "family": "lighting",
+    "source_ids": [
+      "S05",
+      "S06"
+    ],
+    "problem": "把柔光误写成亮度更低或无限平光。",
+    "application_rule": "描述光源对主体的相对大小和距离关系，并观察阴影过渡；软硬与强弱分别设计。",
+    "applies_when": "决定硬朗、柔和或混合光质。",
+    "actions": [
+      "说明有效发光/扩散面相对主体的尺度。",
+      "单独决定曝光与阴影软硬。",
+      "必要时组合柔和主光与受控局部硬光。"
+    ],
+    "depends_on": [
+      "light.modeling"
+    ],
+    "incompatible_with": [
+      "把“大光源”不计距离地视为永远柔软。"
+    ],
+    "expected_visible_evidence": [
+      "阴影边界符合所需软硬，主体仍有转折。"
+    ],
+    "controlled_test": "尽量固定平均曝光，只改变光源角尺寸。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "light.fill",
+    "version": 1,
+    "title": "填充与暗部信息",
+    "family": "lighting",
+    "source_ids": [
+      "S05",
+      "S04"
+    ],
+    "problem": "高调被做成全白平；低调被做成死黑。",
+    "application_rule": "把亮度基调与塑形对比分开，按任务决定暗部保留的信息。",
+    "applies_when": "所有摄影式布光。",
+    "actions": [
+      "写哪些暗部必须可读，哪些可以简化。",
+      "填充不是新增一个同等强度的反向主光。",
+      "避免无动机双重阴影。"
+    ],
+    "depends_on": [
+      "light.modeling"
+    ],
+    "incompatible_with": [
+      "高调不允许任何阴影；低调必须压死细节。"
+    ],
+    "expected_visible_evidence": [
+      "亮暗基调成立，必需的脸部或产品结构仍清楚。"
+    ],
+    "controlled_test": "固定主光与背景，仅改变填充程度。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "light.motivation",
+    "version": 1,
+    "title": "主体与环境共享光源逻辑",
+    "family": "lighting",
+    "source_ids": [
+      "S05",
+      "S04"
+    ],
+    "problem": "人物像后贴的，背景和主体光向/色温不搭。",
+    "application_rule": "先确定环境光源，再解释主体受光；若有额外布光，必须说明其位置与作用。",
+    "applies_when": "场景合成、人物替换、人车关系。",
+    "actions": [
+      "记录主要光源方向和软硬。",
+      "检查主体阴影、反射与背景受光能否同时成立。",
+      "不把存在色差自动当作错误，区分有意混合光。"
+    ],
+    "depends_on": [
+      "light.modeling"
+    ],
+    "incompatible_with": [
+      "局部完美棚光与场景无因果联系。"
+    ],
+    "expected_visible_evidence": [
+      "在同图观察到兼容的主光、遮挡阴影与反射关系。"
+    ],
+    "controlled_test": "保留身份构图，单独修改主体的受光以匹配场景。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "light.separation",
+    "version": 1,
+    "title": "主体、填充与背景光各司其职",
+    "family": "lighting",
+    "source_ids": [
+      "S05"
+    ],
+    "problem": "灯越加越多，背景反而比主体抢眼。",
+    "application_rule": "每道光必须承担塑形、信息恢复、分离或环境叙事中的一个作用。",
+    "applies_when": "布光复杂或需要空间层次。",
+    "actions": [
+      "逐一声明光的作用，不必凑齐三点/四点。",
+      "检查背景亮区是不是阅读路径的一部分。",
+      "关掉非必要装饰光测试。"
+    ],
+    "depends_on": [
+      "attention.roles",
+      "light.modeling"
+    ],
+    "incompatible_with": [
+      "无条件轮廓光、雾和光束。"
+    ],
+    "expected_visible_evidence": [
+      "移除任一主要光会损失明确功能；非主角不被无意突出。"
+    ],
+    "controlled_test": "做单灯/叠灯对照，观察每一步是否有效。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "color.roles",
+    "version": 1,
+    "title": "主辅色是空间分工，不是色名清单",
+    "family": "color",
+    "source_ids": [
+      "S07",
+      "S01"
+    ],
+    "problem": "写了青橙却整图染色，肤色和产品本色失守。",
+    "application_rule": "说明各色落在什么区域、承担什么关系；允许多色但需有组织。",
+    "applies_when": "调色、设计配色、强调主体。",
+    "actions": [
+      "指定主体/环境/局部强调色的载体。",
+      "产品本色和肤色是否保护由当前需求决定。",
+      "不把青橙、低饱和或黑金定为通用高级。"
+    ],
+    "depends_on": [
+      "attention.roles"
+    ],
+    "incompatible_with": [
+      "整段色调模板无条件覆盖所有主体。"
+    ],
+    "expected_visible_evidence": [
+      "色彩的空间分布契合主次，保护对象未被错误染色。"
+    ],
+    "controlled_test": "保持亮度布局，只改变一个区域的色相关系。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "color.context",
+    "version": 1,
+    "title": "颜色必须放回环境比较",
+    "family": "color",
+    "source_ids": [
+      "S07"
+    ],
+    "problem": "色板单独好看，放进图里脏或刺眼。",
+    "application_rule": "局部色感依赖邻色和面积关系；用同色不同背景的对照看效果。",
+    "applies_when": "选色、肤色融合、产品色呈现。",
+    "actions": [
+      "把目标色放到实际相邻区域旁检查。",
+      "先找引起偏感的邻色，不急于改变主体色。",
+      "保存并列比较而非只看孤立色卡。"
+    ],
+    "depends_on": [
+      "color.roles"
+    ],
+    "incompatible_with": [
+      "只用HEX接近就判断实际观感一致。"
+    ],
+    "expected_visible_evidence": [
+      "整体与局部同时可用，不靠抽离背景才成立。"
+    ],
+    "controlled_test": "保持主体色，分别改变相邻背景以比较色感。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "color.luminance",
+    "version": 1,
+    "title": "色相、饱和度与明度分开处理",
+    "family": "color",
+    "source_ids": [
+      "S02",
+      "S07"
+    ],
+    "problem": "为了冲击只增饱和，主次反而丢失。",
+    "application_rule": "先辨认是哪一种色彩维度造成问题，再改对应变量。",
+    "applies_when": "灰闷、混乱、局部过艳。",
+    "actions": [
+      "识别问题来自明度区隔、色相关系还是饱和竞争。",
+      "必要时用灰度缩略图辅助检查明度，但不把灰度好看当充分条件。",
+      "修后回彩色验证，不丢目标情绪。"
+    ],
+    "depends_on": [
+      "attention.contrast_budget"
+    ],
+    "incompatible_with": [
+      "统一去灰或提高饱和来解决一切。"
+    ],
+    "expected_visible_evidence": [
+      "目标层次更清楚，未制造新色彩冲突。"
+    ],
+    "controlled_test": "分别制作只改明度与只改饱和的两稿，比较真实瓶颈。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "color.scope",
+    "version": 1,
+    "title": "调色不等于重布光和改构图",
+    "family": "constraint",
+    "source_ids": [
+      "S05",
+      "S07"
+    ],
+    "problem": "只要调色，却换了天气、光向或姿态。",
+    "application_rule": "把色彩映射、照明结构和几何/内容权限分开。",
+    "applies_when": "color_only 或明确局部编辑。",
+    "actions": [
+      "先读取允许操作。",
+      "模板内有新光源、雾、天空重做时拆出并排除。",
+      "不以好看为理由越过锁定项。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "仅调色同时增加体积光、新动作或新机位。"
+    ],
+    "expected_visible_evidence": [
+      "原布局、阴影形状及主体保持，色彩变化与权限一致。"
+    ],
+    "controlled_test": "比较原图与输出结构，先发现越界再评色彩。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "material.reflection",
+    "version": 1,
+    "title": "高光形状服务材质与体积",
+    "family": "material",
+    "source_ids": [
+      "S05"
+    ],
+    "problem": "车漆和物件只有油亮，没有可信曲面。",
+    "application_rule": "把高光看成环境/光源在表面的表现，检查它与曲面关系，不统一去反光。",
+    "applies_when": "光泽产品、车漆、金属或玻璃。",
+    "actions": [
+      "指定需读出的曲面和高光位置。",
+      "将高光形状、过渡与底色分开描述。",
+      "反射太碎时减少无关环境信息而不消灭材质特性。"
+    ],
+    "depends_on": [
+      "light.modeling"
+    ],
+    "incompatible_with": [
+      "所有高级材质必须哑光。"
+    ],
+    "expected_visible_evidence": [
+      "反光解释形状而非随机白条，底色和关键细节未消失。"
+    ],
+    "controlled_test": "保持物体，只调整一个反射源形状或背景明暗。",
+    "domains": [
+      "vehicle",
+      "prop",
+      "character"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "material.detail",
+    "version": 1,
+    "title": "细节密度服从观看尺度",
+    "family": "material",
+    "source_ids": [
+      "S02",
+      "S03"
+    ],
+    "problem": "哪里都毛孔、纹理、锐化，画面却像假精修。",
+    "application_rule": "按成片尺寸和主要信息分配细节，而不是全局放大纹理。",
+    "applies_when": "人像、角色、道具和汽车。",
+    "actions": [
+      "以最终使用尺寸检查，而不仅100%放大。",
+      "高频细节不能打断主要体积或表情。",
+      "近景需要的真实细节不强塞进远景主体。"
+    ],
+    "depends_on": [
+      "camera.shot_scale",
+      "attention.roles"
+    ],
+    "incompatible_with": [
+      "更清晰等于更真实或更高级。"
+    ],
+    "expected_visible_evidence": [
+      "纹理能支持材质，缩小后不变脏点和噪声。"
+    ],
+    "controlled_test": "只改变次要区域细节密度，查看整体是否更统一。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "integration.coherence",
+    "version": 1,
+    "title": "组合协同与有意对抗",
+    "family": "integration",
+    "source_ids": [
+      "S01",
+      "S04",
+      "S07"
+    ],
+    "problem": "镜头、光、色各自漂亮，但讲的不是同一件事。",
+    "application_rule": "逐对检查关键选择是协同、补偿还是有意对抗；不要求所有视觉维度同方向。",
+    "applies_when": "所有方案生成前。",
+    "actions": [
+      "为每个强选择写其服务的目标。",
+      "例如强透视+近尺度可协同，柔光+硬轮廓可分工。",
+      "相互抵消且无意图的选择必须删或改。"
+    ],
+    "depends_on": [
+      "intent.meaning",
+      "attention.roles"
+    ],
+    "incompatible_with": [
+      "把所有好看的模板拼成一张。"
+    ],
+    "expected_visible_evidence": [
+      "整体目标清楚，差异可解释，不依赖“高级感”兜底。"
+    ],
+    "controlled_test": "移除一个强效果，检查是否反而改善目标表达。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "eval.intent_first",
+    "version": 1,
+    "title": "先判做对，再判表达质量",
+    "family": "evaluation",
+    "source_ids": [
+      "S09",
+      "S08"
+    ],
+    "problem": "图好看但违背要求，或内容正确却审美平庸。",
+    "application_rule": "事实/权限为不可抵消项；表达质量另列，不求一个平均总分。",
+    "applies_when": "每次出图和修订。",
+    "actions": [
+      "逐条检查用户硬条件。",
+      "另外检查本次重点感受与参考差距。",
+      "可判内容过关但表达需改，或形式精彩但任务失败。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "总分高掩盖主体或目标错误。"
+    ],
+    "expected_visible_evidence": [
+      "评审结论区分需求错误、形式问题与未知。"
+    ],
+    "controlled_test": "加入一张漂亮但违约的负例，测试评审是否拒绝。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "eval.evidence",
+    "version": 1,
+    "title": "看图举证与未知状态",
+    "family": "evaluation",
+    "source_ids": [
+      "S09"
+    ],
+    "problem": "评审只复述提示词，没真正看图。",
+    "application_rule": "结论需绑定实际图中区域/关系；看不清就标未知。",
+    "applies_when": "任何自动复查。",
+    "actions": [
+      "同时提供当前需求、目标参考、冻结标准与候选。",
+      "不把设计器解释当成图像证据。",
+      "若只有链接没读像素，记录证据不足。"
+    ],
+    "depends_on": [
+      "eval.intent_first"
+    ],
+    "incompatible_with": [
+      "没有候选图也能审美通过。"
+    ],
+    "expected_visible_evidence": [
+      "每项判定有可定位证据，不是形容词回声。"
+    ],
+    "controlled_test": "在输入中故意放入与图不符的文字描述，检验评审是否依图而非依文。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "eval.pairwise",
+    "version": 1,
+    "title": "成对比较与人工校准",
+    "family": "evaluation",
+    "source_ids": [
+      "S09"
+    ],
+    "problem": "评价器总觉得自己的新版更好。",
+    "application_rule": "比较冻结同一目标的两个结果，并用用户判断校准，不把自评当真值。",
+    "applies_when": "修订选择及长期评审能力建立。",
+    "actions": [
+      "交换A/B位置再评，隐藏作者与版本。",
+      "区分改进、退化、相当、证据不足。",
+      "保留未参与规则修改的测试案例。"
+    ],
+    "depends_on": [
+      "eval.evidence"
+    ],
+    "incompatible_with": [
+      "更新了规则就用同一组示例宣布能力提高。"
+    ],
+    "expected_visible_evidence": [
+      "比较结论对位置不敏感，并能报告与用户判断的分歧。"
+    ],
+    "controlled_test": "对同一对图交换左右和命名，记录结论是否变化。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "eval.revision",
+    "version": 1,
+    "title": "诊断原因后局部修订与回归",
+    "family": "evaluation",
+    "source_ids": [
+      "S09"
+    ],
+    "problem": "失败后只追加“高级”“震撼”，或新版破坏旧优点。",
+    "application_rule": "按意图/参考/设计/编译/执行定位，再选择最小有效修订。",
+    "applies_when": "一轮或多轮生成。",
+    "actions": [
+      "保存正确部分和失败证据。",
+      "每轮优先检验一组原因相关的变量；预算写明。",
+      "修后重检硬条件、原优点和绝对合格线，保留上一最佳候选。"
+    ],
+    "depends_on": [
+      "eval.intent_first",
+      "eval.evidence",
+      "integration.coherence"
+    ],
+    "incompatible_with": [
+      "删除未达成标准；预算耗尽就改成通过。"
+    ],
+    "expected_visible_evidence": [
+      "修订改变了目标缺陷，无明显回归；否则明确未达标。"
+    ],
+    "controlled_test": "把改进但仍不合格、细节改善但主次退化的结果加入评审测试。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "理论依据见source_ids中的bounded_basis；actions、冲突处理和检查方法是本项目设计，非源文献逐条结论。"
+  },
+  {
+    "id": "camera.close_readability",
+    "version": 1,
+    "title": "近景不是自动的情绪按钮",
+    "family": "camera",
+    "source_ids": [
+      "S03",
+      "S04"
+    ],
+    "problem": "过近遮掉关键环境或肢体，使本来依赖关系的情绪丢失。",
+    "application_rule": "需要读微表情、物体证据或观看关系时，先确定要被读到的细节。",
+    "applies_when": "当前表达需要对应景别、信息或观看关系时。",
+    "actions": [
+      "指出哪一处表情/细节是信息。",
+      "为背景是否需要可辨认留出设计理由。",
+      "同样特写可亲密、威胁或冷静，须用表演和上下文区分。"
+    ],
+    "depends_on": [
+      "camera.shot_scale",
+      "staging.gesture"
+    ],
+    "incompatible_with": [
+      "过近遮掉关键环境或肢体，使本来依赖关系的情绪丢失。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "camera.medium_interaction",
+    "version": 1,
+    "title": "中景让行为关系可读",
+    "family": "camera",
+    "source_ids": [
+      "S03",
+      "S04"
+    ],
+    "problem": "裁掉接触点，或背景装饰破坏行为重心。",
+    "application_rule": "把需要共同读到的脸、手、物体或两人动作放进同一取景。",
+    "applies_when": "当前表达需要对应景别、信息或观看关系时。",
+    "actions": [
+      "以动作链而非人体标签决定边缘。",
+      "安排接触/目光/站位与清晰范围。",
+      "中景不是平庸，应检查行为是否有意义。"
+    ],
+    "depends_on": [
+      "camera.shot_scale",
+      "staging.relation"
+    ],
+    "incompatible_with": [
+      "裁掉接触点，或背景装饰破坏行为重心。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "camera.wide_environment",
+    "version": 1,
+    "title": "远景选择环境信息的权重",
+    "family": "camera",
+    "source_ids": [
+      "S03",
+      "S04"
+    ],
+    "problem": "大场面没有目标关系；小主体失去必要身份信息。",
+    "application_rule": "通过人/物与场所的尺度和位置说明处境，不把远景写成必然孤独。",
+    "applies_when": "当前表达需要对应景别、信息或观看关系时。",
+    "actions": [
+      "决定环境是阻碍、归属还是尺度参照。",
+      "保留最少可辨主体线索。",
+      "用光色/遮挡/方向引导回主要关系。"
+    ],
+    "depends_on": [
+      "composition.depth",
+      "attention.roles"
+    ],
+    "incompatible_with": [
+      "大场面没有目标关系；小主体失去必要身份信息。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "camera.offscreen",
+    "version": 1,
+    "title": "画外空间参与暗示",
+    "family": "camera",
+    "source_ids": [
+      "S03"
+    ],
+    "problem": "随意裁切造成缺损而非悬念；故意含混与失误混淆。",
+    "application_rule": "让视线、动作出口或裁切指向画外，能为静态图保留想象；影片还需上下文。",
+    "applies_when": "当前表达需要对应景别、信息或观看关系时。",
+    "actions": [
+      "写清可见证据和被有意排除的信息。",
+      "检查画面自身是否仍然成立。",
+      "不要要求一张图证明画外真实发生的事件。"
+    ],
+    "depends_on": [
+      "composition.frame",
+      "composition.vectors"
+    ],
+    "incompatible_with": [
+      "随意裁切造成缺损而非悬念；故意含混与失误混淆。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "camera.scale_not_attention",
+    "version": 1,
+    "title": "占比必须说明测量含义",
+    "family": "camera",
+    "source_ids": [
+      "S01",
+      "S08"
+    ],
+    "problem": "多个外接框重叠却强制加成100%；为凑比例损坏产品形态。",
+    "application_rule": "先确定主次，再给相对大小或外接框粗范围；不把面积当注意力百分比。",
+    "applies_when": "当前表达需要对应景别、信息或观看关系时。",
+    "actions": [
+      "可写主体高度约半画高作为提案。",
+      "不强制每个任务都有精确数字。",
+      "以实际意义和目标关系验收，而非僵化比例。"
+    ],
+    "depends_on": [
+      "attention.roles",
+      "composition.frame"
+    ],
+    "incompatible_with": [
+      "多个外接框重叠却强制加成100%；为凑比例损坏产品形态。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "camera.focus_information",
+    "version": 1,
+    "title": "清晰范围决定可读信息",
+    "family": "camera",
+    "source_ids": [
+      "S03",
+      "S04"
+    ],
+    "problem": "空间有层次但关系关键点失焦，只有氛围没有信息。",
+    "application_rule": "景深服务读图任务；需要同时读脸与接触点时不盲目全背景奶油虚化。",
+    "applies_when": "当前表达需要对应景别、信息或观看关系时。",
+    "actions": [
+      "列需清楚与可模糊的对象。",
+      "区分空间布局、景深和表面锐化。",
+      "静帧只表达当前对焦，拉焦另作为影片计划。"
+    ],
+    "depends_on": [
+      "camera.focus",
+      "staging.relation"
+    ],
+    "incompatible_with": [
+      "空间有层次但关系关键点失焦，只有氛围没有信息。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "narrative.shot_task",
+    "version": 1,
+    "title": "镜头存在的剧情理由",
+    "family": "narrative",
+    "source_ids": [
+      "S03",
+      "S10"
+    ],
+    "problem": "漂亮静帧不改变观众理解，也不承担停顿等有意功能。",
+    "application_rule": "film_shot先确定本镜头提供的信息/情绪变化，而非仅选一种电影感。",
+    "applies_when": "影片镜头规划；静态图不强制启用。",
+    "actions": [
+      "把镜头任务写成揭示、反应、延迟信息或有意停顿。",
+      "景别/位置围绕任务组织。",
+      "不能要求每镜都高潮。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "漂亮静帧不改变观众理解，也不承担停顿等有意功能。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "narrative.context",
+    "version": 1,
+    "title": "镜头含义来自前后关系",
+    "family": "narrative",
+    "source_ids": [
+      "S10"
+    ],
+    "problem": "凭空补剧情，或靠单帧确认前后信息。",
+    "application_rule": "明确观众之前知道什么、本镜新知道什么、之后如何接；未知就留假设。",
+    "applies_when": "影片镜头规划；静态图不强制启用。",
+    "actions": [
+      "保持用户给出的前后镜头事实。",
+      "缺上下文时说明独立镜头假设。",
+      "关键剧情不能从风格图猜。"
+    ],
+    "depends_on": [
+      "intent.meaning"
+    ],
+    "incompatible_with": [
+      "凭空补剧情，或靠单帧确认前后信息。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "narrative.pov",
+    "version": 1,
+    "title": "观察位置与主观归属分开",
+    "family": "narrative",
+    "source_ids": [
+      "S03",
+      "S04",
+      "S10"
+    ],
+    "problem": "仰拍就判英雄视角，或人物直视必然是第四面墙。",
+    "application_rule": "区分物理机位与谁的知觉/信息立场；主观镜头须有上下文支撑。",
+    "applies_when": "影片镜头规划；静态图不强制启用。",
+    "actions": [
+      "写观察者和信息限制。",
+      "人物目光与观众位置有目的关联。",
+      "静帧只记录主观性提案，不判整场POV成立。"
+    ],
+    "depends_on": [
+      "camera.height_angle",
+      "composition.vectors"
+    ],
+    "incompatible_with": [
+      "仰拍就判英雄视角，或人物直视必然是第四面墙。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "narrative.establish",
+    "version": 1,
+    "title": "建立空间而不是例行空镜",
+    "family": "narrative",
+    "source_ids": [
+      "S10"
+    ],
+    "problem": "为了建立场景插入与戏无关的漂亮远景。",
+    "application_rule": "需要观众理解人物/物体/场所关系时，给足空间信息；也可有意延迟。",
+    "applies_when": "影片镜头规划；静态图不强制启用。",
+    "actions": [
+      "指出必须交代的方位/距离/进出口。",
+      "后续细节镜头使用同一空间事实。",
+      "不强制每场戏都远景开头。"
+    ],
+    "depends_on": [
+      "composition.depth",
+      "camera.wide_environment"
+    ],
+    "incompatible_with": [
+      "为了建立场景插入与戏无关的漂亮远景。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "narrative.reaction",
+    "version": 1,
+    "title": "反应镜头改变事件意义",
+    "family": "narrative",
+    "source_ids": [
+      "S04",
+      "S10"
+    ],
+    "problem": "只拍一张有情绪的脸，却没有反应对象或因果。",
+    "application_rule": "选择动作前后与人物反应可读的瞬间，让反应补充而非重复信息。",
+    "applies_when": "影片镜头规划；静态图不强制启用。",
+    "actions": [
+      "保持反应对象的实际上下文。",
+      "用景别/姿态/目光控制反应读法。",
+      "不把所有反应都强化为愤怒或震惊。"
+    ],
+    "depends_on": [
+      "staging.gesture",
+      "camera.close_readability"
+    ],
+    "incompatible_with": [
+      "只拍一张有情绪的脸，却没有反应对象或因果。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "narrative.continuity",
+    "version": 1,
+    "title": "连续性先保空间事实",
+    "family": "narrative",
+    "source_ids": [
+      "S10"
+    ],
+    "problem": "左右混乱、道具换手、动作断开；有意跳跃未说明目的。",
+    "application_rule": "在需要连续的段落中，记录人物相对位置、视线、运动方向、动作阶段。",
+    "applies_when": "影片镜头规划；静态图不强制启用。",
+    "actions": [
+      "说明轴线及是否允许越轴。",
+      "记录入镜/出镜方向和接续动作。",
+      "单帧复查只能看当前空间，不证明剪辑已经连续。"
+    ],
+    "depends_on": [
+      "staging.relation",
+      "composition.vectors"
+    ],
+    "incompatible_with": [
+      "左右混乱、道具换手、动作断开；有意跳跃未说明目的。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "narrative.movement",
+    "version": 1,
+    "title": "运镜须改变信息或观看关系",
+    "family": "narrative",
+    "source_ids": [
+      "S03",
+      "S10"
+    ],
+    "problem": "运动量很大却无剧情功能；一张图宣称完成长镜头。",
+    "application_rule": "推拉摇移跟随要说明开始/结束状态以及为何变化，而不是列动词。",
+    "applies_when": "影片镜头规划；静态图不强制启用。",
+    "actions": [
+      "写起点/终点的可见信息变化。",
+      "区分相机移动、变焦和人物移动。",
+      "静帧提示词只画指定相位；运动写在镜头计划。"
+    ],
+    "depends_on": [
+      "camera.viewpoint",
+      "camera.still_motion"
+    ],
+    "incompatible_with": [
+      "运动量很大却无剧情功能；一张图宣称完成长镜头。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  },
+  {
+    "id": "narrative.rhythm",
+    "version": 1,
+    "title": "节奏由信息密度与时长关系产生",
+    "family": "narrative",
+    "source_ids": [
+      "S03",
+      "S10"
+    ],
+    "problem": "孤立好看图片拼在一起就自称节奏完整。",
+    "application_rule": "影片任务考虑表演、观看时间、切换和音画条件，不只标快切。",
+    "applies_when": "影片镜头规划；静态图不强制启用。",
+    "actions": [
+      "指出让观众停留在哪里及为何。",
+      "时长是提案，不是静帧效果证据。",
+      "需要成片/连续帧才能验证节奏。"
+    ],
+    "depends_on": [
+      "narrative.context",
+      "narrative.shot_task"
+    ],
+    "incompatible_with": [
+      "孤立好看图片拼在一起就自称节奏完整。"
+    ],
+    "expected_visible_evidence": [
+      "与当前需求相符的空间/观看关系可读；具体证据由任务设计。"
+    ],
+    "controlled_test": "保持用户硬要求，改变一个主要设计因素并比较；影片时序需另行成片验证。",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "source_informed_design_hypothesis",
+    "validation": {
+      "source_checked": true,
+      "task_images_tested": false,
+      "user_confirmed": false
+    },
+    "attribution": "由来源术语与机制启发的本项目设计规则，不是对文献全文的复制或通用情绪定律。"
+  }
+]

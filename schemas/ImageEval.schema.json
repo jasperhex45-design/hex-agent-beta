@@ -1,0 +1,282 @@
+{
+  "$defs": {
+    "BaselineComparison": {
+      "additionalProperties": false,
+      "properties": {
+        "reference_id": {
+          "title": "Reference Id",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "comparable",
+            "below",
+            "uncertain"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "composition": {
+          "title": "Composition",
+          "type": "string"
+        },
+        "light_and_material": {
+          "title": "Light And Material",
+          "type": "string"
+        },
+        "expression": {
+          "title": "Expression",
+          "type": "string"
+        },
+        "decisive_gap": {
+          "title": "Decisive Gap",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference_id",
+        "verdict",
+        "composition",
+        "light_and_material",
+        "expression",
+        "decisive_gap"
+      ],
+      "title": "BaselineComparison",
+      "type": "object"
+    },
+    "EvalItem": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion_id": {
+          "title": "Criterion Id",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "met",
+            "not_met",
+            "uncertain"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "candidate_evidence": {
+          "title": "Candidate Evidence",
+          "type": "string"
+        },
+        "reference_evidence": {
+          "title": "Reference Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "verdict",
+        "candidate_evidence",
+        "reference_evidence"
+      ],
+      "title": "EvalItem",
+      "type": "object"
+    },
+    "HolisticReview": {
+      "additionalProperties": false,
+      "properties": {
+        "image_access": {
+          "enum": [
+            "viewed",
+            "unavailable"
+          ],
+          "title": "Image Access",
+          "type": "string"
+        },
+        "review_context": {
+          "enum": [
+            "isolated",
+            "author_context",
+            "unknown"
+          ],
+          "title": "Review Context",
+          "type": "string"
+        },
+        "first_impression": {
+          "maxLength": 2000,
+          "minLength": 5,
+          "title": "First Impression",
+          "type": "string"
+        },
+        "judgments": {
+          "items": {
+            "$ref": "#/$defs/WholeImageJudgment"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Judgments",
+          "type": "array"
+        }
+      },
+      "required": [
+        "image_access",
+        "review_context",
+        "first_impression",
+        "judgments"
+      ],
+      "title": "HolisticReview",
+      "type": "object"
+    },
+    "RevisionTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion_id": {
+          "description": "绑定本次已判为 not_met 的标准 ID；不得绑定 met 或 uncertain 项。",
+          "title": "Criterion Id",
+          "type": "string"
+        },
+        "change": {
+          "description": "逐字复制 changes 数组中同一位置的动作，不另写同义改述。",
+          "title": "Change",
+          "type": "string"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "change"
+      ],
+      "title": "RevisionTarget",
+      "type": "object"
+    },
+    "WholeImageJudgment": {
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "enum": [
+            "overall",
+            "visual_coherence",
+            "expression"
+          ],
+          "title": "Dimension",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "met",
+            "not_met",
+            "uncertain"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "evidence": {
+          "maxLength": 2000,
+          "minLength": 5,
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension",
+        "verdict",
+        "evidence"
+      ],
+      "title": "WholeImageJudgment",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "holistic": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HolisticReview"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "decision": {
+      "enum": [
+        "ready_for_user",
+        "revise",
+        "uncertain"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/EvalItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "baseline_comparisons": {
+      "items": {
+        "$ref": "#/$defs/BaselineComparison"
+      },
+      "title": "Baseline Comparisons",
+      "type": "array"
+    },
+    "diagnosis": {
+      "enum": [
+        "intent",
+        "reference",
+        "design",
+        "compiler",
+        "execution",
+        "unknown"
+      ],
+      "title": "Diagnosis",
+      "type": "string"
+    },
+    "diagnosis_reason": {
+      "title": "Diagnosis Reason",
+      "type": "string"
+    },
+    "preserve": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Preserve",
+      "type": "array"
+    },
+    "changes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Changes",
+      "type": "array"
+    },
+    "sequence_validation": {
+      "enum": [
+        "not_applicable",
+        "not_tested"
+      ],
+      "title": "Sequence Validation",
+      "type": "string"
+    },
+    "revision_targets": {
+      "description": "修订时逐项绑定 changes：数量、顺序和 change 正文须与 changes 完全一致，每项指向已知 not_met 标准。",
+      "items": {
+        "$ref": "#/$defs/RevisionTarget"
+      },
+      "maxItems": 2,
+      "title": "Revision Targets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "holistic",
+    "decision",
+    "items",
+    "baseline_comparisons",
+    "diagnosis",
+    "diagnosis_reason",
+    "preserve",
+    "changes",
+    "sequence_validation",
+    "revision_targets"
+  ],
+  "title": "ImageEval",
+  "type": "object"
+}

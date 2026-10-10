@@ -1,0 +1,38 @@
+[
+  {
+    "id": "S11",
+    "title": "The Met：Chinese Handscrolls",
+    "url": "https://www.metmuseum.org/ko/essays/chinese-handscrolls",
+    "source_type": "博物馆教学资料",
+    "read_scope": "手卷格式、分段展开、观看时间与空间、近距离阅读",
+    "bounded_basis": "手卷把观看组织成随展开推进的时间和空间路径，观者可停留、回看和改变速度。",
+    "limitations": "这是关于手卷格式和观看方式的资料，不是所有中国画或所有任务的统一规则。",
+    "checked_at": "2026-09-22",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；不分发原图。"
+  },
+  {
+    "id": "S12",
+    "title": "Smarthistory：Huang Gongwang, Dwelling in the Fuchun Mountains",
+    "url": "https://smarthistory.org/huang-gongwang-dwelling-in-the-fuchun-mountains/",
+    "source_type": "博物馆/大学艺术史教学",
+    "read_scope": "手卷中的多视点、行旅式观看、留白与层次",
+    "bounded_basis": "作品以多视点和连续行旅组织空间，近景、远山和空白共同形成观看节奏。",
+    "limitations": "个案分析不能直接变成所有中国画的本质，也不能作为生成模型可控保证。",
+    "checked_at": "2026-09-22",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；不分发原图。"
+  },
+  {
+    "id": "S13",
+    "title": "The Met：Ten Thousand Miles along the Yellow River",
+    "url": "https://www.metmuseum.org/art/collection/search/73299",
+    "source_type": "博物馆藏品说明",
+    "read_scope": "平面化/等距式空间、地图性观看和非统一透视",
+    "bounded_basis": "藏品说明记录了平面化水道、正面山体和等距建筑等空间组织，并指出不依赖统一的缩短、透视或大气退远。",
+    "limitations": "单件作品说明，不作为中国画通史结论；本项目只借结构描述。",
+    "checked_at": "2026-09-22",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；藏品图不打包进项目。"
+  }
+]

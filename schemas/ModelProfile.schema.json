@@ -1,0 +1,141 @@
+{
+  "$defs": {
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "user_material",
+            "official",
+            "editorial",
+            "external"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "checked_at": {
+          "title": "Checked At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "url",
+        "kind",
+        "checked_at"
+      ],
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-z][a-z0-9_-]{1,60}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "language": {
+      "enum": [
+        "zh",
+        "en"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "experimental",
+        "validated",
+        "deprecated"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "provider_version": {
+      "title": "Provider Version",
+      "type": "string"
+    },
+    "last_checked": {
+      "title": "Last Checked",
+      "type": "string"
+    },
+    "review_after_days": {
+      "maximum": 365,
+      "minimum": 1,
+      "title": "Review After Days",
+      "type": "integer"
+    },
+    "writing_rules": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Writing Rules",
+      "type": "array"
+    },
+    "setup_rules": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Setup Rules",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    },
+    "evaluation_files": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evaluation Files",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "label",
+    "language",
+    "status",
+    "provider_version",
+    "last_checked",
+    "review_after_days",
+    "writing_rules",
+    "setup_rules",
+    "limitations",
+    "sources",
+    "evaluation_files"
+  ],
+  "title": "ModelProfile",
+  "type": "object"
+}

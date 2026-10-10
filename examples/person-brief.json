@@ -1,0 +1,15 @@
+{
+  "title": "自然、有特点的肖像",
+  "request": "一位虚构的成年女性的时尚肖像，不要一眼网红脸，轻松又有态度。构图近一点，鲜明色彩但肤色自然。",
+  "domain": "person",
+  "scope": "create",
+  "targets": [
+    "image",
+    "nano",
+    "midjourney",
+    "seedream"
+  ],
+  "must_keep": [],
+  "avoid": [],
+  "references": []
+}

@@ -1,0 +1,357 @@
+{
+  "$defs": {
+    "AdaptationRule": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_index": {
+          "minimum": 0,
+          "title": "Rule Index",
+          "type": "integer"
+        },
+        "reason": {
+          "maxLength": 18000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "prompt_excerpt": {
+          "maxLength": 18000,
+          "minLength": 1,
+          "title": "Prompt Excerpt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_index",
+        "reason",
+        "prompt_excerpt"
+      ],
+      "title": "AdaptationRule",
+      "type": "object"
+    },
+    "ChoiceCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "choice_id": {
+          "maxLength": 18000,
+          "minLength": 1,
+          "title": "Choice Id",
+          "type": "string"
+        },
+        "prompt_excerpt": {
+          "maxLength": 18000,
+          "minLength": 1,
+          "title": "Prompt Excerpt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "choice_id",
+        "prompt_excerpt"
+      ],
+      "title": "ChoiceCoverage",
+      "type": "object"
+    },
+    "ChoiceTranslation": {
+      "additionalProperties": false,
+      "properties": {
+        "choice_id": {
+          "title": "Choice Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "choice_id",
+        "text"
+      ],
+      "title": "ChoiceTranslation",
+      "type": "object"
+    },
+    "DirectionTranslation": {
+      "additionalProperties": false,
+      "properties": {
+        "direction_id": {
+          "minLength": 1,
+          "title": "Direction Id",
+          "type": "string"
+        },
+        "source_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Digest",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 6000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "direction_id",
+        "source_digest",
+        "text"
+      ],
+      "title": "DirectionTranslation",
+      "type": "object"
+    },
+    "PromptAdaptation": {
+      "additionalProperties": false,
+      "properties": {
+        "context_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Context Digest",
+          "type": "string"
+        },
+        "strategy": {
+          "maxLength": 18000,
+          "minLength": 1,
+          "title": "Strategy",
+          "type": "string"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/AdaptationRule"
+          },
+          "minItems": 1,
+          "title": "Rules",
+          "type": "array"
+        },
+        "choice_coverage": {
+          "items": {
+            "$ref": "#/$defs/ChoiceCoverage"
+          },
+          "title": "Choice Coverage",
+          "type": "array"
+        },
+        "direction_excerpt": {
+          "anyOf": [
+            {
+              "maxLength": 18000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Direction Excerpt"
+        },
+        "template_excerpt": {
+          "anyOf": [
+            {
+              "maxLength": 18000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Template Excerpt"
+        },
+        "aesthetic_excerpt": {
+          "anyOf": [
+            {
+              "maxLength": 18000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Aesthetic Excerpt"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RevisionContext"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "revision_excerpt": {
+          "anyOf": [
+            {
+              "maxLength": 18000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision Excerpt"
+        }
+      },
+      "required": [
+        "context_digest",
+        "strategy",
+        "rules",
+        "choice_coverage",
+        "direction_excerpt",
+        "template_excerpt",
+        "aesthetic_excerpt",
+        "revision",
+        "revision_excerpt"
+      ],
+      "title": "PromptAdaptation",
+      "type": "object"
+    },
+    "PromptDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "translated_locks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Translated Locks",
+          "type": "array"
+        },
+        "translated_aesthetic_relations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 2,
+          "title": "Translated Aesthetic Relations",
+          "type": "array"
+        },
+        "choice_translations": {
+          "items": {
+            "$ref": "#/$defs/ChoiceTranslation"
+          },
+          "maxItems": 8,
+          "title": "Choice Translations",
+          "type": "array"
+        },
+        "direction_translation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DirectionTranslation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "adaptation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PromptAdaptation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "setup_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Setup Notes",
+          "type": "array"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "target",
+        "text",
+        "translated_locks",
+        "translated_aesthetic_relations",
+        "choice_translations",
+        "direction_translation",
+        "adaptation",
+        "setup_notes",
+        "limitations"
+      ],
+      "title": "PromptDraft",
+      "type": "object"
+    },
+    "RevisionContext": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Candidate Sha256",
+          "type": "string"
+        },
+        "candidate_role": {
+          "enum": [
+            "edit_target",
+            "edit_canvas"
+          ],
+          "title": "Candidate Role",
+          "type": "string"
+        },
+        "review_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Review Digest",
+          "type": "string"
+        },
+        "preserve": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preserve",
+          "type": "array"
+        },
+        "changes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Changes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "candidate_sha256",
+        "candidate_role",
+        "review_digest",
+        "preserve",
+        "changes"
+      ],
+      "title": "RevisionContext",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "prompts": {
+      "items": {
+        "$ref": "#/$defs/PromptDraft"
+      },
+      "title": "Prompts",
+      "type": "array"
+    }
+  },
+  "required": [
+    "prompts"
+  ],
+  "title": "Compilation",
+  "type": "object"
+}

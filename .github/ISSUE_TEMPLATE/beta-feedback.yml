@@ -1,0 +1,35 @@
+name: HEX 内测反馈
+description: 用实际需求和结果图说明最关键的一处差距。
+title: "[内测] "
+body:
+  - type: markdown
+    attributes:
+      value: "请只上传可向内测组分享的素材；不要上传密钥、账户文件或完整任务目录。无需先判断是哪个技术环节的问题。"
+  - type: input
+    id: environment
+    attributes:
+      label: HEX 版本与使用环境
+      placeholder: "例如：0.3.8 / Codex / Image / Windows；不清楚的项可以写未知"
+    validations:
+      required: true
+  - type: textarea
+    id: request
+    attributes:
+      label: 原始需求与必须保留的内容
+      placeholder: "直接粘贴本次给 HEX 的需求。"
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: 实际结果
+      description: "拖入结果图或局部截图；如有参考图，注明它负责身份、风格还是编辑输入。安装问题可贴去除隐私后的报错。"
+    validations:
+      required: true
+  - type: textarea
+    id: difference
+    attributes:
+      label: 最关键的一处差距或改进
+      placeholder: "期望什么，实际哪里没做到；也可以说明这次哪里更好了。"
+    validations:
+      required: true

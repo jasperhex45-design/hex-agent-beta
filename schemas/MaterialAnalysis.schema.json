@@ -1,0 +1,74 @@
+{
+  "$defs": {
+    "MaterialFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "reference_id": {
+          "title": "Reference Id",
+          "type": "string"
+        },
+        "observed_composition": {
+          "title": "Observed Composition",
+          "type": "string"
+        },
+        "observed_light": {
+          "title": "Observed Light",
+          "type": "string"
+        },
+        "observed_color": {
+          "title": "Observed Color",
+          "type": "string"
+        },
+        "observed_material": {
+          "title": "Observed Material",
+          "type": "string"
+        },
+        "useful_for": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Useful For",
+          "type": "array"
+        },
+        "do_not_transfer": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Do Not Transfer",
+          "type": "array"
+        },
+        "uncertainty": {
+          "title": "Uncertainty",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference_id",
+        "observed_composition",
+        "observed_light",
+        "observed_color",
+        "observed_material",
+        "useful_for",
+        "do_not_transfer",
+        "uncertainty"
+      ],
+      "title": "MaterialFinding",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/MaterialFinding"
+      },
+      "title": "Findings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "findings"
+  ],
+  "title": "MaterialAnalysis",
+  "type": "object"
+}

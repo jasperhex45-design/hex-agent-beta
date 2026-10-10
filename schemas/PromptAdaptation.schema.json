@@ -1,0 +1,208 @@
+{
+  "$defs": {
+    "AdaptationRule": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_index": {
+          "minimum": 0,
+          "title": "Rule Index",
+          "type": "integer"
+        },
+        "reason": {
+          "maxLength": 18000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "prompt_excerpt": {
+          "maxLength": 18000,
+          "minLength": 1,
+          "title": "Prompt Excerpt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_index",
+        "reason",
+        "prompt_excerpt"
+      ],
+      "title": "AdaptationRule",
+      "type": "object"
+    },
+    "ChoiceCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "choice_id": {
+          "maxLength": 18000,
+          "minLength": 1,
+          "title": "Choice Id",
+          "type": "string"
+        },
+        "prompt_excerpt": {
+          "maxLength": 18000,
+          "minLength": 1,
+          "title": "Prompt Excerpt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "choice_id",
+        "prompt_excerpt"
+      ],
+      "title": "ChoiceCoverage",
+      "type": "object"
+    },
+    "RevisionContext": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Candidate Sha256",
+          "type": "string"
+        },
+        "candidate_role": {
+          "enum": [
+            "edit_target",
+            "edit_canvas"
+          ],
+          "title": "Candidate Role",
+          "type": "string"
+        },
+        "review_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Review Digest",
+          "type": "string"
+        },
+        "preserve": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preserve",
+          "type": "array"
+        },
+        "changes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Changes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "candidate_sha256",
+        "candidate_role",
+        "review_digest",
+        "preserve",
+        "changes"
+      ],
+      "title": "RevisionContext",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "context_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Context Digest",
+      "type": "string"
+    },
+    "strategy": {
+      "maxLength": 18000,
+      "minLength": 1,
+      "title": "Strategy",
+      "type": "string"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/AdaptationRule"
+      },
+      "minItems": 1,
+      "title": "Rules",
+      "type": "array"
+    },
+    "choice_coverage": {
+      "items": {
+        "$ref": "#/$defs/ChoiceCoverage"
+      },
+      "title": "Choice Coverage",
+      "type": "array"
+    },
+    "direction_excerpt": {
+      "anyOf": [
+        {
+          "maxLength": 18000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Direction Excerpt"
+    },
+    "template_excerpt": {
+      "anyOf": [
+        {
+          "maxLength": 18000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Template Excerpt"
+    },
+    "aesthetic_excerpt": {
+      "anyOf": [
+        {
+          "maxLength": 18000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Aesthetic Excerpt"
+    },
+    "revision": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RevisionContext"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "revision_excerpt": {
+      "anyOf": [
+        {
+          "maxLength": 18000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revision Excerpt"
+    }
+  },
+  "required": [
+    "context_digest",
+    "strategy",
+    "rules",
+    "choice_coverage",
+    "direction_excerpt",
+    "template_excerpt",
+    "aesthetic_excerpt",
+    "revision",
+    "revision_excerpt"
+  ],
+  "title": "PromptAdaptation",
+  "type": "object"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "midjourney",
+  "version": 1,
+  "label": "MidJourney",
+  "language": "en",
+  "status": "experimental",
+  "provider_version": "family-profile; account/version to be confirmed",
+  "last_checked": "2026-09-19",
+  "review_after_days": 30,
+  "writing_rules": [
+    "使用精炼英语描述主体、环境、构图、光照、颜色和材质。",
+    "优先正向明确的可见效果，不写冗长问答或自我解释。",
+    "同一visual spec的内容不可因语言压缩被改写；硬锁定项单独准确翻译。"
+  ],
+  "setup_rules": [
+    "具体版本与参数在使用界面设置，正文不自动拼接版本号或参数。",
+    "Style Reference用于风格而不是身份；精确编辑需根据当前界面的Edit/引用方式配置。"
+  ],
+  "limitations": [
+    "官方说明不等于本项目已验证效果；首次需按目标模型小样实测。",
+    "GPT测试只能验证方向，不能证明此模型会复现同样结果。"
+  ],
+  "sources": [
+    {
+      "label": "Midjourney Prompt Basics",
+      "url": "https://docs.midjourney.com/hc/en-us/articles/32023408776205-Prompt-Basics",
+      "kind": "official",
+      "checked_at": "2026-09-19"
+    },
+    {
+      "label": "Midjourney Style Reference",
+      "url": "https://docs.midjourney.com/hc/en-us/articles/32180011136653-Style-Reference",
+      "kind": "official",
+      "checked_at": "2026-09-19"
+    }
+  ],
+  "evaluation_files": []
+}

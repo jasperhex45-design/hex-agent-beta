@@ -1,0 +1,160 @@
+{
+  "$defs": {
+    "PrivateStyleRule": {
+      "additionalProperties": false,
+      "description": "A user-specific visual tendency with explicit evidence boundaries.",
+      "properties": {
+        "id": {
+          "pattern": "^personal\\.[a-z0-9_.-]{3,80}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "domains": {
+          "items": {
+            "enum": [
+              "person",
+              "illustration",
+              "poster",
+              "vehicle",
+              "character",
+              "prop",
+              "hybrid"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Domains",
+          "type": "array"
+        },
+        "confidence": {
+          "enum": [
+            "confirmed_positive",
+            "supported_interest",
+            "experimental"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        },
+        "direction": {
+          "maxLength": 1000,
+          "minLength": 3,
+          "title": "Direction",
+          "type": "string"
+        },
+        "visible_checks": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Visible Checks",
+          "type": "array"
+        },
+        "avoid": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Avoid",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "domains",
+        "confidence",
+        "direction",
+        "visible_checks",
+        "avoid",
+        "evidence_ids"
+      ],
+      "title": "PrivateStyleRule",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Private taste profile; advisory until the user accepts a result.",
+  "properties": {
+    "format": {
+      "const": "liu.private-aesthetic-profile.v1",
+      "title": "Format",
+      "type": "string"
+    },
+    "version": {
+      "const": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "owner": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Owner",
+      "type": "string"
+    },
+    "status": {
+      "const": "experimental_private_baseline",
+      "title": "Status",
+      "type": "string"
+    },
+    "confirmed_positive_card_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Confirmed Positive Card Ids",
+      "type": "array"
+    },
+    "explicit_negative_count": {
+      "minimum": 0,
+      "title": "Explicit Negative Count",
+      "type": "integer"
+    },
+    "pinterest_observation_count": {
+      "minimum": 0,
+      "title": "Pinterest Observation Count",
+      "type": "integer"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/PrivateStyleRule"
+      },
+      "maxItems": 12,
+      "minItems": 1,
+      "title": "Rules",
+      "type": "array"
+    },
+    "review_policy": {
+      "const": "advisory_user_final",
+      "title": "Review Policy",
+      "type": "string"
+    },
+    "source_record": {
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Source Record",
+      "type": "string"
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "owner",
+    "status",
+    "confirmed_positive_card_ids",
+    "explicit_negative_count",
+    "pinterest_observation_count",
+    "rules",
+    "review_policy",
+    "source_record"
+  ],
+  "title": "PrivateAestheticProfile",
+  "type": "object"
+}

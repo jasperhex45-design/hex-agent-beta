@@ -1,0 +1,25 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "image": {
+      "enum": [
+        "A",
+        "B"
+      ],
+      "title": "Image",
+      "type": "string"
+    },
+    "reason": {
+      "maxLength": 1000,
+      "minLength": 2,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "image",
+    "reason"
+  ],
+  "title": "CalibrationRejection",
+  "type": "object"
+}

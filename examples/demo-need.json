@@ -1,0 +1,53 @@
+{
+  "domain": "prop",
+  "intent": "把模糊的安静、精致与午后感转为一张虚构产品主视觉。",
+  "subject": "一只无品牌透明方形香氛瓶",
+  "desired_feeling": [
+    "有温度的安静",
+    "干净却不苍白",
+    "材质可信"
+  ],
+  "must_keep": [
+    "画面只有一只透明方形香氛瓶作为主体",
+    "瓶身不出现品牌与文字"
+  ],
+  "avoid": [
+    "大面积灰雾",
+    "花束和无关装饰"
+  ],
+  "assumptions": [
+    "当前没有实物参考，瓶型与瓶盖由本次创作设计，不能声称还原某品牌。",
+    "采用横幅近景，适用于展示；用户尚未规定画幅。"
+  ],
+  "questions": [],
+  "knowledge_needs": [
+    {
+      "query": "道具 产品 单一主体 展示 prop hero",
+      "kind": "task",
+      "reason": "产品主视觉而不是场景叙事"
+    },
+    {
+      "query": "克制 精致 留白 restrained",
+      "kind": "style",
+      "reason": "精致感依靠比例和材质，不依靠压灰"
+    },
+    {
+      "query": "透明 玻璃 厚度 透射 glass",
+      "kind": "material",
+      "reason": "玻璃本身是视觉重点"
+    },
+    {
+      "query": "硬光 窗 阳光 投影 hard",
+      "kind": "lighting",
+      "reason": "午后阳光形成清晰主次"
+    },
+    {
+      "query": "主次 视觉层级 焦点 hierarchy",
+      "kind": "composition",
+      "reason": "单一产品清晰，周边留白"
+    }
+  ],
+  "public_queries": [
+    "glass fragrance bottle warm window light product photography"
+  ]
+}

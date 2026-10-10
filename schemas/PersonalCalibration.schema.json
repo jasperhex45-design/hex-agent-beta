@@ -1,0 +1,188 @@
+{
+  "$defs": {
+    "CalibrationImage": {
+      "additionalProperties": false,
+      "description": "A real local image bound to a personal preference record.\n\nThe byte hash is captured at recording time and must be rechecked before\nthe record is used. This is evidence of which files were compared, not a\nquality or aesthetic score.",
+      "properties": {
+        "label": {
+          "enum": [
+            "A",
+            "B"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "path",
+        "sha256"
+      ],
+      "title": "CalibrationImage",
+      "type": "object"
+    },
+    "CalibrationRejection": {
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "enum": [
+            "A",
+            "B"
+          ],
+          "title": "Image",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 1000,
+          "minLength": 2,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image",
+        "reason"
+      ],
+      "title": "CalibrationRejection",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Explicit user pairwise preference; never inferred from machine eval.",
+  "properties": {
+    "format": {
+      "const": "liu.personal-calibration.v1",
+      "title": "Format",
+      "type": "string"
+    },
+    "version": {
+      "const": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "id": {
+      "pattern": "^calibration\\.[a-z0-9_-]{3,80}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "recorded_at": {
+      "minLength": 10,
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "domain": {
+      "enum": [
+        "person",
+        "illustration",
+        "poster",
+        "vehicle",
+        "character",
+        "prop",
+        "hybrid"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "criterion": {
+      "maxLength": 500,
+      "minLength": 3,
+      "title": "Criterion",
+      "type": "string"
+    },
+    "images": {
+      "items": {
+        "$ref": "#/$defs/CalibrationImage"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "title": "Images",
+      "type": "array"
+    },
+    "choice": {
+      "enum": [
+        "A",
+        "B",
+        "tie",
+        "uncertain"
+      ],
+      "title": "Choice",
+      "type": "string"
+    },
+    "user_quote": {
+      "maxLength": 2000,
+      "minLength": 2,
+      "title": "User Quote",
+      "type": "string"
+    },
+    "rejected_reasons": {
+      "items": {
+        "$ref": "#/$defs/CalibrationRejection"
+      },
+      "maxItems": 8,
+      "title": "Rejected Reasons",
+      "type": "array"
+    },
+    "source": {
+      "const": "explicit_user_pairwise_feedback",
+      "title": "Source",
+      "type": "string"
+    },
+    "task_id": {
+      "anyOf": [
+        {
+          "maxLength": 240,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Task Id"
+    },
+    "method_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Method Ids",
+      "type": "array"
+    },
+    "grammar_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Grammar Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "id",
+    "recorded_at",
+    "domain",
+    "criterion",
+    "images",
+    "choice",
+    "user_quote",
+    "rejected_reasons",
+    "source",
+    "task_id",
+    "method_ids",
+    "grammar_ids"
+  ],
+  "title": "PersonalCalibration",
+  "type": "object"
+}

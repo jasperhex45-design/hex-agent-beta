@@ -1,0 +1,105 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "liu.aesthetic-plan.v1",
+      "title": "Format",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "domain": {
+      "enum": [
+        "person",
+        "illustration",
+        "poster",
+        "vehicle",
+        "hybrid"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "route": {
+      "minLength": 3,
+      "title": "Route",
+      "type": "string"
+    },
+    "dominant_decision": {
+      "minLength": 8,
+      "title": "Dominant Decision",
+      "type": "string"
+    },
+    "supporting_mechanism": {
+      "minLength": 8,
+      "title": "Supporting Mechanism",
+      "type": "string"
+    },
+    "withheld_information": {
+      "minLength": 8,
+      "title": "Withheld Information",
+      "type": "string"
+    },
+    "anti_default": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Anti Default",
+      "type": "array"
+    },
+    "visible_test": {
+      "minLength": 12,
+      "title": "Visible Test",
+      "type": "string"
+    },
+    "failure_test": {
+      "minLength": 12,
+      "title": "Failure Test",
+      "type": "string"
+    },
+    "card_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Card Ids",
+      "type": "array"
+    },
+    "revision_rule": {
+      "minLength": 12,
+      "title": "Revision Rule",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "working",
+        "validated",
+        "needs_review"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "domain",
+    "route",
+    "dominant_decision",
+    "supporting_mechanism",
+    "withheld_information",
+    "anti_default",
+    "visible_test",
+    "failure_test",
+    "card_ids",
+    "revision_rule",
+    "status"
+  ],
+  "title": "AestheticPlan",
+  "type": "object"
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "ST01",
+    "source_id": "S05",
+    "pages_1_indexed": [
+      17
+    ],
+    "pixel_reviewed": true,
+    "role": "教学原理图，不是目标风格基准",
+    "observations": [
+      "同一紫色雕塑的亮部、底色与阴影在头部曲面上有不同位置和过渡。"
+    ],
+    "design_application": "评价物件质感时分区看反射/底色/阴影，不仅看亮不亮。",
+    "related_mechanisms": [
+      "material.reflection",
+      "light.modeling"
+    ],
+    "not_established": [
+      "没有证明本任务该用紫色或相同灯位。",
+      "没有测得生成模型材质表现。"
+    ],
+    "local_image_file": null,
+    "asset_redistribution_permission": "未取得；本包仅给原出处页码。"
+  },
+  {
+    "id": "ST02",
+    "source_id": "S05",
+    "pages_1_indexed": [
+      24,
+      25
+    ],
+    "pixel_reviewed": true,
+    "role": "带布光示意的教学样片",
+    "observations": [
+      "肖像图包含正面可读的面部、头发局部分离和背景亮区；下一页提供多个光源及白色反光板的相对位置。"
+    ],
+    "design_application": "根据各光源的不同职责分析组合，而非把“多灯、柔光、逆光”当同义优点。",
+    "related_mechanisms": [
+      "light.separation",
+      "light.softness",
+      "integration.coherence"
+    ],
+    "not_established": [
+      "不能从这一个教学样片推出所有高级人像都该采用同一布光。",
+      "没有把样片中的人或造型作为用户资产。"
+    ],
+    "local_image_file": null,
+    "asset_redistribution_permission": "未取得；本包仅给原出处页码。"
+  }
+]

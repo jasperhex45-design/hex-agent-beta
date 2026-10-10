@@ -1,0 +1,6 @@
+{
+  "backend": "native",
+  "max_queries": 3,
+  "max_hits": 6,
+  "native": {"enabled": true}
+}

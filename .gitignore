@@ -1,0 +1,28 @@
+# Credentials and local environment
+.env*
+!.env.example
+.venv/
+.runtime/
+.state/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.pytest-*/
+.test-artifacts/
+build/
+dist/
+
+# Task content and private learning data never become beta source.
+inputs/
+outputs/
+local-library/
+evidence/
+experiments/
+reports/
+
+# Machine-bound host installation metadata and backups
+.agents/skills/hex/installation.json
+.codex/hex-integration.json
+.codex/hex-install-backups/
+*.local.json

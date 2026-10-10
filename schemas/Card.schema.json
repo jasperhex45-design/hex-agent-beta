@@ -1,0 +1,188 @@
+{
+  "$defs": {
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "user_material",
+            "official",
+            "editorial",
+            "external"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "checked_at": {
+          "title": "Checked At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "url",
+        "kind",
+        "checked_at"
+      ],
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-z][a-z0-9_.-]{2,100}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "kind": {
+      "enum": [
+        "task",
+        "style",
+        "composition",
+        "lighting",
+        "color",
+        "material",
+        "constraint",
+        "failure"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "domains": {
+      "items": {
+        "enum": [
+          "person",
+          "illustration",
+          "poster",
+          "vehicle",
+          "character",
+          "prop"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Domains",
+      "type": "array"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "tags": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Tags",
+      "type": "array"
+    },
+    "when": {
+      "title": "When",
+      "type": "string"
+    },
+    "avoid_when": {
+      "title": "Avoid When",
+      "type": "string"
+    },
+    "rules": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Rules",
+      "type": "array"
+    },
+    "failure_signals": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failure Signals",
+      "type": "array"
+    },
+    "scopes": {
+      "items": {
+        "enum": [
+          "create",
+          "edit",
+          "color_only",
+          "relight",
+          "scene"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Scopes",
+      "type": "array"
+    },
+    "requires_reference_role": {
+      "title": "Requires Reference Role",
+      "type": "string"
+    },
+    "conflicts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Conflicts",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "seed",
+        "candidate",
+        "validated",
+        "deprecated"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "kind",
+    "domains",
+    "title",
+    "tags",
+    "when",
+    "avoid_when",
+    "rules",
+    "failure_signals",
+    "scopes",
+    "requires_reference_role",
+    "conflicts",
+    "status",
+    "sources",
+    "evidence"
+  ],
+  "title": "Card",
+  "type": "object"
+}

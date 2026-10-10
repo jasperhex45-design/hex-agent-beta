@@ -1,0 +1,32 @@
+{
+  "id": "nano",
+  "version": 1,
+  "label": "Nano / Gemini Image",
+  "language": "zh",
+  "status": "experimental",
+  "provider_version": "family-profile; account/version to be confirmed",
+  "last_checked": "2026-09-19",
+  "review_after_days": 30,
+  "writing_rules": [
+    "按语义描述主体、场景与需要改变的具体部位，避免关键词堆栈。",
+    "多图输入要分别说明身份、衣装、姿态、场景或风格角色。",
+    "修改已有图时清楚写出目标变化与保留项；不要把强词当作绝对锁定保证。"
+  ],
+  "setup_rules": [
+    "Nano 是家族称呼；实际版本/通道由用户在使用端确认。",
+    "将列出的图片按角色上传，不能只复制文件名。"
+  ],
+  "limitations": [
+    "官方说明不等于本项目已验证效果；首次需按目标模型小样实测。",
+    "GPT测试只能验证方向，不能证明此模型会复现同样结果。"
+  ],
+  "sources": [
+    {
+      "label": "Gemini native image generation / prompting",
+      "url": "https://ai.google.dev/gemini-api/docs/image-generation",
+      "kind": "official",
+      "checked_at": "2026-09-19"
+    }
+  ],
+  "evaluation_files": []
+}

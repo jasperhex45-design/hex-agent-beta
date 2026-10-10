@@ -1,0 +1,515 @@
+{
+  "format": "liu.art-structure-cases.v1",
+  "version": 1,
+  "policy": "馆方文字已核对；没有下载、逐图视觉检查或生成测试。解释与迁移均为项目假设，非美学真值。",
+  "cases": [
+    {
+      "id": "art.guoxi.early_spring",
+      "method_id": "space.layered_reveal",
+      "title": "早春图",
+      "artist": "郭熙",
+      "tradition": "北宋山水",
+      "source_url": "https://artsandculture.google.com/story/a-new-vision-of-national-treasures-quot-early-spring-quot-landscape-national-palace-museum-taiwan/MAVhq9CUx6JmSQ?hl=en",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方展页以高远、深远、平远解释此作，并说明云气空白和淡墨参与空间层次。",
+      "interpretation": "本项目解读：空间可以经遮掩、显露和层次逐步进入，而非只靠景深模糊。",
+      "transfer_hypothesis": "以不同尺度的实体和中间低细节间隔组织可游历的观看路径；每层仍应服务当前主体。",
+      "keywords": [
+        "层次",
+        "遮掩",
+        "显露",
+        "深入",
+        "游观",
+        "空间",
+        "layered",
+        "reveal",
+        "depth"
+      ],
+      "modes": [
+        "layered",
+        "camera"
+      ],
+      "operations": [
+        "layout",
+        "content",
+        "lighting"
+      ],
+      "do_not_transfer": [
+        "不复制蟹爪枝与云头皴等识别性组合",
+        "不要求当代摄影改成水墨"
+      ],
+      "avoid_when": [
+        "锁定原空间且不允许改场景",
+        "任务只需平面信息清单"
+      ],
+      "controlled_test": "固定主体，比较有无中段遮掩时的层次可读性，不用画派相似度判定。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.fankuan.travelers",
+      "method_id": "space.scale_anchor",
+      "title": "谿山行旅图",
+      "artist": "范宽",
+      "tradition": "北宋山水",
+      "source_url": "https://theme.npm.edu.tw/EnduringLegacyS203/ja/page-2",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方说明把构图区分为前、中、后景；旅人与主山的尺度关系增强山体体量感。",
+      "interpretation": "本项目解读：体量感可以来自可辨识的小尺度参照，而非主角占满画布。",
+      "transfer_hypothesis": "保留一个不抢主角的尺度锚点，用真实相对尺度表达环境体量。",
+      "keywords": [
+        "尺度",
+        "体量",
+        "参照",
+        "环境",
+        "巨大",
+        "scale",
+        "anchor",
+        "monumental"
+      ],
+      "modes": [
+        "camera",
+        "layered"
+      ],
+      "operations": [
+        "layout",
+        "content"
+      ],
+      "do_not_transfer": [
+        "不照搬山峰轮廓与旅队",
+        "不缩小必须看清的产品细节"
+      ],
+      "avoid_when": [
+        "主体最小像素尺寸不能满足",
+        "人物比例被明确锁死且会冲突"
+      ],
+      "controlled_test": "不改主物尺寸，只改变一个尺度参照，比较体量是否更易读。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.mayuan.spring_path",
+      "method_id": "space.directed_void",
+      "title": "山径春行图",
+      "artist": "马远",
+      "tradition": "南宋院体",
+      "source_url": "https://theme.npm.edu.tw/exh111/SilentPoetry/npm_poetry/poetry2.html",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方说明焦点集中近景，中景距离渺远，人物目光延伸到虚空间并连接题诗。",
+      "interpretation": "本项目解读：虚空间可以有方向和阅读用途，不等于把背景删除。",
+      "transfer_hypothesis": "让实体朝向、边缘方向或文字位置跨越留空区互相呼应，产生联系与停顿。",
+      "keywords": [
+        "间隔",
+        "连接",
+        "未抵达",
+        "视线",
+        "留白",
+        "停顿",
+        "负空间",
+        "void",
+        "gap",
+        "pause",
+        "distance"
+      ],
+      "modes": [
+        "planar",
+        "layered",
+        "camera"
+      ],
+      "operations": [
+        "layout",
+        "content"
+      ],
+      "do_not_transfer": [
+        "不复制高士柳树鸟和御题的组合",
+        "不把大面积空白当统一标准"
+      ],
+      "avoid_when": [
+        "必须完整展示密集说明",
+        "不得移动主体或文字且无法形成联系"
+      ],
+      "controlled_test": "填满间隔后目标关系是否变弱；若不变，空白可能只是装饰。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.nizan.riverbank",
+      "method_id": "space.sparse_articulation",
+      "title": "江渚风林图",
+      "artist": "倪瓒",
+      "tradition": "元代文人画",
+      "source_url": "https://www.metmuseum.org/art/collection/search/41154",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方将此作联系到画家主动追求的简略、自发笔意，并以不确定措辞讨论孤立感。",
+      "interpretation": "本项目解读：精确选择少量形迹可能比处处完成度一致更有表达，不等于所有细节都模糊。",
+      "transfer_hypothesis": "减少与主要关系无关的纹理，保留身份和结构必须清晰的锚点；孤独感只作待检验解释。",
+      "keywords": [
+        "稀疏",
+        "疏离",
+        "纹理",
+        "删减",
+        "安静",
+        "细节",
+        "sparse",
+        "quiet",
+        "texture"
+      ],
+      "modes": [
+        "planar",
+        "layered",
+        "camera"
+      ],
+      "operations": [
+        "texture",
+        "layout"
+      ],
+      "do_not_transfer": [
+        "不复制枯树与题款",
+        "不把用户所有作品变成低饱和与低清晰度"
+      ],
+      "avoid_when": [
+        "产品材质细节必须完整显示",
+        "任务要求高密度视觉"
+      ],
+      "controlled_test": "只去掉次要纹理，检查主体关系是否更明确而非信息损失。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.wangmeng.retreat",
+      "method_id": "space.dense_quiet_center",
+      "title": "素庵图",
+      "artist": "王蒙",
+      "tradition": "元末明初山水",
+      "source_url": "https://www.metmuseum.org/art/collection/search/39550",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方描述活跃的山石树木笔触包围居所，居所成为相对宁静的区域。",
+      "interpretation": "本项目解读：秩序也可以存在于密集画面，不能把极简当作唯一美学。",
+      "transfer_hypothesis": "把密集方向与纹理组织到一个较安静的核心，保持核心必要信息可辨。",
+      "keywords": [
+        "密集",
+        "包围",
+        "安静中心",
+        "纹理",
+        "秩序",
+        "dense",
+        "enclosure",
+        "calm"
+      ],
+      "modes": [
+        "layered",
+        "planar",
+        "camera"
+      ],
+      "operations": [
+        "layout",
+        "texture"
+      ],
+      "do_not_transfer": [
+        "不复制隐士仙鹤鹿与灵芝符号",
+        "不把密集等同噪点堆叠"
+      ],
+      "avoid_when": [
+        "只允许调曝光",
+        "密集区域会遮蔽指定产品轮廓"
+      ],
+      "controlled_test": "保持元素数量，改变方向和密度分工，比较核心是否稳定。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.shitao.returning",
+      "method_id": "space.text_image_rhythm",
+      "title": "归棹册",
+      "artist": "石涛",
+      "tradition": "清代册页",
+      "source_url": "https://www.metmuseum.org/art/collection/search/49173",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方描述诗、书、画共同构成表达单元，山水与花卉交替，作品适合逐对缓慢观看。",
+      "interpretation": "本项目解读：系列一致性可以来自文字与图像的组织逻辑，不必重复同一媒介外观。",
+      "transfer_hypothesis": "让文字形态和图像方向呼应，在系列中安排紧凑与停顿；单图不冒充验证了序列体验。",
+      "keywords": [
+        "文字",
+        "图像",
+        "系列",
+        "节奏",
+        "交替",
+        "观看",
+        "sequence",
+        "typography",
+        "rhythm"
+      ],
+      "modes": [
+        "sequential",
+        "planar"
+      ],
+      "operations": [
+        "layout",
+        "content",
+        "texture"
+      ],
+      "do_not_transfer": [
+        "不复制诗文印章和笔迹",
+        "不把全部作品强制统一成书法水墨"
+      ],
+      "avoid_when": [
+        "必须逐字保持原排版",
+        "仅一张静帧却声称验证运镜节奏"
+      ],
+      "controlled_test": "跨题材改变内容，检查仍被保留的是阅读关系而非相同符号。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.raphael.athens",
+      "method_id": "space.group_hierarchy",
+      "title": "雅典学院",
+      "artist": "拉斐尔",
+      "tradition": "意大利文艺复兴",
+      "source_url": "https://www.museivaticani.va/content/museivaticani/en/collezioni/musei/stanze-di-raffaello/stanza-della-segnatura/scuola-di-atene.html",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方说明哲学家置于宏大的建筑内，中间为柏拉图与亚里士多德，其他人物形成不同活动。",
+      "interpretation": "本项目解读：中心与群组的分工可组织多种信息，中心不是所有任务的默认答案。",
+      "transfer_hypothesis": "通过建筑或版面轴线连接主组与次组，每组有明确任务，避免所有元素等强。",
+      "keywords": [
+        "群像",
+        "群组",
+        "中心",
+        "建筑",
+        "信息层级",
+        "group",
+        "hierarchy",
+        "axis"
+      ],
+      "modes": [
+        "camera",
+        "planar"
+      ],
+      "operations": [
+        "layout",
+        "content"
+      ],
+      "do_not_transfer": [
+        "不复制哲学家服装姿态与古典建筑组合",
+        "不强制每张图对称居中"
+      ],
+      "avoid_when": [
+        "任务要求分散或并行阅读",
+        "原机位和构图完全锁死"
+      ],
+      "controlled_test": "固定人物数量，对比平均摆放与分组连接的信息读序。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.caravaggio.emmaus",
+      "method_id": "space.light_gesture_event",
+      "title": "以马忤斯的晚餐",
+      "artist": "卡拉瓦乔",
+      "tradition": "意大利巴洛克",
+      "source_url": "https://www.nationalgallery.org.uk/paintings/michelangelo-merisi-da-caravaggio-the-supper-at-emmaus",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方说明突出的动作、透视缩短与强明暗共同强化人物认出基督的瞬间。",
+      "interpretation": "本项目解读：光与动作可以指向同一事件，而不是分别追求戏剧性。",
+      "transfer_hypothesis": "把关键手势、面部和受光关系连在一起，降低无关高对比竞争点。",
+      "keywords": [
+        "事件",
+        "动作",
+        "手势",
+        "明暗",
+        "强光",
+        "聚焦",
+        "lighting",
+        "gesture",
+        "event"
+      ],
+      "modes": [
+        "camera",
+        "planar"
+      ],
+      "operations": [
+        "lighting",
+        "layout",
+        "exposure"
+      ],
+      "do_not_transfer": [
+        "不复制宗教人物与桌面符号",
+        "不将重阴影强加到产品必看细节"
+      ],
+      "avoid_when": [
+        "任务禁止改光向",
+        "手势身份被锁定且所选光会遮蔽它"
+      ],
+      "controlled_test": "保留动作只调整光的竞争位置，检查事件是否更容易读到。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.cezanne.apples_pears",
+      "method_id": "space.bounded_multiple_viewpoints",
+      "title": "苹果与梨静物",
+      "artist": "保罗·塞尚",
+      "tradition": "后印象派",
+      "source_url": "https://www.metmuseum.org/art/collection/search/435883",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方说明画家从正面、上方与侧面观察水果、盘子和桌面，没有坚持传统单点透视。",
+      "interpretation": "本项目解读：不同观察方向可以有组织地共存，但不能用来掩盖精确产品图的错误。",
+      "transfer_hypothesis": "在允许平面重组的作品中明确不同区域的观察方式，同时保留识别对象的锚点。",
+      "keywords": [
+        "多视点",
+        "静物",
+        "形体",
+        "重组",
+        "观察方向",
+        "multiple",
+        "viewpoints",
+        "stilllife"
+      ],
+      "modes": [
+        "multiple_viewpoints",
+        "planar"
+      ],
+      "operations": [
+        "geometry",
+        "layout"
+      ],
+      "do_not_transfer": [
+        "不复制果盘摆法和色板",
+        "不破坏被要求准确还原的车辆或人脸"
+      ],
+      "avoid_when": [
+        "摄影式透视必须一致",
+        "任何严格复刻或局部修改"
+      ],
+      "controlled_test": "保留内容，比较单一投影与明确分区的多视点是否增强本次表达。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.braque.guitar",
+      "method_id": "space.recognition_in_fragments",
+      "title": "持吉他的人",
+      "artist": "乔治·布拉克",
+      "tradition": "分析立体主义",
+      "source_url": "https://www.moma.org/audio/playlist/296/21",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方讲解讨论线面在前进后退和实虚之间的歧义，同时指出人脸与乐器等可识别线索。",
+      "interpretation": "本项目解读：破碎构成仍需可读锚点；随机切碎并不等于有效多视点。",
+      "transfer_hypothesis": "将形面拆分限定在允许区域，并保留关键轮廓或孔洞帮助识别。",
+      "keywords": [
+        "切面",
+        "碎片",
+        "识别锚点",
+        "多视点",
+        "形面",
+        "fragments",
+        "recognition"
+      ],
+      "modes": [
+        "multiple_viewpoints",
+        "planar"
+      ],
+      "operations": [
+        "geometry",
+        "layout",
+        "texture"
+      ],
+      "do_not_transfer": [
+        "不复制吉他人脸与绳索符号组合",
+        "不把错手错车体解释为艺术"
+      ],
+      "avoid_when": [
+        "身份与几何精度是硬验收",
+        "用户要求自然摄影"
+      ],
+      "controlled_test": "减少一组碎片但保持锚点，检查识别与表达是否同时改善。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.monet.bridge",
+      "method_id": "space.surface_reflection_layers",
+      "title": "睡莲池上的桥",
+      "artist": "克劳德·莫奈",
+      "tradition": "印象派",
+      "source_url": "https://www.metmuseum.org/art/collection/search/437127",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方说明竖幅安排突出睡莲和倒影，并区分水面、树影与桥的阴影。",
+      "interpretation": "本项目解读：空间不仅存在于物体背后，也可由同一表面的不同视觉层次构成。",
+      "transfer_hypothesis": "区分表面物体、倒影和阴影，使它们服务统一构图；保留材料因果。",
+      "keywords": [
+        "倒影",
+        "水面",
+        "表面",
+        "阴影",
+        "层次",
+        "reflection",
+        "surface",
+        "material"
+      ],
+      "modes": [
+        "camera",
+        "layered",
+        "planar"
+      ],
+      "operations": [
+        "lighting",
+        "texture",
+        "layout"
+      ],
+      "do_not_transfer": [
+        "不复制桥与睡莲组合",
+        "不凭空给非反射材质加镜面倒影"
+      ],
+      "avoid_when": [
+        "只允许局部替换而反射范围不在修改区",
+        "材质不支持此现象"
+      ],
+      "controlled_test": "分别削弱倒影和表面细节，检查材料层次是否仍然可信。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    },
+    {
+      "id": "art.mondrian.broadway",
+      "method_id": "space.rhythmic_intervals",
+      "title": "百老汇爵士乐",
+      "artist": "皮特·蒙德里安",
+      "tradition": "新造型主义",
+      "source_url": "https://www.moma.org/collection/works/78682",
+      "source_checked_on": "2026-09-22",
+      "source_reported_structure": "馆方说明连续色条被多色小段打断，色块交替产生节奏，并与灰白区互相调节。",
+      "interpretation": "本项目解读：节奏来自重复与间隔中的差异，而不是必须使用某组三原色。",
+      "transfer_hypothesis": "以重复单元和少量间隔变化建立平面阅读节奏，色板服从当前任务。",
+      "keywords": [
+        "平面",
+        "节奏",
+        "色块",
+        "间隔",
+        "重复",
+        "变化",
+        "rhythm",
+        "interval",
+        "grid"
+      ],
+      "modes": [
+        "planar",
+        "sequential"
+      ],
+      "operations": [
+        "layout",
+        "color"
+      ],
+      "do_not_transfer": [
+        "不复制原网格与三原色配置",
+        "不把所有品牌改成几何风"
+      ],
+      "avoid_when": [
+        "指定排版不可改",
+        "需要自然空间且不允许平面化"
+      ],
+      "controlled_test": "保留单元种类，只调整间距与例外位置，比较读序而非像不像原作。",
+      "epistemic_status": "source_informed_design_hypothesis",
+      "image_status": "not_bundled_not_inspected_in_this_release"
+    }
+  ]
+}

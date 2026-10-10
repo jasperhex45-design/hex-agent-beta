@@ -1,0 +1,937 @@
+[
+  {
+    "id": "color.01",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "墨青碎金",
+    "tags": [
+      "墨青",
+      "碎金",
+      "水景",
+      "冷暖"
+    ],
+    "when": "已有水面与反射时",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "低明度墨青/青蓝的水体与小面积暖金反射分离",
+      "只重映射已有波纹亮部，纯调色不凭空新增反光星点"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第01条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.02",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "陶土暖灰",
+    "tags": [
+      "陶土",
+      "暖灰",
+      "温暖",
+      "静物"
+    ],
+    "when": "暖静生活场景",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "高光奶油米白、阴影浅褐灰，红橙向陶土收敛",
+      "绿植偏灰绿或橄榄绿，避免全局泛黄而吞掉材质本色"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第02条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.03",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "薄雾灰蓝",
+    "tags": [
+      "薄雾",
+      "灰蓝",
+      "清冷",
+      "冬季"
+    ],
+    "when": "明确想要灰蓝雾感",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "浅灰蓝高光、青蓝阴影，降低远景对比表达距离",
+      "不把灰蓝当脏灰自动去除；纯调色保留既有雾与轮廓，不新增气象"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第03条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.04",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "通透晴天",
+    "tags": [
+      "通透",
+      "晴天",
+      "蓝天",
+      "日景"
+    ],
+    "when": "已有晴天素材或允许设计天气",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "蓝色干净、白色不剪白，绿植有层次而非荧光色",
+      "在原光线中提升中间调可读性；不能仅调色就声称把阴天改晴天"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第04条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.05",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "胶片青橙",
+    "tags": [
+      "青橙",
+      "胶片",
+      "电影",
+      "冷暖"
+    ],
+    "when": "存在冷环境与暖主体/光源对照",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "阴影/中间调柔和青蓝，高光温润琥珀，克制分色",
+      "保留自然肤色和产品本色，无暖光时不强制大量橙色"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第05条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.06",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "复古胶片",
+    "tags": [
+      "复古",
+      "胶片",
+      "暖棕",
+      "褪色"
+    ],
+    "when": "用户明确要记忆感的胶片方向",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "暖棕与轻褪色青绿协调，高光略暖、暗部留层次",
+      "颗粒或柔焦属于额外成像选择，纯调色不强制添加"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第06条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.07",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "柯达Gold氛围",
+    "tags": [
+      "柯达",
+      "Gold",
+      "暖调",
+      "日常"
+    ],
+    "when": "暖自然的日常胶片氛围",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "暖而不过黄，肤色保留区分，红橙更温润、蓝色柔和",
+      "这是文字气质提案，不是经标定的胶片响应曲线或LUT"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第07条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.08",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "石墨青暗调",
+    "tags": [
+      "石墨",
+      "暗调",
+      "城市",
+      "灰青"
+    ],
+    "when": "冷静城市/雨后暗调",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "石墨灰青打底，暗部有冷蓝，已有灯光作少量暖橙点缀",
+      "保留建筑材质与暗部层次，不把整片压成死黑"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第08条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.09",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "侘寂深灰",
+    "tags": [
+      "侘寂",
+      "深灰",
+      "极简",
+      "暗调"
+    ],
+    "when": "明确极简深灰目标",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "深灰/沥青灰为环境，少量木陶暖色作为重点",
+      "深暗是这张图的目标而非通用高级标准，关键纹理仍须可读"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第09条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.10",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "纪实浓郁",
+    "tags": [
+      "纪实",
+      "国家地理",
+      "浓郁",
+      "自然"
+    ],
+    "when": "自然人文的饱满纪实方向",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "蓝绿大地色有区分、原色扎实，人物肤色自然",
+      "对比有力但不过度HDR，不把出版品牌名称当固定滤镜保证"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第10条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.11",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "自然细腻影调",
+    "tags": [
+      "哈苏",
+      "自然",
+      "细腻",
+      "纯净"
+    ],
+    "when": "自然物色与细腻影调",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "减少不必要全局色偏，保留肤色和物体本色关系",
+      "亮部柔和、暗部可读、过渡细腻；不是相机型号模拟承诺"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第11条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.12",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "青橙夜景",
+    "tags": [
+      "青橙",
+      "夜景",
+      "灯光",
+      "商业"
+    ],
+    "when": "已有复杂明暗和光源的夜景",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "环境暗部青蓝/青绿，已有灯光温暖橙色",
+      "局部灯光保亮但不溢色，冷暖遵循空间光源而非平均覆盖"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第12条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.13",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "暖棕暗调",
+    "tags": [
+      "暖棕",
+      "咖啡",
+      "暗调",
+      "文学"
+    ],
+    "when": "明确安静暖棕低调画面",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "深棕、咖啡、黑灰为基底，高光沿原来源保留暖白/暖黄",
+      "黑位可柔和但不冲淡空间，不固定强迫所有画面60%暗部"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第13条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.14",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "蓝调电影",
+    "tags": [
+      "蓝调",
+      "黄昏",
+      "blue hour",
+      "电影"
+    ],
+    "when": "日落后或蓝调方向提案",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "环境深青蓝/墨蓝，原有主体和光源局部保暖",
+      "明暗低调但保留空气层次，不随意把白天光向改变成夜晚"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第14条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.15",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "暗调墨绿花朵",
+    "tags": [
+      "墨绿",
+      "花朵",
+      "植物",
+      "暗调"
+    ],
+    "when": "花卉作为道具主体",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "保持花朵自身颜色，明亮主体与深墨绿背景分离",
+      "純调色不新增水珠、修补花瓣或改变高光来源"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第15条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.16",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "梦幻复古",
+    "tags": [
+      "梦幻",
+      "琥珀",
+      "金红",
+      "复古"
+    ],
+    "when": "暖红琥珀的记忆氛围",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "高光暖橙/米金，阴影青蓝，蓝转青蓝、黄略偏橘红",
+      "纯调色重映射已有光晕，不新增遮住主体的日落光晕"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第16条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.17",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "体积光雨雾",
+    "tags": [
+      "雨雾",
+      "体积光",
+      "丁达尔",
+      "电影"
+    ],
+    "when": "明确允许环境重塑",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "侧后光与薄雨雾共同形成有来源的空间光束",
+      "主体位置比例保留，雨雾不能均匀蒙住近景；这是环境重塑而非纯调色"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第17条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.18",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "马卡龙奶油",
+    "tags": [
+      "马卡龙",
+      "奶油",
+      "富士",
+      "C200",
+      "度假"
+    ],
+    "when": "柔和奶油配色方向",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "浅青、奶油、柔粉等分区清晰，低对比但非灰蒙",
+      "纯调色保留原构图和景深，不因为风格名字就重排为对称建筑"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第18条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.19",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "体积光蓝天",
+    "tags": [
+      "蓝天",
+      "白云",
+      "体积光",
+      "商业"
+    ],
+    "when": "明确允许天气/光向设计",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "蓝天白云与侧后方明暗穿透建立纵深",
+      "主体本色和结构受锁定项约束；不靠8K/32K词宣称真实分辨率"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第19条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  },
+  {
+    "id": "color.20",
+    "version": 1,
+    "kind": "color",
+    "domains": [
+      "person",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "title": "橄榄绿纪实",
+    "tags": [
+      "奥林巴斯",
+      "橄榄绿",
+      "日系",
+      "纪实"
+    ],
+    "when": "绿植与柔和橄榄绿方向",
+    "avoid_when": "不能不加区分地覆盖身份肤色或产品固有色；仅在需求匹配时使用",
+    "rules": [
+      "绿植柔和青橄榄，亮部浅黄绿，暗部沉静灰绿",
+      "自然肤色与产品颜色不被全局染绿；品牌名仅作风格称呼"
+    ],
+    "failure_signals": [
+      "色调超过授权范围",
+      "调色与重新布光混淆"
+    ],
+    "scopes": [
+      "create",
+      "edit",
+      "color_only",
+      "relight",
+      "scene"
+    ],
+    "requires_reference_role": "",
+    "conflicts": [],
+    "status": "seed",
+    "sources": [
+      {
+        "label": "用户本轮提供的AI调色提示词交互模板库.html，第20条；重新拆分权限与可见规则",
+        "url": "",
+        "kind": "user_material",
+        "checked_at": "2026-09-19"
+      }
+    ],
+    "evidence": []
+  }
+]

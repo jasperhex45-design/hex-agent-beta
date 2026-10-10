@@ -1,0 +1,28 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "direction_id": {
+      "minLength": 1,
+      "title": "Direction Id",
+      "type": "string"
+    },
+    "source_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Digest",
+      "type": "string"
+    },
+    "text": {
+      "maxLength": 6000,
+      "minLength": 1,
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "direction_id",
+    "source_digest",
+    "text"
+  ],
+  "title": "DirectionTranslation",
+  "type": "object"
+}

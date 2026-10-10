@@ -1,0 +1,76 @@
+{
+  "$defs": {
+    "Observation": {
+      "additionalProperties": false,
+      "properties": {
+        "target_id": {
+          "title": "Target Id",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "met",
+            "not_met",
+            "uncertain"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "evidence": {
+          "title": "Evidence",
+          "type": "string"
+        },
+        "correction": {
+          "title": "Correction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_id",
+        "verdict",
+        "evidence",
+        "correction"
+      ],
+      "title": "Observation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "enum": [
+        "ready_for_user",
+        "revise",
+        "uncertain"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "observations": {
+      "items": {
+        "$ref": "#/$defs/Observation"
+      },
+      "title": "Observations",
+      "type": "array"
+    },
+    "preserve": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Preserve",
+      "type": "array"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision",
+    "observations",
+    "preserve",
+    "revision"
+  ],
+  "title": "Review",
+  "type": "object"
+}

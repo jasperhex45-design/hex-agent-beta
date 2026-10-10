@@ -1,0 +1,55 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "minLength": 2,
+      "title": "Title",
+      "type": "string"
+    },
+    "tags": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Tags",
+      "type": "array"
+    },
+    "visible_facts": {
+      "minLength": 10,
+      "title": "Visible Facts",
+      "type": "string"
+    },
+    "transfer": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Transfer",
+      "type": "array"
+    },
+    "do_not_transfer": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Do Not Transfer",
+      "type": "array"
+    },
+    "uncertainty": {
+      "minLength": 2,
+      "title": "Uncertainty",
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "tags",
+    "visible_facts",
+    "transfer",
+    "do_not_transfer",
+    "uncertainty"
+  ],
+  "title": "LibraryObservation",
+  "type": "object"
+}

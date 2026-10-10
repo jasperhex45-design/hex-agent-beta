@@ -1,0 +1,360 @@
+[
+  {
+    "id": "grammar.mobile_layered_space",
+    "version": 1,
+    "title": "移动观看与层叠空间",
+    "traditions": [
+      "chinese_handscroll"
+    ],
+    "operation": "把观看当成沿空间展开的路径，用近中远、遮挡和停顿让画面在移动阅读中逐步显现。",
+    "application_rule": "当表达需要行进、发现、回看或多段关系，而单一固定视点会压平体验时使用。",
+    "actions": [
+      "写清观看入口、主体段落和远处停顿。",
+      "用近中远与遮挡组织层次，不用虚化代替空间。",
+      "为每个段落指定首读与回看关系。"
+    ],
+    "tradeoff": "信息不是一眼全部给出，缩略图即时性会下降。",
+    "counter_example": "所有元素在同一平面平均展开，只有风格纹理没有观看路径。",
+    "transfer": [
+      "移动观看",
+      "层叠空间",
+      "停顿与回看"
+    ],
+    "do_not_transfer": [
+      "原作人物、故事、题材符号",
+      "手卷格式本身除非任务需要"
+    ],
+    "source_ids": [
+      "S11",
+      "S12"
+    ],
+    "domains": [
+      "person",
+      "illustration",
+      "poster",
+      "character"
+    ],
+    "epistemic_status": "experimental_structural_hypothesis"
+  },
+  {
+    "id": "grammar.fixed_frame_depth",
+    "version": 1,
+    "title": "固定框景与透视深度",
+    "traditions": [
+      "western_painting",
+      "cinematography"
+    ],
+    "operation": "在一个固定画框内建立入口、主体、背景和退远方向，让透视、遮挡、明暗或空气层次共同解释深度。",
+    "application_rule": "当信息需要一眼建立空间事实、主体位置和明确观看距离时使用。",
+    "actions": [
+      "确定观察位置和画框边界。",
+      "用线性/尺度/明暗/空气层次至少两种证据解释远近。",
+      "保留边缘裁切或框景的压力作为表达变量。"
+    ],
+    "tradeoff": "空间路径更稳定，但多视点和时间展开被压缩。",
+    "counter_example": "只加广角、景深或电影感词，主体比例和空间关系仍未定义。",
+    "transfer": [
+      "固定观看关系",
+      "框景",
+      "透视与层次协同"
+    ],
+    "do_not_transfer": [
+      "某位画家的原构图",
+      "把透视当作唯一高级标准"
+    ],
+    "source_ids": [
+      "S01",
+      "S02",
+      "S03",
+      "S04"
+    ],
+    "domains": [
+      "person",
+      "illustration",
+      "poster",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "experimental_structural_hypothesis"
+  },
+  {
+    "id": "grammar.negative_space_function",
+    "version": 1,
+    "title": "有功能的留白",
+    "traditions": [
+      "chinese_painting",
+      "modernist_design"
+    ],
+    "operation": "把空白当作呼吸、尺度、出口、延迟或文字承载区，与实形共同完成意义。",
+    "application_rule": "当主体需要孤独、距离、方向出口、停顿或海报信息空间时使用。",
+    "actions": [
+      "明确空白服务的表达功能。",
+      "测试遮住或收紧空白后意义是否改变。",
+      "让边界、方向线或文字与空白发生关系。"
+    ],
+    "tradeoff": "空白增多会降低即时信息密度，需要更准确的主次。",
+    "counter_example": "留白只是空出来的背景，删掉后画面意义不变。",
+    "transfer": [
+      "空间呼吸",
+      "尺度对照",
+      "视线出口"
+    ],
+    "do_not_transfer": [
+      "把“空”固定成低饱和或极简画风"
+    ],
+    "source_ids": [
+      "S01",
+      "S02",
+      "S07",
+      "S12"
+    ],
+    "domains": [
+      "person",
+      "illustration",
+      "poster",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "experimental_structural_hypothesis"
+  },
+  {
+    "id": "grammar.planometric_space",
+    "version": 1,
+    "title": "平面化与多视点空间",
+    "traditions": [
+      "chinese_landscape",
+      "cartographic_painting"
+    ],
+    "operation": "允许不同区域采用不同视点或平面化尺度，让空间承载更完整的关系，而不追求单一消失点。",
+    "application_rule": "当任务需要同时读到路线、层级、全景关系或不可从单一视点看全的场面时使用。",
+    "actions": [
+      "声明哪些区域使用不同视点。",
+      "用重复地标、方向线或尺度锚点保持整体可读。",
+      "在局部平面化与主体识别之间设定取舍。"
+    ],
+    "tradeoff": "空间更完整但写实统一性下降，需防止像拼贴地图。",
+    "counter_example": "所有对象都用同一透视，却无法同时呈现路线和整体关系。",
+    "transfer": [
+      "多视点",
+      "平面化",
+      "关系优先于单一透视"
+    ],
+    "do_not_transfer": [
+      "把非透视当成中国画全部特征",
+      "直接复制地图或名画布局"
+    ],
+    "source_ids": [
+      "S13",
+      "S11"
+    ],
+    "domains": [
+      "illustration",
+      "poster",
+      "character"
+    ],
+    "epistemic_status": "experimental_structural_hypothesis"
+  },
+  {
+    "id": "grammar.scale_relation",
+    "version": 1,
+    "title": "尺度差与人境关系",
+    "traditions": [
+      "shanshui",
+      "mise_en_scene"
+    ],
+    "operation": "用主体与环境的尺度差决定观者站位，让环境成为表达承载者而非装饰背景。",
+    "application_rule": "当孤独、压迫、渺小、行旅或环境依存关系比主体肖像更重要时使用。",
+    "actions": [
+      "明确主体相对环境的尺度角色。",
+      "用前景入口、中景动作和远景承载关系。",
+      "去掉主体或环境做反事实检查。"
+    ],
+    "tradeoff": "主体细节减少，需保证姿态或方向仍能读到。",
+    "counter_example": "主体占满画面，环境只剩纹理和色块。",
+    "transfer": [
+      "尺度对照",
+      "环境承载表达",
+      "前中后景关系"
+    ],
+    "do_not_transfer": [
+      "把小人物自动解释成东方意境",
+      "牺牲用户要求的身份细节"
+    ],
+    "source_ids": [
+      "S04",
+      "S12"
+    ],
+    "domains": [
+      "person",
+      "illustration",
+      "poster",
+      "vehicle",
+      "character"
+    ],
+    "epistemic_status": "experimental_structural_hypothesis"
+  },
+  {
+    "id": "grammar.directional_gesture",
+    "version": 1,
+    "title": "方向线与观看动势",
+    "traditions": [
+      "calligraphic_brushwork",
+      "western_composition"
+    ],
+    "operation": "让线、姿态、山脊、文字或光带形成主导向量，并安排回收或反向力量。",
+    "application_rule": "当画面需要行进、抵抗、回望、冲突或阅读路径时使用。",
+    "actions": [
+      "只选一条主导方向和最多两条支持方向。",
+      "让主体姿态与环境线条互相连接或有意抵抗。",
+      "检查视线是否在关键节点停留后返回。"
+    ],
+    "tradeoff": "动势增强会牺牲静态均衡，过多方向会失去主次。",
+    "counter_example": "每个局部都很有动作，但整体没有方向。",
+    "transfer": [
+      "笔势/线性动势",
+      "对角线",
+      "回收与反向"
+    ],
+    "do_not_transfer": [
+      "把“气韵”写成不可见情绪词",
+      "用速度词替代实际方向关系"
+    ],
+    "source_ids": [
+      "S01",
+      "S02",
+      "S04",
+      "S07"
+    ],
+    "domains": [
+      "person",
+      "illustration",
+      "poster",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "experimental_structural_hypothesis"
+  },
+  {
+    "id": "grammar.luminance_modeling",
+    "version": 1,
+    "title": "明度层与局部塑形",
+    "traditions": [
+      "chiaroscuro",
+      "ink_tone"
+    ],
+    "operation": "把明暗、浓淡、局部高光和环境反射分配给空间层次与主体体积，而不是覆盖统一滤镜。",
+    "application_rule": "当材质、体积、空间分离或情绪需要由光色结构承担时使用。",
+    "actions": [
+      "指定最强明度对比的表达任务。",
+      "分别写主体塑形、背景分离和环境反射。",
+      "灰度检查主次和空间层次。"
+    ],
+    "tradeoff": "整体色彩自由度受明度秩序约束，局部对比不能无限增加。",
+    "counter_example": "颜色漂亮但主体、背景和投影没有因果关系。",
+    "transfer": [
+      "浓淡层级",
+      "明暗塑形",
+      "局部对比"
+    ],
+    "do_not_transfer": [
+      "把水墨或油画当成统一滤镜",
+      "用“高级光影”替代光源关系"
+    ],
+    "source_ids": [
+      "S05",
+      "S07"
+    ],
+    "domains": [
+      "person",
+      "illustration",
+      "poster",
+      "vehicle",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "experimental_structural_hypothesis"
+  },
+  {
+    "id": "grammar.surface_density",
+    "version": 1,
+    "title": "表面密度服从观看尺度",
+    "traditions": [
+      "brush_texture",
+      "painterly_surface"
+    ],
+    "operation": "让笔触、颗粒、边缘软硬和细节密度随空间层次与观看尺度变化，表面服务结构。",
+    "application_rule": "当媒介感或绘画性是表达的一部分，且需要避免全画面同质纹理时使用。",
+    "actions": [
+      "指定纹理出现的层级和范围。",
+      "近景保留可读笔触，远景压缩细节并维护轮廓。",
+      "缩小检查纹理是否抢过主结构。"
+    ],
+    "tradeoff": "局部材质更强，整体统一需要更精确的密度控制。",
+    "counter_example": "全图覆盖颗粒/水粉/油画笔触，空间和主次被抹平。",
+    "transfer": [
+      "局部笔触",
+      "边缘控制",
+      "细节密度"
+    ],
+    "do_not_transfer": [
+      "把媒介名称当成结构完成",
+      "用颗粒遮盖构图问题"
+    ],
+    "source_ids": [
+      "S02",
+      "S05",
+      "S07"
+    ],
+    "domains": [
+      "person",
+      "illustration",
+      "poster",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "experimental_structural_hypothesis"
+  },
+  {
+    "id": "grammar.frame_sequence",
+    "version": 1,
+    "title": "画幅作为阅读容器",
+    "traditions": [
+      "handscroll",
+      "poster_layout",
+      "modernist_design"
+    ],
+    "operation": "把画幅边界、裁切、折叠或版面分区当成阅读节奏的一部分，而不是最后加的外框。",
+    "application_rule": "当海报、长幅、系列或需要信息分段的静帧中，容器本身参与表达时使用。",
+    "actions": [
+      "明确入口、主图、停顿区和出口。",
+      "让裁切/边界改变主体与画外空间的关系。",
+      "文字加入前先检查图块关系仍可读。"
+    ],
+    "tradeoff": "版式结构更强，但自由铺陈和局部完整性下降。",
+    "counter_example": "先生成一张散图，最后把文字贴上去，主次和阅读路径互相冲突。",
+    "transfer": [
+      "画幅行为",
+      "分区与停顿",
+      "画外空间"
+    ],
+    "do_not_transfer": [
+      "复制原作文字、品牌或整套版式",
+      "把长卷直接当作海报模板"
+    ],
+    "source_ids": [
+      "S01",
+      "S02",
+      "S11"
+    ],
+    "domains": [
+      "illustration",
+      "poster",
+      "character",
+      "prop"
+    ],
+    "epistemic_status": "experimental_structural_hypothesis"
+  }
+]

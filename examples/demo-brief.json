@@ -1,0 +1,24 @@
+{
+  "title": "把午后装进玻璃瓶",
+  "request": "做一张虚构香氛瓶的产品图，安静但不要灰，像午后房间里的一小块阳光，有精致感，不要堆花和道具。",
+  "domain": "prop",
+  "scope": "create",
+  "targets": [
+    "image",
+    "nano",
+    "midjourney",
+    "seedream"
+  ],
+  "must_keep": [
+    "画面只有一只透明方形香氛瓶作为主体",
+    "瓶身不出现品牌与文字"
+  ],
+  "avoid": [
+    "大面积灰雾",
+    "花束和无关装饰"
+  ],
+  "references": [],
+  "exploration_allowed": true,
+  "color_style": null,
+  "public_search_hint": "glass fragrance bottle warm window light product photography"
+}

@@ -1,0 +1,859 @@
+{
+  "$defs": {
+    "BriefChange": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "anyOf": [
+            {
+              "enum": [
+                "person",
+                "illustration",
+                "poster",
+                "vehicle",
+                "character",
+                "prop"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Domain"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "create",
+                "edit",
+                "color_only",
+                "relight",
+                "scene"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Scope"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "must_keep": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Must Keep"
+        },
+        "avoid": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Avoid"
+        },
+        "targets": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Targets"
+        }
+      },
+      "required": [
+        "domain",
+        "scope",
+        "source_refs",
+        "must_keep",
+        "avoid",
+        "targets"
+      ],
+      "title": "BriefChange",
+      "type": "object"
+    },
+    "ConstraintEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "enum": [
+            "must_keep",
+            "avoid"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "user_explicit",
+            "user_confirmed",
+            "scope_rule"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "text",
+        "kind",
+        "source_refs",
+        "rule_id"
+      ],
+      "title": "ConstraintEvidence",
+      "type": "object"
+    },
+    "DirectionDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "intent_summary": {
+          "minLength": 1,
+          "title": "Intent Summary",
+          "type": "string"
+        },
+        "viewer_relation": {
+          "minLength": 1,
+          "title": "Viewer Relation",
+          "type": "string"
+        },
+        "subject_state": {
+          "minLength": 1,
+          "title": "Subject State",
+          "type": "string"
+        },
+        "spatial_organization": {
+          "minLength": 1,
+          "title": "Spatial Organization",
+          "type": "string"
+        },
+        "dominant_decision": {
+          "minLength": 1,
+          "title": "Dominant Decision",
+          "type": "string"
+        },
+        "supporting_decisions": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Supporting Decisions",
+          "type": "array"
+        },
+        "reference_evidence": {
+          "items": {
+            "$ref": "#/$defs/DirectionEvidence"
+          },
+          "maxItems": 5,
+          "title": "Reference Evidence",
+          "type": "array"
+        },
+        "expected_effect": {
+          "minLength": 1,
+          "title": "Expected Effect",
+          "type": "string"
+        },
+        "tradeoff": {
+          "minLength": 1,
+          "title": "Tradeoff",
+          "type": "string"
+        },
+        "authority": {
+          "const": "agent_hypothesis",
+          "default": "agent_hypothesis",
+          "title": "Authority",
+          "type": "string"
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
+        "first_visual_focus": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Visual Focus"
+        },
+        "subject_relation": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Relation"
+        },
+        "proposal_kind": {
+          "default": "direction",
+          "enum": [
+            "direction",
+            "same_direction_variant"
+          ],
+          "title": "Proposal Kind",
+          "type": "string"
+        },
+        "base_direction_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base Direction Id"
+        },
+        "variation_axes": {
+          "items": {
+            "enum": [
+              "camera_angle",
+              "color_temperature",
+              "focal_length"
+            ],
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Variation Axes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "intent_summary",
+        "viewer_relation",
+        "subject_state",
+        "spatial_organization",
+        "dominant_decision",
+        "supporting_decisions",
+        "reference_evidence",
+        "expected_effect",
+        "tradeoff",
+        "authority",
+        "purpose",
+        "first_visual_focus",
+        "subject_relation",
+        "proposal_kind",
+        "base_direction_id",
+        "variation_axes"
+      ],
+      "title": "DirectionDraft",
+      "type": "object"
+    },
+    "DirectionEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "reference",
+            "host_visible_reference",
+            "feedback"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "evidence_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Digest",
+          "type": "string"
+        },
+        "quote": {
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "evidence_digest",
+        "quote"
+      ],
+      "title": "DirectionEvidence",
+      "type": "object"
+    },
+    "DirectionReview": {
+      "additionalProperties": false,
+      "properties": {
+        "route": {
+          "enum": [
+            "direct",
+            "ask"
+          ],
+          "title": "Route",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "user_explicit",
+            "user_delegated",
+            "bounded_autonomy",
+            "unresolved_tradeoff"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "question_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Question Id"
+        }
+      },
+      "required": [
+        "route",
+        "basis",
+        "reason",
+        "source_refs",
+        "question_id"
+      ],
+      "title": "DirectionReview",
+      "type": "object"
+    },
+    "KnowledgeNeed": {
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "title": "Query",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "task",
+            "style",
+            "composition",
+            "lighting",
+            "color",
+            "material",
+            "constraint"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query",
+        "kind",
+        "reason"
+      ],
+      "title": "KnowledgeNeed",
+      "type": "object"
+    },
+    "QuestionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "question": {
+          "title": "Question",
+          "type": "string"
+        },
+        "affected_decision": {
+          "title": "Affected Decision",
+          "type": "string"
+        },
+        "decision_type": {
+          "enum": [
+            "identity",
+            "text",
+            "scope",
+            "reference_role",
+            "expression",
+            "technical"
+          ],
+          "title": "Decision Type",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "answered",
+            "withdrawn"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/DirectionDraft"
+          },
+          "maxItems": 3,
+          "title": "Options",
+          "type": "array"
+        },
+        "recommended_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recommended Id"
+        },
+        "selected_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Id"
+        },
+        "selection_source": {
+          "anyOf": [
+            {
+              "enum": [
+                "user_selected",
+                "user_explicit",
+                "user_delegated"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selection Source"
+        },
+        "answer_options_digest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Answer Options Digest"
+        },
+        "delegation_scope": {
+          "default": "",
+          "title": "Delegation Scope",
+          "type": "string"
+        },
+        "supersedes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supersedes"
+        }
+      },
+      "required": [
+        "id",
+        "question",
+        "affected_decision",
+        "decision_type",
+        "status",
+        "reason",
+        "source_refs",
+        "options",
+        "recommended_id",
+        "selected_id",
+        "selection_source",
+        "answer_options_digest",
+        "delegation_scope",
+        "supersedes"
+      ],
+      "title": "QuestionRecord",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "quote": {
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "quote"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "TaskUnderstanding": {
+      "additionalProperties": false,
+      "properties": {
+        "task_mode": {
+          "enum": [
+            "open_creation",
+            "reference_transfer",
+            "local_edit"
+          ],
+          "title": "Task Mode",
+          "type": "string"
+        },
+        "purpose": {
+          "title": "Purpose",
+          "type": "string"
+        },
+        "audience": {
+          "title": "Audience",
+          "type": "string"
+        },
+        "change_scope": {
+          "title": "Change Scope",
+          "type": "string"
+        },
+        "preserve": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preserve",
+          "type": "array"
+        },
+        "reference_roles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reference Roles",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_mode",
+        "purpose",
+        "audience",
+        "change_scope",
+        "preserve",
+        "reference_roles"
+      ],
+      "title": "TaskUnderstanding",
+      "type": "object"
+    },
+    "VisualResearchAssessment": {
+      "additionalProperties": false,
+      "description": "Host interpretation of this task, independent of generation references.",
+      "properties": {
+        "route": {
+          "enum": [
+            "study",
+            "specified_direction",
+            "bounded_edit",
+            "user_waived"
+          ],
+          "title": "Route",
+          "type": "string"
+        },
+        "trigger": {
+          "enum": [
+            "open_brief",
+            "explicit_research",
+            "rejected_direction",
+            "user_specified_target",
+            "local_change",
+            "user_prohibited_study"
+          ],
+          "title": "Trigger",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "visual_question": {
+          "title": "Visual Question",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "route",
+        "trigger",
+        "reason",
+        "visual_question",
+        "source_refs"
+      ],
+      "title": "VisualResearchAssessment",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "domain": {
+      "enum": [
+        "person",
+        "illustration",
+        "poster",
+        "vehicle",
+        "character",
+        "prop"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "intent": {
+      "title": "Intent",
+      "type": "string"
+    },
+    "subject": {
+      "title": "Subject",
+      "type": "string"
+    },
+    "desired_feeling": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Desired Feeling",
+      "type": "array"
+    },
+    "must_keep": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Must Keep",
+      "type": "array"
+    },
+    "avoid": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Avoid",
+      "type": "array"
+    },
+    "assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Assumptions",
+      "type": "array"
+    },
+    "questions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Questions",
+      "type": "array"
+    },
+    "knowledge_needs": {
+      "items": {
+        "$ref": "#/$defs/KnowledgeNeed"
+      },
+      "title": "Knowledge Needs",
+      "type": "array"
+    },
+    "public_queries": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Public Queries",
+      "type": "array"
+    },
+    "constraint_evidence": {
+      "items": {
+        "$ref": "#/$defs/ConstraintEvidence"
+      },
+      "title": "Constraint Evidence",
+      "type": "array"
+    },
+    "question_records": {
+      "items": {
+        "$ref": "#/$defs/QuestionRecord"
+      },
+      "title": "Question Records",
+      "type": "array"
+    },
+    "understanding": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TaskUnderstanding"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "brief_change": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BriefChange"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "direction_review": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DirectionReview"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "visual_research": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VisualResearchAssessment"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "domain",
+    "intent",
+    "subject",
+    "desired_feeling",
+    "must_keep",
+    "avoid",
+    "assumptions",
+    "questions",
+    "knowledge_needs",
+    "public_queries",
+    "constraint_evidence",
+    "question_records",
+    "understanding",
+    "brief_change",
+    "direction_review",
+    "visual_research"
+  ],
+  "title": "Need",
+  "type": "object"
+}

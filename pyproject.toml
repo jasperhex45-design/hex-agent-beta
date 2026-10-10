@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cl-hex"
+version = "0.3.8"
+description = "Hex Agent visual creation assistant: intent, art direction, model-aware prompts and evidence-bound execution."
+readme = "README.md"
+license = "CC-BY-NC-4.0"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+requires-python = ">=3.11"
+dependencies = ["httpx==0.28.1", "pydantic==2.13.4", "Pillow==12.3.0"]
+
+[project.optional-dependencies]
+test = ["pytest==9.0.2"]
+
+[project.scripts]
+cl-hex = "liu_agent.cli:main"
+hex-agent = "liu_agent.windows_runtime:main"
+liu-agent = "liu_agent.cli:main"
+
+[project.urls]
+Repository = "https://github.com/jasperhex45-design/hex-agent"
+
+[tool.setuptools.packages.find]
+include = ["liu_agent*", "hex_agent*", "cl_hex*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers"

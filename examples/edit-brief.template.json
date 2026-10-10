@@ -1,0 +1,28 @@
+{
+  "title": "基于自己的图片编辑",
+  "request": "保留图片中的主体和构图，只改变色彩与曝光。希望安静通透，色调参考陶土暖灰，但主体本色不被统一染黄。",
+  "domain": "prop",
+  "scope": "color_only",
+  "targets": [
+    "image",
+    "nano",
+    "seedream"
+  ],
+  "must_keep": [
+    "主体形态、构图、光向及阴影结构不变"
+  ],
+  "avoid": [
+    "把调色变成换背景或新增灯光"
+  ],
+  "references": [
+    {
+      "id": "source",
+      "path": "../inputs/my-source.png",
+      "role": "scene",
+      "note": "这是编辑画布，全部结构与原生光向以它为准",
+      "rights": "unknown"
+    }
+  ],
+  "color_style": "color.02",
+  "public_search_hint": ""
+}

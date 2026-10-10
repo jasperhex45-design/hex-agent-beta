@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "description": "Bridge a seen aesthetic card to this task's actual design.",
+  "properties": {
+    "selected_card_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Selected Card Ids",
+      "type": "array"
+    },
+    "dominant_decision": {
+      "minLength": 8,
+      "title": "Dominant Decision",
+      "type": "string"
+    },
+    "supporting_mechanism": {
+      "minLength": 8,
+      "title": "Supporting Mechanism",
+      "type": "string"
+    },
+    "visible_test": {
+      "minLength": 12,
+      "title": "Visible Test",
+      "type": "string"
+    },
+    "failure_test": {
+      "minLength": 12,
+      "title": "Failure Test",
+      "type": "string"
+    },
+    "adoption_reason": {
+      "minLength": 8,
+      "title": "Adoption Reason",
+      "type": "string"
+    },
+    "not_selected_reason": {
+      "minLength": 2,
+      "title": "Not Selected Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "selected_card_ids",
+    "dominant_decision",
+    "supporting_mechanism",
+    "visible_test",
+    "failure_test",
+    "adoption_reason",
+    "not_selected_reason"
+  ],
+  "title": "AestheticBinding",
+  "type": "object"
+}

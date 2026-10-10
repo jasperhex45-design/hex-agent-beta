@@ -1,0 +1,24 @@
+{
+  "title": "走廊尽头的停顿",
+  "request": "设计一个影片分镜：一个人走到走廊尽头，发现门后的光突然暗下。他没有开门，停住。紧张来自他和门的关系，不要靠夸张表情或恐怖造型。",
+  "domain": "person",
+  "scope": "create",
+  "targets": [
+    "image",
+    "midjourney"
+  ],
+  "medium": "film_shot",
+  "must_keep": [
+    "只有一个人物",
+    "人物停在门外，不开门"
+  ],
+  "avoid": [
+    "凭空出现怪物"
+  ],
+  "scene_context": "这场戏把“准备进入”变成“怀疑里面发生了什么”。",
+  "previous_shot": "全景交代人物从走廊走向门。",
+  "next_shot": "尚未决定，不能假称有确定后续镜头。",
+  "references": [],
+  "exploration_allowed": true,
+  "public_search_hint": "cinematography corridor doorway suspense blocking light"
+}

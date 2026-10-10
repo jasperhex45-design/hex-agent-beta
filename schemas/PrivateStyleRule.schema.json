@@ -1,0 +1,80 @@
+{
+  "additionalProperties": false,
+  "description": "A user-specific visual tendency with explicit evidence boundaries.",
+  "properties": {
+    "id": {
+      "pattern": "^personal\\.[a-z0-9_.-]{3,80}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "domains": {
+      "items": {
+        "enum": [
+          "person",
+          "illustration",
+          "poster",
+          "vehicle",
+          "character",
+          "prop",
+          "hybrid"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Domains",
+      "type": "array"
+    },
+    "confidence": {
+      "enum": [
+        "confirmed_positive",
+        "supported_interest",
+        "experimental"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "direction": {
+      "maxLength": 1000,
+      "minLength": 3,
+      "title": "Direction",
+      "type": "string"
+    },
+    "visible_checks": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Visible Checks",
+      "type": "array"
+    },
+    "avoid": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Avoid",
+      "type": "array"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 30,
+      "minItems": 1,
+      "title": "Evidence Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "domains",
+    "confidence",
+    "direction",
+    "visible_checks",
+    "avoid",
+    "evidence_ids"
+  ],
+  "title": "PrivateStyleRule",
+  "type": "object"
+}

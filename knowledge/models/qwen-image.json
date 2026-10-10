@@ -1,0 +1,37 @@
+{
+  "id": "qwen-image",
+  "version": 5,
+  "label": "Local Qwen Image 2.1 INT8",
+  "language": "zh",
+  "status": "experimental",
+  "provider_version": "ComfyUI 0.37.2; qwen_image_2.1_int8_convrot.safetensors; qwen3vl_8b_int8_convrot.safetensors; qwen_image_2.1_vae_bf16.safetensors",
+  "last_checked": "2026-10-07",
+  "review_after_days": 30,
+  "writing_rules": [
+    "用具体中文描述主体数量、位置、朝向、材质与环境；把多个物体的相对关系写清，避免只列名词。",
+    "本题准确文案用引号逐字保留，明确文字承载物、朝向和阅读位置；无文案任务不用额外安排文字。",
+    "画面主次、光色和构图应来自同一设计，再独立写成此模型正文；不要把另一模型提示词仅换模型名称。",
+    "当前 CFG=1 路线不使用负向提示，避项要在正向目标状态中表达；本地连接器不自动调用提示词增强器。",
+    "单父图编辑正文先写具体变化及可见目标，再写需求中的保留项；方向相对图像坐标明确表达，不把新动作写成整体重绘。"
+  ],
+  "setup_rules": [
+    "纯文单张 tool=comfyui.qwen-image，仍只接受512、768、1024方图；先冻结 endpoint、width、height、seed。",
+    "单父图编辑 tool=comfyui.qwen-image-edit，TextEncodeQwenImage21 同时连接 images.image_1 与VAE，使用节点输出的64通道latent；不能换为旧16通道latent。",
+    "编辑必须显式冻结reference_resolution为0、512、768或1024；0按父图尺寸取32倍数，其余按约resolution平方像素和原图长宽比取32倍数。width/height须与实际处理尺寸一致；上传原始PNG的尺寸与哈希另行记录。",
+    "Euler/simple、CFG=1，默认25步；可显式选择40或50步。已核对本机原生节点源码和schema，量化模型效果须真实测试。",
+    "局部蒙版编辑另用tool=comfyui.qwen-image-masked-edit：reference_resolution=0且画布为原图32倍数尺寸；冻结任务内同尺寸二值PNG蒙版的路径和SHA256。原图VAEEncode的64通道latent经SetLatentNoiseMask采样，解码后ImageCompositeMasked恢复全部黑色保护区；执行后逐像素核验。",
+    "需要软过渡时必须同时冻结composite_alpha与protection_mask的file/SHA256：alpha在本次目标修改区域的核心为1，过渡范围按本次编辑边界及周边兼容性确定；硬保护白色优先保留原图。有效合成权重为alpha*(1-protection)，对未合成解码RGB仅应用一次。采样范围仍由edit_mask限制；原解码单独保存，不增加采样次数。"
+  ],
+  "limitations": [
+    "普通comfyui.qwen-image-edit仅一张PNG父图且不支持mask；处理尺寸与输出latent来自首张参考，不保证无损、身份或非目标像素不变。两条编辑路线均不支持多参考、透明输出控制、提示词增强或任意工作流。",
+    "蒙版路线保护非目标RGB像素，但蒙版范围和目标内容仍由模型判断；接触引导图仅供验收，不是已接入的姿态条件。区域边界接缝、目标状态和必要接触关系的质量必须看真实图片。",
+    "本机已核对节点和文件；档案存在、节点通过、非目标像素不变均不能代替实际生成与视觉评估。"
+  ],
+  "sources": [
+    {"label":"Qwen Image 2.1 官方模型说明","url":"https://huggingface.co/Qwen/Qwen-Image-2.1","kind":"official","checked_at":"2026-09-29"},
+    {"label":"ComfyUI 官方 Qwen Image 2.1 T2I 模板，CFG与采样参数依据","url":"https://github.com/Comfy-Org/workflow_templates/blob/main/templates/image_qwen_image_2_1_t2i.json","kind":"official","checked_at":"2026-09-29"},
+    {"label":"本地 ComfyUI TextEncodeQwenImage21 及加载器接口","url":"http://127.0.0.1:8188/object_info","kind":"user_material","checked_at":"2026-10-07"},
+    {"label":"ComfyUI原生Qwen参考编码与缩放实现","url":"https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_qwen.py","kind":"official","checked_at":"2026-10-07"}
+  ],
+  "evaluation_files": []
+}

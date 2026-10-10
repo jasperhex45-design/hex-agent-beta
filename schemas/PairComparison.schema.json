@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "choice": {
+      "enum": [
+        "A",
+        "B",
+        "uncertain"
+      ],
+      "title": "Choice",
+      "type": "string"
+    },
+    "evidence": {
+      "title": "Evidence",
+      "type": "string"
+    },
+    "regressions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Regressions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "choice",
+    "evidence",
+    "regressions"
+  ],
+  "title": "PairComparison",
+  "type": "object"
+}

@@ -1,0 +1,219 @@
+{
+  "packet_digest": "filled_by_demo_command",
+  "spec": {
+    "concept": "一块午后光斑，把透明瓶身从温暖的房间里轻轻托出来。",
+    "feeling": "安静而有生命力；精致感来自玻璃边缘、克制的色彩比例和有方向的日光。",
+    "composition": "横向近景，方形香氛瓶位于画面左侧三分之一，机位略高于瓶肩，看见少量肩面；右侧留出连续暖白墙面，瓶底与台面清楚接触。",
+    "lighting": "从画面左后方进入一束真实窗光，瓶体右前侧接受墙面柔和反射；台面投影朝右前延伸，边缘有轻微半影；保留玻璃轮廓，不添加自发光。",
+    "color": "暖奶油白墙面、浅杏色陶质台面、很淡的琥珀色液体；透明玻璃保持中性，阴影仍有清楚的褐灰层次，整幅不覆盖黄色滤镜。",
+    "material": "玻璃有厚度、边缘折射与随形变化的小面积反光；液面水平；浅磨砂金属小瓶盖；台面为细腻陶面，与透明瓶体区分。",
+    "capture": "产品近景，相机位于瓶肩略上方，适度后退再以约85mm全画幅等效取景；这只是构图提案而非实测镜头。瓶体前缘、液面和瓶底接触清楚，墙面轻柔离焦。",
+    "locked_facts": [
+      "画面只有一只透明方形香氛瓶作为主体",
+      "瓶身不出现品牌与文字"
+    ],
+    "changes": [
+      "设计一个不对应现有品牌的瓶型与瓶盖",
+      "选择留白、材质及窗光关系"
+    ],
+    "operations": [
+      "color",
+      "exposure",
+      "lighting",
+      "geometry",
+      "layout",
+      "content",
+      "texture"
+    ],
+    "selected_knowledge_ids": [
+      "task.prop.hero",
+      "style.restrained",
+      "material.glass",
+      "lighting.hard",
+      "composition.hierarchy"
+    ],
+    "assumptions": [
+      "当前没有实物参考，瓶型与瓶盖由本次创作设计，不能声称还原某品牌。",
+      "采用横幅近景，适用于展示；用户尚未规定画幅。"
+    ],
+    "evidence_targets": [
+      {
+        "id": "afternoon-light",
+        "criterion": "午后安静感是由可读空间光线而非黄滤镜表达吗？",
+        "visible_evidence": "瓶身局部折射、左后光与右前投影相互解释，中性玻璃与有层次阴影仍可见。"
+      },
+      {
+        "id": "glass-depth",
+        "criterion": "透明玻璃与陶面、金属是否各有可信的体积和表面反应？",
+        "visible_evidence": "水平液面、可读边缘厚度、瓶底接触和有限反光共同形成玻璃体积，不是自发光塑料。"
+      },
+      {
+        "id": "whole",
+        "criterion": "窗光、瓶体、投影与负空间是否构成一个安静但有活力的整体？",
+        "visible_evidence": "第一眼读到产品和阳光关系；暖白、浅杏与淡琥珀分层；无需无关装饰撑场。"
+      }
+    ]
+  },
+  "compilation": {
+    "prompts": [
+      {
+        "target": "image",
+        "text": "生成一张虚构香氛产品的横幅摄影图：一只无品牌透明方形香氛瓶，装少量淡琥珀液体，配小巧浅磨砂金属瓶盖。瓶子位于左侧三分之一，站在浅杏色陶面上，右侧是连续暖白墙面的安静留白。机位略高于瓶肩，保留少量肩面与完整瓶底。午后窗光从左后方进入，投影向右前方延伸，墙面提供柔和反射，让玻璃既有清楚厚度和折射，又不是整圈发光。保留水平液面、瓶底接触和随形小面积反光。色彩以暖白、杏色和淡琥珀构成，透明玻璃仍保持中性，不用统一黄滤镜或灰雾。近距离、低畸变产品摄影观感，瓶体前缘清楚，墙面轻柔离焦。不要用花束或装饰填满留白。",
+        "translated_locks": [
+          "画面只有一只透明方形香氛瓶作为主体",
+          "瓶身不出现品牌与文字"
+        ],
+        "setup_notes": [
+          "文生图；无需参考素材。画幅在模型界面选择横向。"
+        ],
+        "limitations": [
+          "作者编写的演示提示词，尚未调用图像模型验证。"
+        ]
+      },
+      {
+        "target": "nano",
+        "text": "文生图，制作一张安静、温暖且不发灰的虚构香氛产品摄影图。主体是一只无品牌透明方瓶，内有淡琥珀液体，瓶盖是小巧浅磨砂金属。把瓶子放在横幅左侧三分之一的浅杏陶面上，保留完整瓶底；右侧留暖白墙面，不添加花束或无关陈设。光线来自左后方的一束午后窗光，投影朝右前延伸，右前方仅接受环境反射补光。玻璃厚度、液面、瓶底接触和局部折射都要可读，瓶边不是自发光。暖白、浅杏与琥珀色分层，阴影干净有细节，玻璃中性通透。采用低畸变近景产品摄影，瓶体为清晰主体，背景轻柔。",
+        "translated_locks": [
+          "画面只有一只透明方形香氛瓶作为主体",
+          "瓶身不出现品牌与文字"
+        ],
+        "setup_notes": [
+          "Nano 是用户的模型族标签；使用时确认平台对应的实际 Gemini 图像版本。"
+        ],
+        "limitations": [
+          "没有接入 Nano 的生图接口；这是提示词导出，并非该模型实测样片。"
+        ]
+      },
+      {
+        "target": "midjourney",
+        "text": "One unbranded square glass fragrance bottle with pale amber liquid and a small matte metal cap, placed on the left third of a warm apricot ceramic counter. Quiet cream wall and generous negative space on the right. Afternoon window light from behind left, a coherent shadow extending forward right, soft wall bounce. Visible glass thickness, a level liquid surface, subtle refraction and grounded contact. Warm white, apricot and pale amber, neutral transparent glass, detailed shadows without grey haze. Intimate low-distortion product photography, viewpoint slightly above the bottle shoulder, sharp bottle edge, gently soft wall. No flowers or decorative props.",
+        "translated_locks": [
+          "Only one transparent square fragrance bottle is the main subject",
+          "No branding or text on the bottle"
+        ],
+        "setup_notes": [
+          "横向画幅与版本在 Midjourney 界面设置；本工程不把参数和正文混写。"
+        ],
+        "limitations": [
+          "构图与玻璃细节需要在目标版本实测；不保证与 Image 输出逐像素一致。"
+        ]
+      },
+      {
+        "target": "seedream",
+        "text": "一张横幅香氛产品摄影：画面左侧三分之一是一只无品牌透明方形玻璃瓶，淡琥珀液体配小巧磨砂金属瓶盖，放置于浅杏色陶质台面。右侧保留大块连续暖白墙面，画面安静却有温度。午后窗光从左后方向瓶身切入，右前方仅有墙面反射光；台面投影朝右前方延伸，瓶底真实接触台面。玻璃的厚度、水平液面、边缘折射与适量反光清楚，不能做成塑料或整圈发光。暖白、浅杏、淡琥珀互相区分，暗部有层次，不蒙灰、不套统一黄色。机位略高于瓶肩的低畸变近景，主体清楚，背景柔和，不加花束和无关装饰。",
+        "translated_locks": [
+          "画面只有一只透明方形香氛瓶作为主体",
+          "瓶身不出现品牌与文字"
+        ],
+        "setup_notes": [
+          "Seedream 5.0 Pro 按你所在平台选择；提示词档案不等于已接入该平台接口。"
+        ],
+        "limitations": [
+          "摄影措辞属于待实测编译策略，不是厂商保证的效果。"
+        ]
+      }
+    ]
+  },
+  "design": {
+    "expression": "午后房间的一小块日光通过玻璃折射，让单一产品安静、精致却不灰闷。",
+    "carrier": "object",
+    "intent_claims": [
+      {
+        "quote": "安静但不要灰",
+        "interpretation": "避免满屏抢眼元素，保留清楚光色层次，不把安静等同降低一切对比。",
+        "inferred": false
+      },
+      {
+        "quote": "像午后房间里的一小块阳光",
+        "interpretation": "通过有方向的窗光和投影呈现午后感，而不是全图染黄。",
+        "inferred": false
+      },
+      {
+        "quote": "",
+        "interpretation": "横幅、左侧产品与右侧留白是本次主动提案。",
+        "inferred": true
+      }
+    ],
+    "subject_environment_relation": "物体是观看中心，环境只通过窗光、墙面反射和台面接触解释温度与空间；不加旁支故事。",
+    "reading_order": "先读玻璃瓶轮廓和淡琥珀液体，再读接触投影，最后让目光在右侧暖白负空间停留。",
+    "camera": {
+      "shot_size": "产品近景；完整瓶身，不裁掉瓶底接触",
+      "viewpoint_and_distance": "相机略高于瓶肩，足以见少量顶面；后退以减轻近远尺度差，焦距随后配合画幅取景。",
+      "focal_equivalent_mm": 85.0,
+      "framing_and_scale": "瓶体中心在画宽约三分之一处，高约画高一半；是此提案的粗略范围，不是审美公式。",
+      "focus_and_depth": "瓶体边缘与液面、接触点可读；背景墙稍柔，但不过度虚化投影。",
+      "reason": "用接近自然观察的比例与完整接触表达精致；不靠超广角形变制造不需要的冲击。"
+    },
+    "choices": [
+      {
+        "id": "warm-window",
+        "goal": "安静且有午后温度",
+        "mechanism_ids": [
+          "intent.meaning"
+        ],
+        "action": "单一左后窗光形成右前投影，墙面柔和反射填充透明瓶。",
+        "cooperation": "暖白负空间与玻璃折射共同承载一小块阳光；色彩保留中性透明区，配合光向而不是覆盖它。",
+        "tradeoff": "投影过硬或亮边全溢出会转成刺激感，需要保住半影与瓶边细节。",
+        "criterion_id": "afternoon-light",
+        "reference_uses": []
+      },
+      {
+        "id": "viewpoint",
+        "goal": "让材质而不是夸张透视主导产品存在感",
+        "mechanism_ids": [
+          "camera.viewpoint"
+        ],
+        "action": "相机略高于瓶肩，瓶身完整，保留底部接触；不以低机位却显示顶面这种矛盾描述取景。",
+        "cooperation": "近景与有限背景软化使液面、厚度和地面投影同时可读。",
+        "tradeoff": "后退过多且画幅留白过大，会让瓶身变成无力的小物；以实际比例检查。",
+        "criterion_id": "glass-depth",
+        "reference_uses": []
+      },
+      {
+        "id": "coherence",
+        "goal": "精致感来自有分工的整体，不是独立效果相加",
+        "mechanism_ids": [
+          "integration.coherence"
+        ],
+        "action": "主体、投影与留白形成一个阅读回路；色彩仅由墙面、台面、液体承担，不新增花或霓虹。",
+        "cooperation": "所有高光跟随玻璃形体；接触与阴影解释同一空间，安静和清楚层次同时成立。",
+        "tradeoff": "模板化极简可能显空；优先检验玻璃与阳光的关系能否独立撑起画面。",
+        "criterion_id": "whole",
+        "reference_uses": []
+      }
+    ],
+    "checks": [
+      {
+        "id": "afternoon-light",
+        "dimension": "expression",
+        "question": "午后安静感是由可读空间光线而非黄滤镜表达吗？",
+        "expected": "瓶身局部折射、左后光与右前投影相互解释，中性玻璃与有层次阴影仍可见。",
+        "failure": "只呈现统一黄色或灰雾；光和投影方向冲突；环境亮点抢走产品。",
+        "reference_ids": []
+      },
+      {
+        "id": "glass-depth",
+        "dimension": "material",
+        "question": "透明玻璃与陶面、金属是否各有可信的体积和表面反应？",
+        "expected": "水平液面、可读边缘厚度、瓶底接触和有限反光共同形成玻璃体积，不是自发光塑料。",
+        "failure": "液面倾斜、整圈发光、瓶底悬浮或高光完全抹掉材质。",
+        "reference_ids": []
+      },
+      {
+        "id": "whole",
+        "dimension": "overall",
+        "question": "窗光、瓶体、投影与负空间是否构成一个安静但有活力的整体？",
+        "expected": "第一眼读到产品和阳光关系；暖白、浅杏与淡琥珀分层；无需无关装饰撑场。",
+        "failure": "局部细节好看但没有主次；产品与投影割裂；大片留白只是空洞。",
+        "reference_ids": []
+      }
+    ],
+    "baseline_reference_ids": [],
+    "assumptions": [
+      "作者编写的安装示例，无视觉基准和真实模型出图；不能当作已验证的审美案例。"
+    ],
+    "narrative": null,
+    "aesthetic_binding": null,
+    "template_binding": null
+  }
+}

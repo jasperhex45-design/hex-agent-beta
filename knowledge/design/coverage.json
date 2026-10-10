@@ -1,0 +1,57 @@
+{
+  "implemented_research_domains": [
+    "意图与注意区分",
+    "画面主次及视觉关系",
+    "空间/景别/观察位置",
+    "基本布光塑形",
+    "情境化色彩",
+    "材质与成像细节组织",
+    "场面组织",
+    "证据化评估",
+    "景别与信息可读性（条件性表达，不是固定情绪）",
+    "影片镜头任务、POV、前后关系与时间验证边界"
+  ],
+  "remaining_research": [
+    {
+      "area": "完形分组与视觉知觉实验",
+      "status": "pending_primary_source_review",
+      "reason": "不能仅凭常见术语就标为完成；本轮PMC页面未获取正文。"
+    },
+    {
+      "area": "人像/角色表演的系统性实例与商业审美分支",
+      "status": "pending_reference_calibration",
+      "reason": "当前只有基础场面组织，不是完整表演学。"
+    },
+    {
+      "area": "玻璃、金属、车漆、半透明材质的专业布光案例",
+      "status": "partial",
+      "reason": "当前仅有基础反射与塑形，需按任务补专业可看案例。"
+    },
+    {
+      "area": "视觉修辞、文化语境、时尚及艺术摄影史",
+      "status": "not_in_current_product_scope",
+      "reason": "不默认扩大艺术摄影业务；遇到目标需求再研究。"
+    },
+    {
+      "area": "摄影风格、后期色彩管理与输出媒介",
+      "status": "partial",
+      "reason": "本轮研究非ICC、印刷或显示校准实施。"
+    },
+    {
+      "area": "完整著作研读",
+      "status": "not_claimed",
+      "reason": "未声称读完The Visual Story、Light Science & Magic或Interaction of Color全书。"
+    }
+  ],
+  "new_topic_intake": [
+    "定义当前表达问题",
+    "选择原始/官方资料并记录实际阅读范围",
+    "找到并实际查看有权使用的例图",
+    "分开记录观察、机制推断、模型可控性",
+    "写使用边界和反例",
+    "进入候选库",
+    "任务测试和用户反馈后另行标注实测状态"
+  ],
+  "global_aesthetic_expertise_proven": false,
+  "reference_corpus_status": "没有随包伪装的审美正例库；任务运行时找实际图、看图、借用指定关系，用户确认后才能标校准。"
+}

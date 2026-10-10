@@ -1,0 +1,122 @@
+[
+  {
+    "id": "S01",
+    "title": "Getty：Principles of Design",
+    "url": "https://www.getty.edu/education/teachers/building_lessons/formal_analysis2.html",
+    "source_type": "博物馆教学资料",
+    "read_scope": "Balance、Emphasis、Movement；另查阅同站设计原则单页。",
+    "bounded_basis": "视觉重心涉及大小、色彩、纹理及空间；对比与方向组织强调和观看路径。",
+    "limitations": "设计原则不是照片得分公式。",
+    "checked_at": "2026-09-19",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；未附原文/原图授权"
+  },
+  {
+    "id": "S02",
+    "title": "Getty：Elements of Art",
+    "url": "https://www.getty.edu/education/teachers/building_lessons/formal_analysis.html",
+    "source_type": "博物馆教学资料",
+    "read_scope": "线条、形状、空间、色彩和纹理的教学条目。",
+    "bounded_basis": "线条方向、形状和空间是组织画面的基础变量。",
+    "limitations": "线条与情绪的联系是语境化的表达惯例，不是决定论。",
+    "checked_at": "2026-09-19",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；未附原文/原图授权"
+  },
+  {
+    "id": "S03",
+    "title": "Yale Film Analysis：Cinematography",
+    "url": "https://filmanalysis.yale.edu/cinematography/",
+    "source_type": "大学电影分析教材",
+    "read_scope": "Framing、Scale、Quality；区分静帧与时间性手法。",
+    "bounded_basis": "取景、景别、观察位置和清晰范围改变表现；角度的意义并非唯一。",
+    "limitations": "电影段落的意义不能全部移植为单张照片；镜头压缩的简写需另用S06的几何关系解释。",
+    "checked_at": "2026-09-19",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；未附原文/原图授权"
+  },
+  {
+    "id": "S04",
+    "title": "Yale Film Analysis：Mise-en-scène",
+    "url": "https://filmanalysis.yale.edu/mise-en-scene/",
+    "source_type": "大学电影分析教材",
+    "read_scope": "装饰、光线、空间、服装与表演的场面组织。",
+    "bounded_basis": "人物、物体、环境及它们的位置关系共同参与表达。",
+    "limitations": "借鉴分析框架；不把电影故事上下文当成单张图片已具备的信息。",
+    "checked_at": "2026-09-19",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；未附原文/原图授权"
+  },
+  {
+    "id": "S05",
+    "title": "ARRI Lighting Handbook，4th edition",
+    "url": "https://www.arri.com/resource/blob/83996/409091c612f371b0c68b41d9dcb636db/arri-lighting-handbook-english-data.pdf",
+    "source_type": "厂商摄影布光手册",
+    "read_scope": "PDF印刷页4–17的理论/定义；实际查看5、17、24、25页图示。",
+    "bounded_basis": "光源品质、主辅光分工、背景分离及漫反射/镜面高光/阴影，是塑形分析的基础。",
+    "limitations": "不是所有题材都需三点布光或柔光；旧设备型号不作为当前采购建议。",
+    "checked_at": "2026-09-19",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；未附原文/原图授权"
+  },
+  {
+    "id": "S06",
+    "title": "Edmund Optics：Understanding Focal Length and Field of View",
+    "url": "https://www.edmundoptics.com/knowledge-center/application-notes/imaging/understanding-focal-length-and-field-of-view/",
+    "source_type": "光学厂商工程教程",
+    "read_scope": "视场角、传感器尺寸、焦距、工作距离的关系与近似条件。",
+    "bounded_basis": "视场需联合考虑焦距、传感器和距离；一阶公式不是精密镜头标定。",
+    "limitations": "从针孔投影推导的相对大小关系在本文标为几何推导，不冒称原文审美结论。",
+    "checked_at": "2026-09-19",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；未附原文/原图授权"
+  },
+  {
+    "id": "S07",
+    "title": "Albers Foundation：Interaction of Color",
+    "url": "https://www.albersfoundation.org/alberses/teaching/interaction-of-color",
+    "source_type": "作者基金会教学资料",
+    "read_scope": "基金会公开教学说明及节选；不是整本书。",
+    "bounded_basis": "颜色知觉依赖周围颜色；通过对照练习观察关系，而非只记色名。",
+    "limitations": "未阅读整本著作；不据此承诺任何色板必然高级。",
+    "checked_at": "2026-09-19",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；未附原文/原图授权"
+  },
+  {
+    "id": "S08",
+    "title": "Henderson et al. (2018)：Meaning Guides Attention during Real-World Scene Description",
+    "url": "https://www.nature.com/articles/s41598-018-31894-5",
+    "source_type": "原始实验论文",
+    "read_scope": "摘要、导论、实验任务及结果论述。",
+    "bounded_basis": "两个场景描述任务中，意义信息对注意分布有独立解释力；显著性不能替代语义。",
+    "limitations": "这是限定任务下的注意研究，不是美感评分模型，也不提供人/车注意力百分比。",
+    "checked_at": "2026-09-19",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；未附原文/原图授权"
+  },
+  {
+    "id": "S09",
+    "title": "OpenAI：Evaluation best practices",
+    "url": "https://developers.openai.com/api/docs/guides/evaluation-best-practices",
+    "source_type": "官方工程文档",
+    "read_scope": "任务特定评测、参考依据、成对比较、人工校准及评审偏差。",
+    "bounded_basis": "评估需对应任务、采用明确标准并校准；比较判定仍会有偏差。",
+    "limitations": "只用于工程评估设计，不将其当成摄影理论或审美权威。",
+    "checked_at": "2026-09-19",
+    "status": "read",
+    "redistribution": "仅保存链接和本项目短摘要；未附原文/原图授权"
+  },
+  {
+    "id": "S10",
+    "title": "Yale Film Analysis: Editing",
+    "url": "https://filmanalysis.yale.edu/editing/",
+    "source_type": "大学电影分析教学",
+    "read_scope": "2026-09-19查阅建立镜头、正反打、视线匹配、连续性、节奏条目。",
+    "bounded_basis": "剪辑组织空间和信息；相邻镜头会共同形成关系与节奏。",
+    "limitations": "表达依赖具体段落；单张生成图不能验证剪辑连续性。",
+    "checked_at": "2026-09-19",
+    "status": "read",
+    "redistribution": "仅短摘要与链接；不重分发影视截帧。"
+  }
+]

@@ -1,0 +1,128 @@
+{
+  "$defs": {
+    "EvidenceTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "criterion": {
+          "title": "Criterion",
+          "type": "string"
+        },
+        "visible_evidence": {
+          "title": "Visible Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "criterion",
+        "visible_evidence"
+      ],
+      "title": "EvidenceTarget",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "concept": {
+      "title": "Concept",
+      "type": "string"
+    },
+    "feeling": {
+      "title": "Feeling",
+      "type": "string"
+    },
+    "composition": {
+      "title": "Composition",
+      "type": "string"
+    },
+    "lighting": {
+      "title": "Lighting",
+      "type": "string"
+    },
+    "color": {
+      "title": "Color",
+      "type": "string"
+    },
+    "material": {
+      "title": "Material",
+      "type": "string"
+    },
+    "capture": {
+      "title": "Capture",
+      "type": "string"
+    },
+    "locked_facts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Locked Facts",
+      "type": "array"
+    },
+    "changes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Changes",
+      "type": "array"
+    },
+    "operations": {
+      "items": {
+        "enum": [
+          "color",
+          "exposure",
+          "lighting",
+          "weather",
+          "geometry",
+          "layout",
+          "content",
+          "texture"
+        ],
+        "type": "string"
+      },
+      "title": "Operations",
+      "type": "array"
+    },
+    "selected_knowledge_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Selected Knowledge Ids",
+      "type": "array"
+    },
+    "assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Assumptions",
+      "type": "array"
+    },
+    "evidence_targets": {
+      "items": {
+        "$ref": "#/$defs/EvidenceTarget"
+      },
+      "title": "Evidence Targets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "concept",
+    "feeling",
+    "composition",
+    "lighting",
+    "color",
+    "material",
+    "capture",
+    "locked_facts",
+    "changes",
+    "operations",
+    "selected_knowledge_ids",
+    "assumptions",
+    "evidence_targets"
+  ],
+  "title": "VisualSpec",
+  "type": "object"
+}

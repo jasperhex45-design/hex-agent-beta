@@ -1,0 +1,252 @@
+{
+  "$defs": {
+    "AestheticCard": {
+      "additionalProperties": false,
+      "description": "A seen local image translated into one transferable visual decision.\n\nThis is deliberately separate from the seed knowledge cards: it carries\nevidence about a real user image, not a general rule or a filename guess.",
+      "properties": {
+        "id": {
+          "pattern": "^aesthetic\\.[a-z0-9_-]{3,80}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "source_path": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Source Path",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "domain": {
+          "enum": [
+            "person",
+            "illustration",
+            "poster",
+            "vehicle",
+            "hybrid"
+          ],
+          "title": "Domain",
+          "type": "string"
+        },
+        "transfer_domains": {
+          "items": {
+            "enum": [
+              "person",
+              "illustration",
+              "poster",
+              "vehicle",
+              "character",
+              "prop",
+              "hybrid"
+            ],
+            "type": "string"
+          },
+          "maxItems": 7,
+          "title": "Transfer Domains",
+          "type": "array"
+        },
+        "roles": {
+          "items": {
+            "enum": [
+              "expression",
+              "composition",
+              "light",
+              "material",
+              "relationship",
+              "layout",
+              "motion"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Roles",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 2,
+          "title": "Title",
+          "type": "string"
+        },
+        "visible_facts": {
+          "minLength": 20,
+          "title": "Visible Facts",
+          "type": "string"
+        },
+        "dominant_decision": {
+          "maxLength": 500,
+          "minLength": 8,
+          "title": "Dominant Decision",
+          "type": "string"
+        },
+        "supporting_mechanisms": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Supporting Mechanisms",
+          "type": "array"
+        },
+        "transfer_conditions": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Transfer Conditions",
+          "type": "array"
+        },
+        "do_not_transfer": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Do Not Transfer",
+          "type": "array"
+        },
+        "anti_default": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Anti Default",
+          "type": "array"
+        },
+        "visible_test": {
+          "maxLength": 500,
+          "minLength": 12,
+          "title": "Visible Test",
+          "type": "string"
+        },
+        "failure_signals": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Failure Signals",
+          "type": "array"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "seen_via": {
+          "enum": [
+            "view_image",
+            "host_reported"
+          ],
+          "title": "Seen Via",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "curated",
+            "candidate",
+            "deprecated"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "source_path",
+        "source_sha256",
+        "domain",
+        "transfer_domains",
+        "roles",
+        "title",
+        "visible_facts",
+        "dominant_decision",
+        "supporting_mechanisms",
+        "transfer_conditions",
+        "do_not_transfer",
+        "anti_default",
+        "visible_test",
+        "failure_signals",
+        "tags",
+        "evidence",
+        "seen_via",
+        "status"
+      ],
+      "title": "AestheticCard",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "liu.aesthetic-library.v1",
+      "title": "Format",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "generated_at": {
+      "minLength": 10,
+      "title": "Generated At",
+      "type": "string"
+    },
+    "source_catalog": {
+      "minLength": 1,
+      "title": "Source Catalog",
+      "type": "string"
+    },
+    "selection_policy": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 3,
+      "title": "Selection Policy",
+      "type": "array"
+    },
+    "cards": {
+      "items": {
+        "$ref": "#/$defs/AestheticCard"
+      },
+      "minItems": 1,
+      "title": "Cards",
+      "type": "array"
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "generated_at",
+    "source_catalog",
+    "selection_policy",
+    "cards"
+  ],
+  "title": "AestheticLibrary",
+  "type": "object"
+}

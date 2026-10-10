@@ -1,0 +1,180 @@
+"""Task-specific visual study, separate from image-input admission.
+
+This gate verifies provenance and decision use, not aesthetic quality or whether
+the host really looked. No keyword classifier guesses user intent, no search or
+upload is performed, and old packets are never migrated on read.
+"""
+from .contracts import VisualResearchAssessment
+from .io import AgentError
+from .provenance import resolve_refs
+
+
+def enabled(packet):
+    version = packet.get('visual_research_version')
+    if version is None:
+        return False
+    if type(version) is not int or version not in (1, 2):
+        raise AgentError('未知 visual_research_version；不能静默跳过视觉研究')
+    return True
+
+
+def assessment(packet):
+    if not enabled(packet):
+        return None
+    raw = packet.get('need', {}).get('visual_research')
+    if raw is None:
+        return None
+    try:
+        value = VisualResearchAssessment.model_validate(raw)
+    except ValueError as exc:
+        raise AgentError('视觉研究判断无效；按本题原话重做 Need.visual_research') from exc
+    if not value.reason.strip():
+        raise AgentError('视觉研究判断需要本题的具体理由')
+    expected = {'study': {'open_brief', 'explicit_research', 'rejected_direction'},
+                'specified_direction': {'user_specified_target'},
+                'bounded_edit': {'local_change'}, 'user_waived': {'user_prohibited_study'}}
+    if value.trigger not in expected[value.route]:
+        raise AgentError('明确研究要求或被拒绝的方向不能降为免研究路径')
+    if value.route == 'bounded_edit' and packet.get('brief', {}).get('scope') == 'create':
+        raise AgentError('开放创作不能冒充局部编辑以跳过研究')
+    if value.route == 'study' and not value.visual_question.strip():
+        raise AgentError('研究须指出本题要解决的视觉问题，不能只有风格标签')
+    messages = resolve_refs(packet.get('input_sources'), value.source_refs)
+    if any(row['actor'] != 'user' for row in messages):
+        raise AgentError('研究判断须引用用户原话；宿主提案不等于用户指定方向')
+    if (value.route != 'study' or value.trigger != 'open_brief') and not messages:
+        raise AgentError('免研究或明确研究/否定方向的判断必须绑定真实用户来源')
+    return value
+
+
+def validate_refresh(previous, current, sources, *, current_brief=None):
+    """A saved explicit research requirement cannot disappear on refresh."""
+    if not enabled(previous):
+        return
+    old = assessment(previous)
+    new_packet = {**previous, 'need': current, 'input_sources': sources}
+    if current_brief is not None:
+        new_packet['brief'] = current_brief
+    new = assessment(new_packet)
+    if old and old.trigger in ('explicit_research', 'rejected_direction'):
+        if new is None:
+            raise AgentError('已记录的明确研究要求不能通过省略字段撤销')
+        if new.route != 'study' or new.trigger != old.trigger:
+            from .provenance import verified_sources
+            old_ids = {row['id'] for row in verified_sources(previous.get('input_sources'))}
+            if not any(ref.source_id not in old_ids for ref in new.source_refs):
+                raise AgentError('撤销明确研究要求需要新的用户指令，不能复用旧原话改判')
+
+
+def observed_sources(packet):
+    """Only task-bound, currently observed visual cases count as research.
+
+    Identity/detail/edit canvas alone are not photography/style study. Sources
+    marked evaluation_only are usable here without becoming generation assets.
+    """
+    from .host_references import research_references, observed_ids
+    refs = {r['id']: r for r in research_references(packet)}
+    analysis = packet.get('reference_analysis') or {}
+    observed = observed_ids(packet)
+    seen = []
+    for finding in analysis.get('findings', []):
+        ref = refs.get(finding['id'])
+        if (ref and ref.get('role') not in ('identity', 'detail')
+                and finding.get('role_in_task') not in ('identity', 'canvas')
+                and finding.get('seen') and finding.get('visible_facts', '').strip()
+                and ref['id'] in observed):
+            seen.append(ref['id'])
+    return seen
+
+
+def status(packet):
+    if not enabled(packet):
+        return None
+    value = assessment(packet)
+    observed = observed_sources(packet)
+    if value is None:
+        state = 'needs_assessment'
+    elif value.route != 'study':
+        state = 'skipped_by_user' if value.route == 'user_waived' else 'not_required'
+    elif packet['visual_research_version'] == 2 and observed:
+        selection = packet.get('reference_analysis') or {}
+        state = {'exploring': 'needs_reference_expansion',
+                 'acceptable': 'observed_pending_decision',
+                 'uncertain': 'needs_reference_selection',
+                 'no_suitable_reference': 'needs_reference_selection'}.get(selection.get('selection_state'))
+        if not state or not selection.get('selection_reason', '').strip():
+            state = 'needs_selection_assessment'
+        elif selection.get('selection_state') == 'acceptable' and not any(
+                row.get('id') in observed and row.get('useful')
+                and row.get('role_in_task') not in ('reject', 'negative')
+                for row in selection.get('findings', [])):
+            # The host itself rejected every seen case. Do not present that
+            # contradictory declaration as a usable direction before Plan.
+            state = 'needs_reference_selection'
+    else:
+        state = 'observed_pending_decision' if observed else 'needs_observation'
+    result = {'version': packet['visual_research_version'], 'state': state,
+            'assessment': value.model_dump() if value else None,
+            'observed_reference_ids': observed,
+            'authority': 'host_interpretation_and_observation_not_aesthetic_proof'}
+    if packet['visual_research_version'] == 2:
+        selection = packet.get('reference_analysis') or {}
+        result.update(selection_state=selection.get('selection_state'),
+                      selection_reason=selection.get('selection_reason', ''))
+    return result
+
+
+def validate_design(packet, design):
+    current = status(packet)
+    if current is None:
+        return None
+    if current['state'] == 'needs_assessment':
+        raise AgentError('needs_visual_research：先按真实原话填写 Need.visual_research；开放创作不自动免研究')
+    if current['state'] in ('not_required', 'skipped_by_user'):
+        return current
+    if not current['observed_reference_ids']:
+        raise AgentError('needs_visual_research：先取得并实际观察本题视觉案例；身份图或文字检索不能替代')
+    if current['state'] == 'needs_selection_assessment':
+        raise AgentError('needs_selection_assessment：实际看图后在 ReferenceAnalysis 记录 selection_state 与本题 selection_reason，不能把已看过当成有合适方向')
+    if current['state'] == 'needs_reference_expansion':
+        raise AgentError('needs_reference_expansion：依据本题视觉问题继续找有实际关系差异的参考并观察；不凑固定数量或重复同类素材')
+    if current['state'] == 'needs_reference_selection':
+        raise AgentError('needs_reference_selection：方向仍拿不准或没有合适参考，进入 copilot 用已有 question_records 澄清取舍，不能强行生成')
+    used = {use.reference_id for choice in design.choices for use in choice.reference_uses}
+    connected = sorted(used.intersection(current['observed_reference_ids']))
+    if not connected:
+        raise AgentError('needs_visual_research：实际观察须改变一个设计决定，沿 reference_uses 连接可见关系、选择与检查；不适用可明确 reject 并说明原因')
+    if current['version'] == 2 and not any(
+            use.disposition == 'adopt' and use.reference_id in connected
+            for choice in design.choices for use in choice.reference_uses):
+        raise AgentError('needs_reference_selection：全部舍弃的案例不能证明已有可用方向；继续找不同参考或进入 copilot 澄清，不得把拒绝证据当成审美选定')
+    if current['version'] == 1 and current['assessment']['trigger'] in ('open_brief', 'rejected_direction'):
+        selection = design.creative_directions
+        if (selection is None or len(selection.drafts) != 2
+                or any(d.proposal_kind != 'direction' for d in selection.drafts)
+                or not selection.alternatives_reason.strip()):
+            raise AgentError('needs_visual_research：开放题或被拒绝方向须比较两个不同创意方向并说明取舍；角度/色温变体不算另一方向，也无需生成两张图')
+    # The caller validates each relation against actual observation and its
+    # linked check. A connected source is evidence of use, never of quality.
+    return {**current, 'state': 'decision_connected', 'decision_reference_ids': connected}
+
+
+def host_instruction(packet):
+    if not enabled(packet):
+        return ''
+    instruction = '''视觉研究与生成基准分开：open_creation 允许无身份图，不代表无需研究。
+新任务在 Need.visual_research 明确 route/trigger/reason/visual_question/source_refs。
+未定方向的开放题走 study/open_brief；明确要求研究或否定现有方向分别用 explicit_research/rejected_direction，保留真实用户引文。
+只有用户已指定可执行视觉目标才用 specified_direction/user_specified_target；范围确定的局部修改才用 bounded_edit/local_change。两种免研究路径必须引用用户原话，不能把宿主自行补的场景当指定目标。
+用户明确禁止研究时用 user_waived/user_prohibited_study 并引用原话，记录为 skipped_by_user，不能声称已研究或已验证审美收益。
+study 使用真实案例：先解决具体视觉问题，实际看图、observe 后比较方向，说明选择和舍弃的依据，再选一个最终方向。搜索命中、文字卡片和身份图不等于完成审美研究。
+把观察中的可见关系写入 choices[].reference_uses，连接同参考的检查项。未采用案例可用 disposition=reject 和 reason，说明它为何改变本题的选择；不强迫采用无关知识。仅供观察的作品保留 evaluation_only，不自动上传。
+参考缺失、不可访问或没有帮助时如实报告缺口，继续研究或说明阻塞；不能删研究要求、补空字段或增加形容词冒充完成。
+'''
+    if packet['visual_research_version'] == 2:
+        instruction += '''参考是随本题扩展的风格库，不是固定风格词菜单。先理解用途、想传达的感觉和真实限制，再带着视觉问题找案例；用实际形态、人物关系、空间、光色及表达效果筛选，不以来源名气代替判断。
+在同一次 ReferenceAnalysis 中记录 selection_state 与 selection_reason：有具体可用关系时 acceptable；需要扩大差异化搜索时 exploring；探索后仍拿不准时 uncertain；没有合适案例时 no_suitable_reference。exploring 继续找不同真实案例并观察，不要求固定数量或固定两个草案；uncertain/no_suitable_reference 进入已有 copilot 问答澄清偏好或目标，再按回答研究。不能为了填 acceptable 而声称参考好看。
+需求开始就模糊且会改变主导表达时，先用 question_records 问清关键目标再找参考。需要共创时只问本题关键分歧；已回答的选择与限制保留，不把搜索扩展当作重选许可。
+有足够依据可直接形成一个最终方向；已由用户选定的共创方案只展开原选中草案。choices/reference_uses/checks 必须连接真正采用的观察；全部拒绝案例不能冒充找到了可用审美方向。代码只验证来源和决策连接，不证明美观或用户接受。
+'''
+    return instruction

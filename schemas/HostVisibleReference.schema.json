@@ -1,0 +1,86 @@
+{
+  "additionalProperties": false,
+  "description": "Host-attested conversation image, limited to evaluation-only research.",
+  "properties": {
+    "id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,31}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "source_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Source Id",
+      "type": "string"
+    },
+    "locator": {
+      "maxLength": 2000,
+      "minLength": 1,
+      "title": "Locator",
+      "type": "string"
+    },
+    "evidence_type": {
+      "const": "host_attested",
+      "title": "Evidence Type",
+      "type": "string"
+    },
+    "observation_method": {
+      "const": "conversation_image",
+      "title": "Observation Method",
+      "type": "string"
+    },
+    "observation_limits": {
+      "maxLength": 2000,
+      "minLength": 1,
+      "title": "Observation Limits",
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "aesthetic_positive",
+        "aesthetic_negative",
+        "style",
+        "composition",
+        "material"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "note": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Note",
+      "type": "string"
+    },
+    "evaluation_only": {
+      "const": true,
+      "title": "Evaluation Only",
+      "type": "boolean"
+    },
+    "source_url": {
+      "default": "",
+      "title": "Source Url",
+      "type": "string"
+    },
+    "credit": {
+      "default": "",
+      "title": "Credit",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "source_id",
+    "locator",
+    "evidence_type",
+    "observation_method",
+    "observation_limits",
+    "role",
+    "note",
+    "evaluation_only",
+    "source_url",
+    "credit"
+  ],
+  "title": "HostVisibleReference",
+  "type": "object"
+}

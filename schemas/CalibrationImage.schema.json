@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "description": "A real local image bound to a personal preference record.\n\nThe byte hash is captured at recording time and must be rechecked before\nthe record is used. This is evidence of which files were compared, not a\nquality or aesthetic score.",
+  "properties": {
+    "label": {
+      "enum": [
+        "A",
+        "B"
+      ],
+      "title": "Label",
+      "type": "string"
+    },
+    "path": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Path",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "label",
+    "path",
+    "sha256"
+  ],
+  "title": "CalibrationImage",
+  "type": "object"
+}

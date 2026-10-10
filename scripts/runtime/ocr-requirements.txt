@@ -1,0 +1,6 @@
+# Install into .runtime/ocr/venv only; main application .venv stays independent.
+paddlepaddle==3.3.1
+paddleocr==3.7.0
+Pillow==12.3.0
+pydantic==2.13.4
+httpx==0.28.1

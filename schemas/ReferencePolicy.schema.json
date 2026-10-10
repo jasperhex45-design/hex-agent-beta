@@ -1,0 +1,35 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "task_mode": {
+      "enum": [
+        "open_creation",
+        "reference_transfer",
+        "local_edit"
+      ],
+      "title": "Task Mode",
+      "type": "string"
+    },
+    "understanding_digest": {
+      "title": "Understanding Digest",
+      "type": "string"
+    },
+    "source_digest": {
+      "title": "Source Digest",
+      "type": "string"
+    }
+  },
+  "required": [
+    "version",
+    "task_mode",
+    "understanding_digest",
+    "source_digest"
+  ],
+  "title": "ReferencePolicy",
+  "type": "object"
+}

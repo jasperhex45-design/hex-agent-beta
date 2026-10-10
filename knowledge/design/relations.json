@@ -1,0 +1,163 @@
+[
+  {
+    "id": "REL01",
+    "inputs": [
+      "camera.viewpoint",
+      "composition.depth",
+      "attention.roles"
+    ],
+    "relation": "coupled",
+    "rule": "观察点、近远位置、投影大小和画幅共同设计；焦距不是独立透视开关。",
+    "failure": "只换一个广角词，主体比例失控。"
+  },
+  {
+    "id": "REL02",
+    "inputs": [
+      "staging.relation",
+      "camera.focus",
+      "composition.vectors"
+    ],
+    "relation": "supports",
+    "rule": "人物目光/动作连接物体，连接点必须在构图和清晰范围内。",
+    "failure": "人和物都漂亮但没有可读关系。"
+  },
+  {
+    "id": "REL03",
+    "inputs": [
+      "light.modeling",
+      "light.fill",
+      "material.reflection"
+    ],
+    "relation": "coupled",
+    "rule": "阴影表现转折，高光解释表面；不能既全平光又要求强立体。",
+    "failure": "用锐化和油亮弥补缺失的塑形。"
+  },
+  {
+    "id": "REL04",
+    "inputs": [
+      "attention.roles",
+      "color.roles",
+      "light.separation"
+    ],
+    "relation": "supports",
+    "rule": "预定主要信息与最强局部对比核对；故意竞争需说明作用。",
+    "failure": "背景灯和服装颜色抢过主要物件。"
+  },
+  {
+    "id": "REL05",
+    "inputs": [
+      "composition.depth",
+      "camera.focus"
+    ],
+    "relation": "distinct",
+    "rule": "空间布局和景深是不同变量。",
+    "failure": "模糊背景等同于完成空间设计。"
+  },
+  {
+    "id": "REL06",
+    "inputs": [
+      "color.scope",
+      "camera.viewpoint",
+      "light.motivation"
+    ],
+    "relation": "scope_conflict",
+    "rule": "仅调色不能顺便移动机位、改变阴影结构；光向变化属于重新布光。",
+    "failure": "漂亮但超范围。"
+  },
+  {
+    "id": "REL07",
+    "inputs": [
+      "composition.rhythm",
+      "attention.contrast_budget"
+    ],
+    "relation": "supports",
+    "rule": "丰富画面靠秩序与例外组织，不因复杂自动降分。",
+    "failure": "将审美收敛为单一极简模板。"
+  },
+  {
+    "id": "REL08",
+    "inputs": [
+      "staging.gesture",
+      "camera.shot_scale",
+      "composition.frame"
+    ],
+    "relation": "coupled",
+    "rule": "想读表情需合适显示尺度；想读动作不可裁掉动作关键节点。",
+    "failure": "冲击词与实际展示内容脱节。"
+  },
+  {
+    "id": "REL09",
+    "inputs": [
+      "light.softness",
+      "light.separation"
+    ],
+    "relation": "complementary",
+    "rule": "不同光质可以分工，不强制全图硬或全图软。",
+    "failure": "柔光溢出导致主次消失。"
+  },
+  {
+    "id": "REL10",
+    "inputs": [
+      "eval.intent_first",
+      "eval.pairwise",
+      "eval.revision"
+    ],
+    "relation": "gate",
+    "rule": "相对更好与绝对合格分开；预算停止不是验收。",
+    "failure": "新版优于旧版即被标成最终通过。"
+  },
+  {
+    "id": "REL11",
+    "inputs": [
+      "color.context",
+      "material.reflection",
+      "color.roles"
+    ],
+    "relation": "coupled",
+    "rule": "产品本色、环境色和表面高光分别对照，不用全局同色滤镜处理。",
+    "failure": "误把反光中的环境色当成产品换色。"
+  },
+  {
+    "id": "REL12",
+    "inputs": [
+      "intent.meaning",
+      "integration.coherence"
+    ],
+    "relation": "selection",
+    "rule": "一张图调用支持其目标的最小充分组合；知识覆盖广不意味着每图加载全部理论。",
+    "failure": "提示词越来越长，画面越来越普通。"
+  },
+  {
+    "id": "REL13",
+    "inputs": [
+      "narrative.shot_task",
+      "camera.shot_scale",
+      "staging.gesture"
+    ],
+    "relation": "supports",
+    "rule": "镜头任务决定需读出的表演信息，景别随后服务可读性。",
+    "failure": "因为想用特写而编造一个情绪高潮。"
+  },
+  {
+    "id": "REL14",
+    "inputs": [
+      "narrative.pov",
+      "narrative.continuity",
+      "narrative.context"
+    ],
+    "relation": "coupled",
+    "rule": "主观归属、相邻视线和空间事实共同设计；单帧不验收整场叙事。",
+    "failure": "只凭机位判断完整POV或连续性成立。"
+  },
+  {
+    "id": "REL15",
+    "inputs": [
+      "narrative.movement",
+      "narrative.rhythm",
+      "camera.still_motion"
+    ],
+    "relation": "evidence_boundary",
+    "rule": "运镜与节奏属于时序计划，静帧只验证选定相位。",
+    "failure": "一张生成图就说长镜头和节奏通过。"
+  }
+]

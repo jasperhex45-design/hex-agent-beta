@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "description": "Bind a task-conditioned template to an actual design decision.",
+  "properties": {
+    "template_id": {
+      "pattern": "^template\\.[a-z0-9_-]{3,80}$",
+      "title": "Template Id",
+      "type": "string"
+    },
+    "adopted_structure": {
+      "minLength": 12,
+      "title": "Adopted Structure",
+      "type": "string"
+    },
+    "adoption_reason": {
+      "minLength": 8,
+      "title": "Adoption Reason",
+      "type": "string"
+    },
+    "visible_test": {
+      "minLength": 12,
+      "title": "Visible Test",
+      "type": "string"
+    },
+    "pitfalls_applied": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Pitfalls Applied",
+      "type": "array"
+    },
+    "not_selected_reason": {
+      "minLength": 2,
+      "title": "Not Selected Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "template_id",
+    "adopted_structure",
+    "adoption_reason",
+    "visible_test",
+    "pitfalls_applied",
+    "not_selected_reason"
+  ],
+  "title": "TemplateBinding",
+  "type": "object"
+}

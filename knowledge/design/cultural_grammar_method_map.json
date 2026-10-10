@@ -1,0 +1,18 @@
+{
+  "format": "liu.art-structure-method-map.v1",
+  "notice": "只记录案例方法到运行时结构语法的显式兼容关系；不把案例名称当作风格词，也不宣称艺术史等价。",
+  "mappings": [
+    {"method_id": "space.bounded_multiple_viewpoints", "grammar_ids": ["grammar.planometric_space"], "confidence": "high", "rationale": "案例方法与多视点/平面化关系直接对应。", "gap": "不覆盖所有中国画的散点透视。"},
+    {"method_id": "space.dense_quiet_center", "grammar_ids": ["grammar.scale_relation", "grammar.surface_density"], "confidence": "medium", "rationale": "把密度集中与主体—环境尺度和局部表面密度相连。", "gap": "密集/安静中心仍须由任务具体定义。"},
+    {"method_id": "space.directed_void", "grammar_ids": ["grammar.negative_space_function"], "confidence": "high", "rationale": "空区承担方向、延迟或出口，而非装饰背景。", "gap": "不等于低饱和或极简画风。"},
+    {"method_id": "space.group_hierarchy", "grammar_ids": ["grammar.fixed_frame_depth"], "confidence": "low", "rationale": "群组层级可作为固定框景中入口、主体和背景的关系证据。", "gap": "本批没有纯粹的透视框景案例。"},
+    {"method_id": "space.layered_reveal", "grammar_ids": ["grammar.mobile_layered_space"], "confidence": "high", "rationale": "通过近中远、遮挡和停顿让空间分段展开。", "gap": "单张静帧不证明真实连续观看。"},
+    {"method_id": "space.light_gesture_event", "grammar_ids": ["grammar.directional_gesture", "grammar.luminance_modeling"], "confidence": "medium", "rationale": "把光线事件与方向向量连接到主体和环境。", "gap": "没有独立的书写性笔势案例。"},
+    {"method_id": "space.recognition_in_fragments", "grammar_ids": ["grammar.planometric_space", "grammar.directional_gesture"], "confidence": "low", "rationale": "碎片识别依赖局部视点和方向线保持关系可读。", "gap": "不能替代身份与主体准确性检查。"},
+    {"method_id": "space.rhythmic_intervals", "grammar_ids": ["grammar.frame_sequence"], "confidence": "medium", "rationale": "间隔和节奏可进入画幅分区与阅读停顿。", "gap": "单帧无法验证系列节奏。"},
+    {"method_id": "space.scale_anchor", "grammar_ids": ["grammar.scale_relation"], "confidence": "high", "rationale": "尺度锚点直接组织主体与环境的相对关系。", "gap": "不能牺牲用户要求的身份细节。"},
+    {"method_id": "space.sparse_articulation", "grammar_ids": ["grammar.surface_density", "grammar.negative_space_function"], "confidence": "medium", "rationale": "稀疏细节让表面密度和空区共同承担主次。", "gap": "需要以当前题材的可见关系验收。"},
+    {"method_id": "space.surface_reflection_layers", "grammar_ids": ["grammar.luminance_modeling", "grammar.surface_density"], "confidence": "medium", "rationale": "反射层可由明度塑形并随表面尺度变化。", "gap": "保留材质因果，不把媒介名变成滤镜。"},
+    {"method_id": "space.text_image_rhythm", "grammar_ids": ["grammar.frame_sequence", "grammar.negative_space_function"], "confidence": "high", "rationale": "文字、图块与停顿区共同形成画幅阅读路径。", "gap": "不复制原作文字、品牌或版式。"}
+  ]
+}

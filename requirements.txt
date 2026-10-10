@@ -1,0 +1,4 @@
+# Runtime dependencies. Python >= 3.11; developer tools use the optional test extra.
+httpx==0.28.1
+pydantic==2.13.4
+Pillow==12.3.0

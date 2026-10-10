@@ -1,0 +1,112 @@
+{
+  "$defs": {
+    "RefFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "seen": {
+          "title": "Seen",
+          "type": "boolean"
+        },
+        "useful": {
+          "title": "Useful",
+          "type": "boolean"
+        },
+        "role_in_task": {
+          "enum": [
+            "identity",
+            "canvas",
+            "positive",
+            "negative",
+            "context",
+            "reject"
+          ],
+          "title": "Role In Task",
+          "type": "string"
+        },
+        "visible_facts": {
+          "title": "Visible Facts",
+          "type": "string"
+        },
+        "transfer": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Transfer",
+          "type": "array"
+        },
+        "do_not_transfer": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Do Not Transfer",
+          "type": "array"
+        },
+        "interpretation": {
+          "title": "Interpretation",
+          "type": "string"
+        },
+        "uncertainty": {
+          "title": "Uncertainty",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "seen",
+        "useful",
+        "role_in_task",
+        "visible_facts",
+        "transfer",
+        "do_not_transfer",
+        "interpretation",
+        "uncertainty"
+      ],
+      "title": "RefFinding",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/RefFinding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "selection_state": {
+      "anyOf": [
+        {
+          "enum": [
+            "exploring",
+            "acceptable",
+            "uncertain",
+            "no_suitable_reference"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Selection State"
+    },
+    "selection_reason": {
+      "default": "",
+      "title": "Selection Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "findings",
+    "selection_state",
+    "selection_reason"
+  ],
+  "title": "ReferenceAnalysis",
+  "type": "object"
+}
