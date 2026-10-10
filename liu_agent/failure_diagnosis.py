@@ -57,9 +57,17 @@ class Assessment(Strict):
 def _trial(run: Path, case: dict) -> dict:
     name = 'image-tests.json' if case['route'] == 'api' else 'host-image-tests.json'
     trials = read_json(run / name) if (run / name).exists() else []
+    if case['route'] == 'host':
+        from .visual_decision import record_only
+        packet = read_packet(run)
+        if record_only(packet):
+            # Production candidates exist in the dispatch ledger before
+            # finalize writes a trials file. Reuse its read-only projection;
+            # a failed review must not require a successful export first.
+            trials = host.production_trials(packet, run, host.read_dispatches(run), trials)
     matches = [row for row in trials if row.get('request_id', row.get('generation_evidence', {}).get('request_id'))
                == case['attempt']['request_id']]
-    if len(matches) != 1 or not matches[0].get('review'):
+    if len(matches) != 1:
         raise AgentError('先登记当前候选的首次评审，不能提前开放第二阶段诊断')
     return matches[0]
 
@@ -71,11 +79,19 @@ def prepare(run: Path, request_id: str | None = None) -> dict:
     if not case['candidate']:
         raise AgentError('无已完成候选；只报告执行状态，不推断成图原因')
     trial = _trial(run, case)
-    review = trial['review']
+    from .workflow_policy import registered_review
+    from .visual_decision import record_only
+    workflow_review = registered_review(run, case['attempt']['request_id'])
+    packet = read_packet(run)
+    if trial.get('review') is not None and not record_only(packet):
+        workflow_review = None
+    review = (workflow_review['evidence']['report']['review'] if workflow_review is not None
+              else trial.get('review'))
+    if review is None:
+        raise AgentError('先登记当前候选的首次评审，不能提前开放第二阶段诊断')
     whole = review.get('holistic') or {}
     if whole.get('image_access') != 'viewed' or whole.get('review_context') != 'isolated':
         raise AgentError('首次评审须声明实际看图及隔离上下文；历史作者自评不升级为隔离评审')
-    packet = read_packet(run)
     contract = read_json(run / 'acceptance.json')
     validate_trial(packet, run, contract, trial)
     image = within(run, trial['file']).read_bytes()
@@ -122,6 +138,9 @@ def prepare(run: Path, request_id: str | None = None) -> dict:
                                   'authority': evidence['authority'], 'tool_trace_authenticated': False},
             'generation_calls': 0, 'writes_to_run': 0,
             'notice': '首评的隔离/看图为宿主声明。正文与摘录一致不证明语义等价；最早偏差按每个问题分别记录，不证明因果。'}
+    if workflow_review is not None:
+        body['review_source'] = {'kind': 'workflow', 'file': workflow_review['evidence_file'],
+                                 'digest': workflow_review['evidence']['digest']}
     return {**body, 'digest': digest(body)}
 
 

@@ -1,4 +1,4 @@
-"""Build an invitation-only beta source bundle, excluding developer and task data."""
+"""Build a public beta source bundle, excluding developer and task data."""
 from __future__ import annotations
 
 import argparse
@@ -44,7 +44,7 @@ REQUIRED_FILES = {
 # These are runtime instructions, not a copy of the development workspace.
 # A fresh tester should not receive historical checks, outputs or private examples.
 PUBLIC_FILES = REQUIRED_FILES | {
-    'BETA.md', '.env.example', '.gitignore', 'ART_STRUCTURE_START.md',
+    'BETA.md', 'CHANGELOG.md', '.env.example', '.gitignore', '.gitattributes', 'ART_STRUCTURE_START.md',
     '.github/ISSUE_TEMPLATE/beta-feedback.yml',
     'knowledge/color_source_mapping.json', 'knowledge/candidates/card.template.json',
     'examples/character-brief.json', 'examples/edit-brief.template.json',
@@ -65,6 +65,7 @@ PUBLIC_FILES = REQUIRED_FILES | {
     'docs/HEX_QWEN_SINGLE_PARENT_EDIT_20261007.md',
     'docs/HEX_QWEN_MASKED_EDIT_20261007.md',
     'docs/CONVERSATION_RUNTIME_20260925.md',
+    'docs/ESSENTIAL_CREATION_FEEDBACK.md',
 }
 EXCLUDED_PARTS = {
     '__pycache__', '.git', '.venv', '.state', '.runtime', 'build', 'dist',
@@ -126,16 +127,16 @@ def build_release(root: Path = ROOT, output_dir: Path | None = None, *,
         raise ValueError('Invalid release version')
     if source_commit is not None and not re.fullmatch(r'[0-9a-f]{40}', source_commit):
         raise ValueError('Invalid source commit')
-    name = f'Hex-Agent-v{version}-private-beta'
+    name = f'Hex-Agent-v{version}-public-beta'
     destination = Path(output_dir) if output_dir is not None else root.parent / 'deliverables'
     destination.mkdir(parents=True, exist_ok=True)
     output = destination / f'{name}.zip'
     manifest = {
         'version': version,
         'scope': 'product_source_only',
-        'channel': 'private_beta',
+        'channel': 'public_beta',
         'source_commit': source_commit,
-        'notice': '邀请制内测源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。访问控制由托管私有库负责；本包不改变现有许可，文件摘要不证明审美或工具可用性。',
+        'notice': '公开 Beta 源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。公开访问不改变现有许可，文件摘要不证明审美或工具可用性。',
         'files': [],
     }
     with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as archive:

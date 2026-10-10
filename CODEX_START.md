@@ -1,5 +1,5 @@
 # Hex Agent 启动与接续
-完整开发仓库可带有 `.codex/hooks.json` 与仓库桥接；独立源码包使用本文件第 5 节的安装入口建立本机绑定。先核对实际目录、项目虚拟环境与宿主支持，再启用集成。云端提交或文件存在不代表本机已经信任或加载 hooks。
+本 Beta 使用独立源码布局，通过本文件第 5 节的安装入口建立本机绑定。先核对实际目录、项目虚拟环境与宿主支持，再启用集成。云端提交或文件存在不代表本机已经信任或加载 hooks。
 
 ## 一个入口与当前规则
 
@@ -48,7 +48,11 @@ python -m hex_agent workflow drive --run RUN
 
 在 `ReferenceAnalysis` 的 `selection_state` / `selection_reason` 保存当前判断与依据：`exploring` 继续扩展真实参考，`uncertain` / `no_suitable_reference` 回到 Copilot 解决偏好或方向，`acceptable` 才继续最终设计。新研究版本要求可采用的实见参考与 choices / checks 关联；全部舍弃说明尚未找到合适依据，不能填成已选定。旧冻结的研究版本 1 保留原合同，新任务使用版本 2。
 
-必要参考先亲自看图，使用当前参考 schema 写真实观察并 `observe`；身份、风格、照明、评价参考各自承担既定职责。研究参考可保持 `evaluation_only`，不强迫上传给生成模型。用 Plan 的 `choices.reference_uses` 关联实际观察、采用或舍弃依据与当前检查；仅搜到链接、读过文字或填了美感标签不构成看图证据。为最终方案的关键选择写可见作用和失败条件，不伪造引用或覆盖用户硬限制。`open_creation`、检索关闭和零采用知识都不能单独将研究标为不适用。
+必要参考先亲自看图，使用当前参考 schema 写真实观察并 `observe`；身份、风格、照明、评价参考各自承担既定职责。研究参考可保持 `evaluation_only`，不强迫上传给生成模型。用 Plan 的 `choices.reference_uses` 关联实际观察、采用或舍弃依据与当前检查；仅搜到链接、读过文字或填了美感标签不构成看图证据。不得伪造引用或覆盖用户硬限制。`open_creation`、检索关闭和零采用知识都不能单独将研究标为不适用。
+
+按真实研究目的填写 `visual_research.evidence_requirement`：旧图反馈复盘、视觉作品参考、专业作品分析分别为 `feedback_review`、`visual_reference`、`professional_analysis`；finding 标明 `source_kind`。专业分析需要同一作品的来源、实际观察及专业解读摘录，旧生成图不能充作专业作品学习。
+
+最终 Plan 用既有 `choices.action` 写使画面成立的必要关系与允许变化边界，`cooperation` 说明选择之间的作用，`tradeoff` 说明可以让位的视觉收益。无助于目标的细节在最终选择前省去；已经选定的 choice 均须进入正文。冻结 checks 使用同一允许变化边界，不把可变实现升级为硬限制。Image 摄影按实际主体组织关系，只有可见人物动作或接触承担表达时才明确手部职责，不为补齐未入镜身体改变取景。详见 [必要关系与看图反馈](docs/ESSENTIAL_CREATION_FEEDBACK.md)。
 
 宿主实际看到了用户会话中的图片、但工具未暴露附件字节时，可用 `add-host-reference --run RUN --file REFERENCE_JSON` 保存独立 `host_visible_references`：填写 `id`、已存在的真实用户 `source_id`、图片所在会话 `locator`、`evidence_type=host_attested`、`observation_method=conversation_image`、观察限制 `observation_limits`、研究职责 `role/note` 与 `evaluation_only=true`。不能把宿主图像描述转录为用户原话；搜索标题、链接或未看到的图片不适用。随后用同一 `observe` 把实际观察写入 findings，再关联 choices/checks。示例与字段 schema 可用 `schemas` 导出为 `HostVisibleReference.schema.json`。
 
@@ -67,7 +71,7 @@ python -m hex_agent prepare-compilation --run RUN --plan PLAN_JSON --target TARG
 python -m hex_agent preflight --run RUN --solution SOLUTION_JSON
 ```
 
-在 `prepare-compilation` 后读取实际生成的模型输入，再编写完整正文与 adaptation。中文、英文都保留原需求的关系、数量、主次和精确文案；用该工具真实支持的参数。汽车在预览核对后继续 `car freeze-input`，按本题实际模型传必要比例和分辨率。预览与 preflight 成功均不等于已经生成或完成交付。
+在 `prepare-compilation` 后读取实际生成的模型输入，再编写完整正文与 adaptation。中文、英文都保留原需求的关系、数量、主次、精确文案及已选决定的允许变化边界；可合并重复描述，不能私自省略 choice。使用该工具真实支持的参数。汽车在预览核对后继续 `car freeze-input`，按本题实际模型传必要比例和分辨率。预览与 preflight 成功均不等于已经生成或完成交付。
 
 ## 3. 真实生成或编辑
 
@@ -78,6 +82,8 @@ python -m hex_agent preflight --run RUN --solution SOLUTION_JSON
 局部编辑必须绑定真实父图、反馈、新 change_scope 与 preserve。用已有 `refresh --out` 建立关联版本；必要时使用原 `--edit-reference` 与 `--parent-request-id`。参考、Need 或模型变化后重新观察和编译；不修改已冻结派发。原图、保留项、父子关系及累计预算继续有效。
 
 ## 4. 检查与完成
+
+通过 `record-feedback` 或 `calibration record` 保存真实评价后，CLI 自动登记来源，相关新任务将适用原话保存为 `user_feedback_context`，并传给设计与编译。接受、拒绝、局部认可与相对喜欢分别保留，当前要求优先，不要求用户重复反馈。可见失败与原因未知分开：看出差距可以记录 `not_met`，不知成因则保留 `diagnosis=unknown`。
 
 收到图片后可以先给用户看真实预览，同时继续本题适用的检查。图片返回、导出提示词或普通 `finalize` 的产物不能单独代替统一完成状态。
 
@@ -95,6 +101,8 @@ python -m hex_agent workflow complete --run RUN
 ```
 
 候选唯一时可以省略 `--request-id`；双模型或多个候选时必须由实际结果定位，不自动选最后一张。`prepare-review` 只准备绑定当前候选的材料与 `review_record_template`；宿主必须实际打开候选和必要参考，按原标准填写该模板后才执行 `record-review`，不能让模板原样充当已看图记录。每个应交付候选分别完成适用检查。
+
+`record-review` 返回当前原图的 `feedback_card`，失败或不确定时也会生成，不必等到正式完成。`workflow status` 在质量未满足时保留 `candidate_receipts` 与 `feedback_cards`。宿主须展示实际图片与观察，不能以 HTML 文件存在证明用户已经看见。默认完整流程的案例与第二阶段诊断读取同一请求的有效评审，不要求先成功导出；可见差距、待验证原因和用户接受分别记录。
 
 `prompt_only` 完成需求、设计与模型编译检查后直接进入 `workflow complete`，不执行像素、OCR 或看图步骤。无需手填 completion 凭证：命令核对当前状态后调用原导出路径，并验证导出文件与完成证据一致。
 
@@ -127,6 +135,6 @@ python scripts/hex_entry.py codex status --config CONFIG --session-id SESSION --
 - [Windows 工作流](docs/HEX_WINDOWS_WORKFLOW_20261007.md)：原生检索、OCR 和离线研究的真实边界。
 - [来源输入](docs/SOURCE_AND_REVIEW_INPUTS.md)：真实原话和来源 schema。
 - [模型适配](docs/MODEL_ADAPTATION_AND_VALUE_20260926.md)：目标模型输入与正文绑定。
-- [内测说明](BETA.md)：安装边界、实际结果反馈和发行范围。
+- [Beta 说明](BETA.md)：安装边界、实际结果反馈和公开发行范围。
 
 研发按需读取具体源码；工程状态与历史报告留在开发库。普通创作不先跑 pytest，不因旧报告里的单次“停止生成”误停新任务。

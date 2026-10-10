@@ -1,6 +1,6 @@
 # HEX 公开 Beta
 
-本版本公开提供下载，用于检验真实创作与反馈流程。版本号以 `pyproject.toml` 为准，发行来源见 `MANIFEST.json`。安装入口与 ZIP 下载见 [README](README.md)。
+本版本公开提供下载，用于检验真实创作与反馈流程。版本号以 `pyproject.toml` 为准，发行来源见 `MANIFEST.json`。安装入口与 ZIP 下载见 [README](README.md)。本版变化与已知问题见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 开始使用
 
@@ -33,6 +33,8 @@
 
 公开 Beta 保留独立、精简的发行历史。原开发库中的私人材料与完整历史不自动进入此仓库；发布前核对所选源码、文档、许可与清单。
 
-构建包使用 `python scripts/release_local.py --output-dir PATH`。明确来源提交时再传 `--source-commit SHA`；未提供时清单保留空值，不推测提交。必要回归在开发库中运行，测试者无需安装 pytest。
+构建包使用 `python scripts/release_local.py --output-dir PATH --source-commit SHA`，从核对过的 Beta 源码提交构建，并传入其完整 40 位提交 SHA。脚本只记录该值，不证明当前文件与提交一致；未提供时清单保留空值，不推测提交。必要回归在开发库中运行，测试者无需安装 pytest。
+
+源码包使用 `public-beta` 名称，清单渠道为 `public_beta`。解压后可运行 `python scripts/verify_package.py` 核对文件摘要。反馈卡包含实际图片与提示词，分享前按上述公开反馈范围核对内容。
 
 公开提供下载与反馈不改变 [LICENSE](LICENSE) 和 [第三方声明](THIRD_PARTY_NOTICES.md) 中已有的许可条款。

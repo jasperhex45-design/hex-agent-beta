@@ -72,6 +72,8 @@ def dispatch(run: Path, target: str, tool: str, *, provider_options: dict | None
         packet = read_packet(run)
         from .workflow_policy import require_image_deliverable
         require_image_deliverable(packet)
+        from .user_feedback_context import require_current
+        require_current(packet, stage='dispatch')
         comparison = packet['brief'].get('model_comparison', False)
         if comparison:
             from .contracts import Brief
@@ -266,6 +268,8 @@ def prepare_compilation(run: Path, plan_path: Path, target: str = 'image', tool:
         if packet['brief'].get('model_comparison') and read_dispatches(run):
             raise AgentError('模型比较已开始；沿用首次调用前冻结的两份正文，不再编译，'
                              '也不将第一张反馈用于第二个模型。未完成调用仅查询原请求。')
+        from .user_feedback_context import require_current
+        require_current(packet, stage='compile')
         plan = Plan.model_validate(read_json(plan_path))
         if target not in packet['model_profiles']:
             raise AgentError('没有目标模型档案：' + target)

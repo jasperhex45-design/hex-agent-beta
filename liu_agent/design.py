@@ -484,7 +484,7 @@ def validate_eval(contract: dict, evaluation: ImageEval) -> None:
                 not all(target.criterion_id in failed for target in targets)):
             raise AgentError('每个修订动作须逐一绑定not_met标准及其画面证据')
     if len(evaluation.changes) > 2:
-        raise AgentError('每轮只处理最多两个主要问题，不整幅推倒重抽')
+        raise AgentError('每轮最多提出两个主要修改方向；修改范围依真实失败与当前任务决定，不增加生成许可')
     if contract['medium'] == 'film_shot' and evaluation.sequence_validation != 'not_tested':
         raise AgentError('单张镜头图不能证明动作、运镜、剪辑连续与节奏已经实现')
     if contract['medium'] == 'still' and evaluation.sequence_validation != 'not_applicable':

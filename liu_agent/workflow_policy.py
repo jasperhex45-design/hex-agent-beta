@@ -278,8 +278,18 @@ def check(run, request_id=None, *, ocr_timeout=180):
         if report.get('generation_binding', {}).get('state') != 'verified_existing_generation':
             raise AgentError('未绑定执行证据的本地诊断不能登记为完整流程检查')
         evidence = _save(_path(run, 'checks', candidate), _envelope(packet, contract, candidate, req, report))
+        card = None
+        try:
+            reviewed = _bound_stage(run, 'reviews', packet, contract, candidate, req)
+        except _ERRORS:
+            # An absent or superseded review stays pending. A new file check
+            # must not reuse its old visual judgments to make a feedback card.
+            reviewed = None
+        if reviewed is not None:
+            from .feedback_card import export_card
+            card = export_card(run, candidate, contract, reviewed, evidence)
         return {'evidence': str(_path(run, 'checks', candidate)), 'report': report, 'digest': evidence['digest'],
-                'check_passed': not _check_failures(report, req)}
+                'check_passed': not _check_failures(report, req), 'feedback_card': card}
 
 
 def prepare_review(run, request_id=None):
@@ -323,8 +333,18 @@ def record_review(run, report_file, request_id=None):
         # The durable source copy is independently revalidated on every finish.
         report = validate_task_review(run, within(run, candidate['file']), source)
         evidence = _save(_path(run, 'reviews', candidate), _envelope(packet, contract, candidate, req, report))
+        try:
+            checked = _bound_stage(run, 'checks', packet, contract, candidate, req)
+        except _ERRORS:
+            # A valid visual observation can still be recorded when the file
+            # check needs to run again. The card marks it unverified; the
+            # existing completion gate continues to require the real check.
+            checked = None
+        from .feedback_card import export_card
+        card = export_card(run, candidate, contract, evidence, checked)
         return {'evidence': str(_path(run, 'reviews', candidate)), 'digest': evidence['digest'],
-                'review_decision': report['review']['decision'], 'human_acceptance': 'not_granted_by_machine'}
+                'review_decision': report['review']['decision'], 'human_acceptance': 'not_granted_by_machine',
+                'feedback_card': card}
 
 
 def _bound_stage(run, section, packet, contract, candidate, req):
@@ -348,6 +368,31 @@ def _bound_stage(run, section, packet, contract, candidate, req):
         if verified != report or verified.get('source_contract_binding') != 'explicit_current_contract':
             raise AgentError('视觉评审原报告或合同绑定与登记证据不一致')
     return value
+
+
+def registered_review(run, request_id=None):
+    """Read a full-flow review without requiring successful completion.
+
+    Only absence permits a caller to use the historical native review path.
+    An existing but invalid sidecar must not silently fall back to older text.
+    The candidate's original generation snapshot, not a later draft solution,
+    supplies the image/request/contract binding.
+    """
+    from .workflow import read_packet
+    run = Path(run).resolve()
+    packet = read_packet(run)
+    if policy(packet) is None:
+        return None
+    contract = read_json(run / 'acceptance.json')
+    candidates, _ = _candidates(run, packet, contract)
+    candidate = _choose(candidates, request_id)
+    path = _path(run, 'reviews', candidate)
+    if not path.exists():
+        return None
+    req = _requirements(run, packet, contract)
+    evidence = _bound_stage(run, 'reviews', packet, contract, candidate, req)
+    return {'candidate': candidate, 'evidence': evidence,
+            'evidence_file': str(path.relative_to(run))}
 
 
 def _check_failures(report, req):
@@ -429,6 +474,7 @@ def inspect_completion(run, packet=None):
         if selected['deliverable_kind'] == 'prompt_only' and candidates:
             raise AgentError('提示词任务出现实际图片调用；核对执行范围，不能据此完成')
         receipts = []
+        feedback_cards = []
         failures = []
         if selected['deliverable_kind'] != 'prompt_only':
             targets = set(packet['brief']['targets']) if packet['brief'].get('model_comparison') else None
@@ -467,6 +513,10 @@ def inspect_completion(run, packet=None):
                                             'request_id': candidate['request_id'], 'image': str(within(run, candidate['file'])),
                                             'review_input': str(_path(run, 'review-inputs', candidate))}}
                 review = reviewed['report']['review']
+                from .feedback_card import saved_card
+                card = saved_card(run, candidate, reviewed, checked)
+                if card is not None:
+                    feedback_cards.append(card)
                 if (candidate['sha256'] in delivered_hashes and
                         (review.get('holistic', {}).get('image_access') != 'viewed' or review.get('decision') != 'ready_for_user')):
                     failures.append('视觉复核尚未达到当前标准：' + candidate['request_id'])
@@ -482,6 +532,7 @@ def inspect_completion(run, packet=None):
             followup = (' 先结合原图与用户反馈做 Copilot 诊断；关键表达或偏好不明确时提出一个针对性问题，已有明确修改就沿已知范围修正，不重复问。'
                         if copilot_enabled(packet) else '')
             return {**base, 'state': 'quality_not_met', 'blockers': failures,
+                    'candidate_receipts': receipts, 'feedback_cards': feedback_cards,
                     'next_action': _action(run, None, '检查已运行但存在未满足或不确定项。展示真实图片与问题，沿现有来源和预算制定关联修订；未获新范围许可不补图，不把本题标为完成。' + followup, owner='host_model', executable=False)}
         receipt = {'format': 'hex.workflow-completion.v1', 'workflow_policy': selected,
                    'packet_digest': packet['digest'], 'contract_digest': contract['digest'],
@@ -499,7 +550,8 @@ def inspect_completion(run, packet=None):
                 complete = _export_files_valid(run, verified_relative=bool(
                     exported.get('candidate_feedback') or exported.get('relative_preference')))
         return {**base, 'state': 'complete' if complete else 'ready_to_export', 'ready': True,
-                'complete': complete, 'receipt': receipt, 'next_action': None if complete else
+                'complete': complete, 'receipt': receipt, 'feedback_cards': feedback_cards,
+                'next_action': None if complete else
                 _action(run, 'complete', '必要步骤的当前证据齐全，执行正式交付')}
     except _ERRORS as exc:
         return {**base, 'state': 'blocked', 'blockers': [str(exc)],

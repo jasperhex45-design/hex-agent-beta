@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cl-hex"
-version = "0.3.8"
+version = "0.3.9b1"
 description = "Hex Agent visual creation assistant: intent, art direction, model-aware prompts and evidence-bound execution."
 readme = "README.md"
 license = "CC-BY-NC-4.0"
@@ -21,7 +21,7 @@ hex-agent = "liu_agent.windows_runtime:main"
 liu-agent = "liu_agent.cli:main"
 
 [project.urls]
-Repository = "https://github.com/jasperhex45-design/hex-agent"
+Repository = "https://github.com/jasperhex45-design/hex-agent-beta"
 
 [tool.setuptools.packages.find]
 include = ["liu_agent*", "hex_agent*", "cl_hex*"]

@@ -387,6 +387,8 @@ def require_submission_authorization(run: Path, attempt: dict, shared_budget=Non
     current = next((row for row in attempts if row['request']['id'] == attempt['request']['id']), None)
     if current != attempt or current['status'] != 'pending':
         raise AgentError('生成预留在准备期间发生变化；核对原回执，不能按旧状态提交')
+    from .user_feedback_context import require_current
+    require_current(packet, stage='submit')
     grant = read_authorization(run, packet)
     request = attempt['request']
     if request['packet_digest'] != packet['digest']:

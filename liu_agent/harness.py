@@ -388,12 +388,30 @@ def case_record(run: Path, request_id: str | None = None) -> dict:
     trial = next((trial for trial in trials if trial.get('request_id') == request_id
                   or trial.get('generation_evidence', {}).get('request_id') == request_id), None)
     review = trial.get('review') if trial else None
+    workflow_review = None
+    if candidate and packet.get('workflow_policy'):
+        from .workflow_policy import registered_review
+        from .visual_decision import record_only
+        workflow_review = registered_review(run, request_id)
+        if review is not None and not record_only(packet):
+            # Explicit research profiles retain their native first review.
+            # Validate any sidecar above, but do not let it erase that review.
+            workflow_review = None
+        if workflow_review is not None:
+            review = workflow_review['evidence']['report']['review']
     failure = {'layer': 'unknown', 'authority': 'execution_status_only', 'review_digest': None,
                'signal': state if state != 'completed' else 'failure_not_observed'}
     if review:
         failure.update(layer=review['diagnosis'] if review['decision'] == 'revise' else 'unknown',
                        authority='reviewer_reported_not_causally_proven', review_digest=digest(review),
                        signal=review['decision'], changes=review.get('changes', []), preserve=review.get('preserve', []))
+        if workflow_review is not None:
+            # First-pass visual observations can show a gap, not locate its
+            # cause. Keep an authored diagnosis as a hypothesis for phase two.
+            failure.update(layer='unknown', reported_hypothesis=review['diagnosis'],
+                           causal_attribution='not_proven',
+                           review_evidence_file=workflow_review['evidence_file'],
+                           review_evidence_digest=workflow_review['evidence']['digest'])
     human_acceptance = 'not_recorded'
     if (run / 'user-feedback.json').exists() and candidate:
         from .feedback import verified_feedback

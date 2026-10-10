@@ -30,7 +30,7 @@ METHODS = {
         '范围内编辑：以真实画布为基准，仅让当前 change_scope、preserve、must_keep 与 allowed_operations 决定可改内容。choices 写具体变化和与保留项的关系；checks 同时检查改善与范围外退步。原画面范围外的已成立部分沿用，不改变未授权修改的场景或机位。',
         'PRODUCTION_DESIGN'),
     'model-compile': (
-        '模型编译：每个目标从同一 Need/Plan 独立编写完整正文，实际 model_profiles 与 compilation_runtimes 决定语言、次序及可用控制。逐项对应 choices、锁定项和真实参考顺序；模型不支持的范围写入 limitations，不自行换模型或删需求。',
+        '模型编译：每个目标从同一 Need/Plan 独立编写完整正文，实际 model_profiles 与 compilation_runtimes 决定语言、次序及可用控制。逐项保留全部已选 choices 的必要关系、允许变化边界与锁定项，按真实参考顺序编写；模型不支持的范围写入 limitations，不自行换模型或删需求。',
         'PRODUCTION_COMPILE'),
     'result-review': (
         '结果观察：据原话明确目标，实际缩看整体、正常大小看关系、按需放大局部并返回整体，再核对 checks；既有 evidence 只记录实际做过的观察与界限。局部全 met 不证明目标成立，自选拍法未实现也不自动等于表达失败；保留真实硬锁，无目标级修改依据则记录不确定，不强修有效画面。只提供研究观察，不代替接受或授权重生成。',

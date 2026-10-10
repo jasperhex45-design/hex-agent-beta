@@ -1,9 +1,9 @@
 {
-  "version": "0.3.8",
+  "version": "0.3.9b1",
   "scope": "product_source_only",
   "channel": "public_beta",
-  "source_commit": "436ba51ccb069ffba9d8cda5c4a6e66f84630f33",
-  "notice": "公开 Beta 源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。沿用现有许可；文件摘要用于核对内容，不证明审美效果或宿主工具可用性。",
+  "source_commit": "3bffda5d7ada7c740d7272c169c273b80559f601",
+  "notice": "公开 Beta 源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。公开访问不改变现有许可，文件摘要不证明审美或工具可用性。",
   "files": [
     {
       "path": ".agents/skills/cl-hex-car-photography/SKILL.md",
@@ -42,8 +42,12 @@
       "sha256": "1d69b521da0277316ba6e4fe4df432fd09a2c4e0ab9e97834554259ad90e7074"
     },
     {
+      "path": ".gitattributes",
+      "sha256": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c"
+    },
+    {
       "path": ".github/ISSUE_TEMPLATE/beta-feedback.yml",
-      "sha256": "1ed7bcea6c673497bac985daadbbecf7cfdd5588e05a2c727662975554c34515"
+      "sha256": "dff7c05462ae866fb939566d5ffed4f760a178e0b93a9578c5ccff1d836cc6ed"
     },
     {
       "path": ".gitignore",
@@ -59,11 +63,15 @@
     },
     {
       "path": "BETA.md",
-      "sha256": "89218f43acd834127400349a45caf14fd895d35833155d94dfa39059cf598fe0"
+      "sha256": "46721c2ee01e2f38cd76ef665feec7bc47b04729c31fcde70048aa1c4056fa19"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "7cd59bddd215ba04d72885ab02f2eed3705454bafc4ad621e262421aa7e617d7"
     },
     {
       "path": "CODEX_START.md",
-      "sha256": "e1884201864e12d3b7efe864b0a3f2be5cb5515e6613e79cb0e3435ee6825be4"
+      "sha256": "d0d1e51cd346c70ac8abdc630bc8d789ec15d7212b7db473e3209d4b53b39b3f"
     },
     {
       "path": "Hex.ps1",
@@ -75,7 +83,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "50d65b773b1ae9bb93849f36c812c05819e7cbdd75968fb10dfbe34cf5d7dd64"
+      "sha256": "17fe5d71c2aa24eabffbc02f0eede5fc161991752c16b678f20ad9c084100b89"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -108,6 +116,10 @@
     {
       "path": "docs/CONVERSATION_RUNTIME_20260925.md",
       "sha256": "6bc44a888d021cb250fb364a501dbe7df02aa2878f28932d8c039dcfa9a319e7"
+    },
+    {
+      "path": "docs/ESSENTIAL_CREATION_FEEDBACK.md",
+      "sha256": "7020ec2d1b42819b746c87018ed5ce7e9ec033879de9c5c40bf70de77c04b6f4"
     },
     {
       "path": "docs/HEX_QWEN_MASKED_EDIT_20261007.md",
@@ -343,7 +355,7 @@
     },
     {
       "path": "knowledge/models/image.json",
-      "sha256": "4b9ba895a446f68223006d33bc4cdafb3bf289042dc7b4c654240259d97fc469"
+      "sha256": "ebc7c24b25d6c83f9095735a25061ffe5c29b096cc5d9772933631a6be2b6c24"
     },
     {
       "path": "knowledge/models/midjourney.json",
@@ -363,7 +375,7 @@
     },
     {
       "path": "liu_agent/__init__.py",
-      "sha256": "6142c1b358fcdd4dd818036ad7caa1156c74e66ec231d13edac1ebfaedee7151"
+      "sha256": "f269e2801d0dec8e7b57818d7fba4e83860a5b651c6bfb86f9cd6fae4eadb5a4"
     },
     {
       "path": "liu_agent/__main__.py",
@@ -407,7 +419,7 @@
     },
     {
       "path": "liu_agent/api_recovery.py",
-      "sha256": "9b9d1e1edb566a2f7220067effbc3f08f3926e35b001e85da08e93ce53796d74"
+      "sha256": "36e31673674b691a0f87243cd09b9063f172b3493a808488a4eec88901370966"
     },
     {
       "path": "liu_agent/art_structure/__init__.py",
@@ -463,11 +475,11 @@
     },
     {
       "path": "liu_agent/cli.py",
-      "sha256": "be97ab8b0ecca72e11ca1c261f41af68bf9ca50e112be9c39cb54fa2c93e33c4"
+      "sha256": "7e38d07a3cc4a321c65d954c91937d78283ccabd571e797923b17e734b75a88e"
     },
     {
       "path": "liu_agent/co_creation.py",
-      "sha256": "c7156336f4f58803c460bec59d97321677091424f9217eab2194015787ffad83"
+      "sha256": "d50b3f079ca4d98185ccf7dc0c46517e467f1beb964ddbc388c3ad74663fc45a"
     },
     {
       "path": "liu_agent/codex_integration.py",
@@ -491,7 +503,7 @@
     },
     {
       "path": "liu_agent/contracts.py",
-      "sha256": "47eccb7c57b55d70ec29d53862c524a844d483c35cf47c8b16eadb5ff44a40dc"
+      "sha256": "1dd79c0be10da4344beb0eb853f3b4403bd382b5ce3a2fc1e0cde753ce0067f4"
     },
     {
       "path": "liu_agent/creative_directions.py",
@@ -499,7 +511,7 @@
     },
     {
       "path": "liu_agent/design.py",
-      "sha256": "0c19cd0bfc005f6d4c0b603820a453ffb38d5dd24f54089e6d29226fb04b3756"
+      "sha256": "9d3d0c63e54cac9ce1fd9fcc105238271a41c899c4677918c9963bd46a112944"
     },
     {
       "path": "liu_agent/evolution_lab.py",
@@ -523,11 +535,15 @@
     },
     {
       "path": "liu_agent/failure_diagnosis.py",
-      "sha256": "a6509d9af3f4fb9abf653988548e910bda38500aeeeeeeaf19732a583bfe06d6"
+      "sha256": "39d83cb29b3f28e12d54e545265d6cee42e4251322811ef91b794b04d0fc8f17"
     },
     {
       "path": "liu_agent/feedback.py",
       "sha256": "5b8457147a705b790d66e1d10263a4a334a9f9213f02c93d8897d5ff8f24d3ad"
+    },
+    {
+      "path": "liu_agent/feedback_card.py",
+      "sha256": "1e39c196e4175cc153b71a949bb95cc9c10b7a0a0762b9b8fde4c382d8adf29d"
     },
     {
       "path": "liu_agent/feedback_recall.py",
@@ -539,7 +555,7 @@
     },
     {
       "path": "liu_agent/generation_authorization.py",
-      "sha256": "4d433efb60f6a8562f63ec75b5e177aef2fe28e65491b82cfb1a29f61b1a5ce7"
+      "sha256": "0f6d475edff18cb2e6defde87f72569a106eab2208ba30c3898fdc300d60266d"
     },
     {
       "path": "liu_agent/generation_evidence.py",
@@ -555,11 +571,11 @@
     },
     {
       "path": "liu_agent/harness.py",
-      "sha256": "9f3dab1823dea402db0343cda38a1686c0ac9867e961fa565d1fd2ffdbc1db74"
+      "sha256": "d95e5bebfe6e1c56d0d246207c868b8f87334ffcf176afff05c9265a71d22496"
     },
     {
       "path": "liu_agent/host.py",
-      "sha256": "8ec46ef1786b91f26d5e19d70d93a7accc914032bafb52f967256f92a01d7bea"
+      "sha256": "cf635540500ed733726e1a737cfb316c4eb04c431b3eb85e5e902e91d71c9cb6"
     },
     {
       "path": "liu_agent/host_references.py",
@@ -567,7 +583,7 @@
     },
     {
       "path": "liu_agent/instructions.py",
-      "sha256": "b2cdf36d0a88be534c2d4db4a7e8317f0e9874ea30a6c36536d68a931a60dba3"
+      "sha256": "0d1ab2b980587d8e75d1d82a677e5a7e185a0b65b96ffc236e2a76adb009175f"
     },
     {
       "path": "liu_agent/intent_review.py",
@@ -591,7 +607,7 @@
     },
     {
       "path": "liu_agent/method_context.py",
-      "sha256": "eefae2bbcb9ec2d478e8426549532fabb83ab6c21a9cbaf5cb646642acb1c424"
+      "sha256": "e39d43c65e7a50823ef5c7108b4adb0c7ab1b9b8d5ad49ba5f5ebf42b5082652"
     },
     {
       "path": "liu_agent/minimal_harness.py",
@@ -599,7 +615,7 @@
     },
     {
       "path": "liu_agent/model_adaptation.py",
-      "sha256": "63e33d964573f628e6f35886643cc660d1db73d0590fc050caab84fec1e67321"
+      "sha256": "5661cb6bd5a38acbd8bc87c1a53fc4386b907344b09341ca7523de7b938153be"
     },
     {
       "path": "liu_agent/native_budget.py",
@@ -643,7 +659,7 @@
     },
     {
       "path": "liu_agent/quality_review.py",
-      "sha256": "b18adbc31d942849df1c5fb2014747af2336a466f87284fd6714adbc3f814232"
+      "sha256": "e0f86467be78fb328fab5d244c0a90287e1be6e9d38ece609d6fcd5d4eede39d"
     },
     {
       "path": "liu_agent/reference_gate.py",
@@ -730,6 +746,10 @@
       "sha256": "ef7e6316f5755953955a12f16c2fc0c414e2b92f6dd6c849baa10ea19da23fb0"
     },
     {
+      "path": "liu_agent/user_feedback_context.py",
+      "sha256": "dda8e6a9a8075d3c2d48c3a72c55df36946e66848d8a81ade401063b27bf031e"
+    },
+    {
       "path": "liu_agent/visual_decision.py",
       "sha256": "91f02adaa8b72e174986a47166f076a4f977408468a369ed082bd45ec61c7e23"
     },
@@ -747,7 +767,7 @@
     },
     {
       "path": "liu_agent/visual_research.py",
-      "sha256": "6197b40996ac053d21b71a5a300402ab01d4291067bb50fa558fbd40d6a6b07b"
+      "sha256": "44ba00c7ddce1bb40e0e33ae7a557c802452c759b928297bdaf37dba6dd5053a"
     },
     {
       "path": "liu_agent/visual_retrieval_trial.py",
@@ -759,15 +779,15 @@
     },
     {
       "path": "liu_agent/workflow.py",
-      "sha256": "65038b2dbdd11e99f42365d865fcdaed534cea48bf6eaacdef5912f047a408d1"
+      "sha256": "720c62614d8bd0020aa190ac0d3e5331f76f3e0601f8dd5fa6edc670bd59f142"
     },
     {
       "path": "liu_agent/workflow_policy.py",
-      "sha256": "a68c934ebfec34c9a61894edf3563d80b5adafec75caaf23d1a41878d991eb15"
+      "sha256": "a02bfc9656819a9c20af15d946c70cf5dfcf4077e099565f5700a7123735e668"
     },
     {
       "path": "pyproject.toml",
-      "sha256": "89fc24719ea8bf89839843b99899cf94718a723be0f05fc892dc93ff1e2e0df3"
+      "sha256": "5bc4077cb797e5ca3be2411c078b177c03f8f54d805770b1c9e69b661eb163bd"
     },
     {
       "path": "requirements.txt",
@@ -855,7 +875,7 @@
     },
     {
       "path": "schemas/Need.schema.json",
-      "sha256": "3f6029295d6b64ea32099a432b1fe119c4a73b6ee622a2a4c86bfef8f80c7ffa"
+      "sha256": "fa1aaae5fd7801659b0ed6d5d14e559f14b0be76f1aaa93ddacfc45cbcc473dd"
     },
     {
       "path": "schemas/PairComparison.schema.json",
@@ -887,7 +907,7 @@
     },
     {
       "path": "schemas/ReferenceAnalysis.schema.json",
-      "sha256": "97fe1492f01393f671dd13a142c71ec7afddf27374135ee2d0538b5f2b443018"
+      "sha256": "f0f53a41cfc5f6cac4d51d6713389bd09bc8ece3a001f0519e8efe828d3fa2e1"
     },
     {
       "path": "schemas/ReferencePolicy.schema.json",
@@ -931,7 +951,7 @@
     },
     {
       "path": "scripts/release_local.py",
-      "sha256": "9c9fcb8c670e33eb46c78dad026067cd2aa658b622cf41f74b0cd8625cc40894"
+      "sha256": "9893b5b88549e8d16c00934c334e535bce3f681ca77cf864003dc0a8c4a82ee7"
     },
     {
       "path": "scripts/runtime/native-requirements.lock.txt",
