@@ -1,6 +1,6 @@
 # Windows 使用与可选本地组件
 
-先按 [CODEX_START.md](../CODEX_START.md) 安装主程序，再在工程目录使用 `Hex.ps1`。下列本地检索、OCR 和研究环境均为可选组件；内测包不含模型权重、虚拟环境或作者机器的配置。
+先按 [README.md](../README.md) 完成基础安装，再按 [CODEX_START.md](../CODEX_START.md) 使用 HEX；工程目录可使用 `Hex.ps1`。下列本地检索、OCR 和研究环境均为可选组件；测试包不含模型权重、虚拟环境或作者机器的配置。
 
 ## 日常入口
 
@@ -10,7 +10,7 @@
 .\Hex.ps1 car prepare --brief inputs/car.json --sources inputs/car-sources.json --out outputs/car
 ```
 
-`inputs/` 中的任务文件由宿主根据真实用户请求整理。`Hex.ps1`、虚拟环境内的 `hex-agent` 和 `python -m hex_agent` 调用同一运行入口。`runtime` 只检查文件是否存在，不证明组件已完成推理或图片质量合格。
+`inputs/` 中的任务文件由宿主根据真实用户请求整理。`Hex.ps1` 与项目解释器执行的 `python -m hex_agent` 调用同一运行入口；基础安装不注册 console script。`runtime` 只检查文件是否存在，不证明组件已完成推理或图片质量合格。
 
 Windows 新任务默认采用 `knowledge-assisted-v1`；汽车入口采用 `car-photography-knowledge-v1`，保留车辆身份与输入冻结规则。通用 `prepare` / `run` 需要使用新任务基线时，可显式传入 `--execution-profile production-baseline`；该选项不用于 `car prepare`。已有任务的恢复保留原策略、来源、停止记录和累计预算。
 
@@ -62,6 +62,8 @@ Windows 新任务默认采用 `knowledge-assisted-v1`；汽车入口采用 `car-
 ```
 
 检查 ID 和准确文字必须对应当前任务，不能将示例占位符直接用于验收。没有文字要求时不启动 OCR；缺组件时保留未核验状态。报告须放在任务目录外，使用新文件名。`review` 仅准备隔离评审输入，宿主仍需实际查看当前图片并记录观察。
+
+上述命令是组件级检查与输入准备。正式交付继续执行当前任务的 `workflow check / prepare-review / record-review / complete`；组件报告不替代统一完成状态。
 
 OCR 通过只表示相关文字检查通过，不能代替版式、语义、视觉质量或用户验收。
 

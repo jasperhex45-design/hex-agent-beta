@@ -154,16 +154,25 @@ def make_packet(brief_file: Path, out: Path, kb: Path, state: Path, need_file: P
     if execution_policy is not None:
         packet['visual_decision_policy'] = execution_policy
         packet['method_context_version'] = 1
+        packet['production_context_version'] = 2
         if retrieval_config is not None:
             packet['knowledge_retrieval_config'] = retrieval_config
         if execution_policy['profile'] in CAR_PROFILES:
             packet['request_input_version'] = 1
+    if interaction and packet.get('visual_research_version') == 2:
+        packet['intake_policy_version'] = 1
     if previous_need is not None:
         packet['need'] = previous_need
     if execution_policy is not None and previous_need is None:
         from .reference_library import initialize
         initialize(packet, kb)
     need = Need.model_validate(read_json(need_file)) if need_file else heuristic_need(brief)
+    if not need_file and previous_need is None and packet.get('intake_policy_version') == 1:
+        # A keyword draft has not asked the user anything. Do not freeze its
+        # generic fallback as an immutable clarification before host intake.
+        # The original request and unresolved understanding remain available.
+        need.questions = []
+        need.question_records = []
     return refresh_packet(packet, out, kb, state, need, "host_supplied" if need_file else "offline_heuristic",
                           aesthetic_library_path=aesthetic_library_path, aesthetic_query=aesthetic_query,
                           style_context_enabled=style_context_enabled)
@@ -378,8 +387,131 @@ def refresh_packet(packet: dict, out: Path, kb: Path, state: Path, need: Need, m
     return packet
 
 
+def _staged_production_context(packet: dict) -> bool:
+    """New task loading policy; never migrate an existing packet on read."""
+    if 'production_context_version' not in packet:
+        return False
+    value = packet['production_context_version']
+    if type(value) is not int or value != 2:
+        raise AgentError('未知 production_context_version；不能静默切换任务加载规则')
+    from .visual_decision import policy
+    if policy(packet) is None:
+        raise AgentError('分阶段上下文只用于生产任务')
+    return True
+
+
+def production_host_context(packet: dict, stage: str, *, input_files: list[str] | None = None,
+                            revision: dict | None = None) -> dict | None:
+    """Return one current host instruction, without selecting or advancing a task.
+
+    The caller supplies the stage already chosen by inspect_run, or by the
+    existing prepare-compilation entrypoint. No files, model calls or new task
+    state are created here. Legacy packets keep their original loading contract.
+    """
+    if not _staged_production_context(packet):
+        return None
+    inputs = {
+        'parse': ['packet.json', 'need.schema.json'],
+        'direction': ['packet.json', 'need.schema.json'],
+        'observe': ['packet.json', 'reference-analysis.schema.json'],
+        'research': ['packet.json'],
+        'design': ['packet.json', 'plan.schema.json'],
+        'model_compile': ['compilation-input.json', 'compilation.schema.json'],
+        'review': [],
+    }
+    if not isinstance(stage, str) or stage not in inputs:
+        raise AgentError('未知宿主指导阶段；使用当前流程的小写阶段名称')
+    files = inputs[stage] if input_files is None else input_files
+    if (not isinstance(files, list)
+            or any(not isinstance(path, str) or not path.strip() for path in files)):
+        raise AgentError('阶段输入须为真实输入文件路径列表')
+    files = list(dict.fromkeys(files))
+    methods = None
+    if stage == 'review':
+        # Full-flow review has a separate isolated input and output contract.
+        # EVALUATE/REVIEW and method_context would reintroduce author context.
+        author_files = {'packet.json', 'need.json', 'plan.json', 'solution.json',
+                        'compilation-input.json', 'production-context.json',
+                        'creation-instructions.md', 'HOST_TASK.md'}
+        if any(Path(path.replace('\\', '/')).name in author_files for path in files):
+            raise AgentError('视觉复核只读取已准备的隔离评审输入，不能加载作者需求或方案文件')
+        instruction = ('读取 workflow prepare-review 返回的当前隔离评审输入，实际打开其中绑定的候选与必要参考，'
+                       '按该输入的 review_record_template 记录可见依据、失败与未知，再执行 workflow record-review。'
+                       '不要读取作者 Plan、提示词或整份 packet；评审字段与标准以当前隔离输入为准。'
+                       '尚无隔离输入时先按当前流程准备，不能用旧 EVALUATE 模板代替，也不把机器意见当用户接受。')
+    elif stage == 'research':
+        from .visual_research import host_instruction as research_instruction
+        instruction = research_instruction(packet)
+    else:
+        instruction = ins.stage_instruction(stage, packet)
+        if stage != 'direction':
+            from .method_context import build_method_context
+            context = build_method_context(packet, stage, revision=revision)
+            if context is not None:
+                selected = [context['primary_method'], *context['supporting_methods']]
+                # stage_instruction already contains normal method prose. A
+                # revision supplied by prepare-compilation adds its existing
+                # static boundary once, never user text to the instruction.
+                if revision is not None:
+                    for method in selected:
+                        if method['id'] == 'revision-boundary':
+                            instruction += '\n' + method['instruction'] + '\n'
+                methods = {
+                    'stage': context['stage'], 'task_mode': context['task_mode'],
+                    'primary_method': context['primary_method']['id'],
+                    'supporting_methods': [row['id'] for row in context['supporting_methods']],
+                    'sources': context['sources'], 'input_digest': context['input_digest'],
+                }
+    return {'format': 'hex.production-host-context.v1', 'packet_digest': packet['digest'],
+            'stage': stage, 'instruction': instruction,
+            'instruction_sha256': sha(instruction.encode('utf-8')),
+            'input_files': files, 'method_context': methods,
+            'notice': '只加载当前阶段；来源、方案与预算仍取原任务。指导与摘要不证明宿主已理解、看图或完成。'}
+
+
+def _write_staged_production_context(out: Path, packet: dict) -> None:
+    """Keep bootstrap files small; live instructions come from the next action."""
+    from .visual_decision import policy
+    from .workflow_policy import policy as workflow_policy
+    full_flow = workflow_policy(packet)
+    write_json(out / 'production-context.json', {
+        'format': 'liu.production-context.v2',
+        'authority': 'derived_from_packet_and_current_instructions',
+        'packet_digest': packet['digest'], 'visual_decision_policy': policy(packet),
+        **({'workflow_policy': full_flow} if full_flow else {}),
+        'instruction_loading': 'current_stage_from_existing_next_action',
+        'instruction_entrypoints': ['workflow drive', 'harness plan', 'prepare-compilation'],
+        'required': ['HOST_TASK.md', 'packet.json'],
+        'when_needed': ['input_files in current host_context', 'references required by the current action'],
+        'experience_retrieval': 'disabled',
+        'notice': '本文件只说明加载方式；实际指导由当前动作的 host_context 提供，不是阅读或完成凭证。',
+    })
+    atomic_text(out / 'creation-instructions.md', '''# 当前阶段的创作指导
+
+执行 workflow drive 或 harness plan，读取返回的 host_context：只按其中的 instruction 与 input_files 完成当前动作。
+先理解真实用户原话，再按现有 Copilot 规则处理会改变结果的含糊；明确或已委托时继续找资料、实际看参考并形成方案。
+prepare-compilation 返回本模型的 model_compile 指导与真实 compilation-input.json；保持同一需求与方案，不猜模型能力。
+图片复核使用 workflow prepare-review 的隔离输入，不重新加载作者方案。每步完成后读取实际下一步，旧指导不能代替当前输入。
+''')
+    atomic_text(out / 'HOST_TASK.md', f'''# 当前创作任务
+
+执行配置：{policy(packet)['profile']}。先读 packet.json 中的 input_sources、brief 与当前 need，分清用户要求、允许自主决定和真正未知项。
+Need 是 offline_heuristic 时先按原话完成真实理解并 refresh；先判清需求，再决定是否需要 Copilot 问讯，不能先写完整方案再补需求记录。
+执行 workflow drive 或 harness plan，读取当前 host_context 与 next_action；只加载本阶段指令和所列输入。need.json 是兼容副本，无须重复读取。
+目标明确或已委托则继续本题研究与创作；缺必要身份、编辑素材或尚未解决的关键取舍时，按真实状态处理，不以自主设计覆盖。
+完成当前动作后继续读取真实下一步。模型编译以 prepare-compilation 返回的指导为准；视觉复核只读已准备的隔离输入。
+原许可、父图、预算、未知请求和完成门禁继续沿用；本加载入口不增加调用额度，也不证明工具已执行或图像合格。
+''')
+    from .co_creation import enabled as interaction_enabled, render
+    if interaction_enabled(packet):
+        atomic_text(out / 'direction-question.md', render(packet))
+
+
 def _write_production_context(out: Path, packet: dict) -> None:
     """Write the actual small host input and a derived loading manifest."""
+    if _staged_production_context(packet):
+        _write_staged_production_context(out, packet)
+        return
     from .visual_decision import policy
     from .workflow_policy import policy as workflow_policy, host_instruction
     full_flow = workflow_policy(packet)
@@ -467,6 +599,7 @@ def read_packet(run: Path) -> dict:
     validate_state(packet)
     from .visual_decision import validate_context
     validate_context(packet)
+    _staged_production_context(packet)
     from .reference_roles import validate_context as validate_reference_roles
     validate_reference_roles(packet)
     from .host_references import validate_context as validate_host_references
@@ -632,6 +765,7 @@ def save_packet(packet: dict, run: Path) -> dict:
     workflow_policy(packet)
     from .visual_decision import record_only, validate_context
     validate_context(packet)
+    _staged_production_context(packet)
     from .reference_roles import validate_context as validate_reference_roles
     validate_reference_roles(packet)
     from .host_references import validate_context as validate_host_references

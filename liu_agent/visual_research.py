@@ -296,6 +296,10 @@ study 使用真实案例：先解决具体视觉问题，实际看图、observe 
 需求开始就模糊且会改变主导表达时，先用 question_records 问清关键目标再找参考。需要共创时只问本题关键分歧；已回答的选择与限制保留，不把搜索扩展当作重选许可。
 有足够依据可直接形成一个最终方向；已由用户选定的共创方案只展开原选中草案。choices/reference_uses/checks 必须连接真正采用的观察；全部拒绝案例不能冒充找到了可用审美方向。代码只验证来源和决策连接，不证明美观或用户接受。
 '''
+    if packet.get('intake_policy_version') == 1:
+        instruction += '''需求明确与视觉方案已定分开判断：direction_review=direct 只表示无需先问用户，不等于 specified_direction，也不免除开放题的参考研究。“做张咖啡海报”可以有明确目标，但未提供具体视觉方案时仍走 study；“风格你定”是允许宿主找依据作设计决定，不能反写成用户已指定场景、机位或光线。
+研究前先解决会改变目标的未知；用户已经交出的实现选择由宿主承担。研究时寻找可借鉴的真实作品，实际观察它如何组织主体、空间、光色与阅读重点，再把适用关系迁移到本题。用户没有要求复刻时，不把完整身份、布局或元素组合照搬成新硬锁；无需为形式重新搜索已看过且适用的作品。
+'''
     if creative_context_enabled(packet):
         instruction += '''本题使用 creative_context_version=1。在 Need.visual_research.evidence_requirement 区分 feedback_review（用户要求复盘已有图）、visual_reference（寻找可用视觉作品）和 professional_analysis（学习对具体作品的专业分析）；不要把旧AI图复盘替代后两种职责，已记录职责只有新的用户指令可以降低。
 observe 时每项 finding 填 source_kind：generated_candidate、user_reference 或 external_work。外部作品复用参考的 source_url、credit 与真实像素；同一张作品可以继续用，不为形式重复搜索。专业分析还须通过 attach-research 保存 sources 中该作品的 url/title/author/excerpt/reference_ids；finding.professional_source_url 指向其中唯一来源，professional_excerpt 摘录该来源正文。图片必须实际看过，摘要或 seen=true 不能替代它；来源记录和引用绑定也不自动证明专业判断适用于本题。

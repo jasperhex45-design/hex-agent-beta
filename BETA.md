@@ -33,7 +33,7 @@
 
 公开 Beta 保留独立、精简的发行历史。原开发库中的私人材料与完整历史不自动进入此仓库；发布前核对所选源码、文档、许可与清单。
 
-构建包使用 `python scripts/release_local.py --output-dir PATH --source-commit SHA`，从核对过的 Beta 源码提交构建，并传入其完整 40 位提交 SHA。脚本只记录该值，不证明当前文件与提交一致；未提供时清单保留空值，不推测提交。必要回归在开发库中运行，测试者无需安装 pytest。
+构建包使用 `python scripts/release_local.py --output-dir PATH --source-commit SHA`，从核对过的来源提交构建，并传入其完整 40 位提交 SHA；来源可以是开发库的精选产品源码或独立 Beta 源码。脚本只记录该值，不证明当前文件与提交一致；未提供时清单保留空值，不推测提交。必要回归在开发库中运行，测试者无需安装 pytest。
 
 源码包使用 `public-beta` 名称，清单渠道为 `public_beta`。解压后可运行 `python scripts/verify_package.py` 核对文件摘要。反馈卡包含实际图片与提示词，分享前按上述公开反馈范围核对内容。
 

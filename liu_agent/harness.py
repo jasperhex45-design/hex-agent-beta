@@ -154,6 +154,32 @@ def _repair_contract(run: Path, status: dict, packet: dict) -> dict:
             'next_entrypoints': ['prepare-compilation', 'preflight', 'dispatch', 'prepare-eval', 'record-test', 'choose', 'finalize']}
 
 
+def _current_host_context(packet: dict, status: dict) -> dict | None:
+    """Project the inspected next action; never infer or advance task state."""
+    from .workflow import production_host_context
+    if status.get('blockers') or 'production_context_version' not in packet:
+        return None
+    current = status['stage']
+    stages = {
+        'needs_parse': 'parse', 'needs_intent_assessment': 'direction',
+        'needs_input': 'direction', 'needs_reference_selection': 'direction',
+        'needs_observation': 'observe', 'needs_selection_assessment': 'observe',
+        'needs_visual_research': 'research', 'needs_research': 'research',
+        'needs_reference_expansion': 'research',
+        'needs_design': 'design', 'needs_compile': 'model_compile',
+    }
+    if current == 'needs_visual_review':
+        review_input = status['next_action'].get('review_input')
+        return (production_host_context(packet, 'review', input_files=[review_input])
+                if review_input else None)
+    stage = stages.get(current)
+    if stage is None:
+        return None
+    if current == 'needs_intent_assessment' and packet.get('need_mode') == 'offline_heuristic':
+        stage = 'parse'
+    return production_host_context(packet, stage)
+
+
 def plan(run: Path, *, _dispatch_lock_held: bool = False) -> dict:
     """Read only; inspect_run is the sole authority for the next action."""
     from .run_status import inspect_run
@@ -180,8 +206,9 @@ def plan(run: Path, *, _dispatch_lock_held: bool = False) -> dict:
                  'owner': action.get('owner', steps[0]['owner'] if steps else 'host_model'),
                  'local_advance_available': allowed,
                  'submission_permitted_by_plan': False}
-    methods = None
-    if packet:
+    context = _current_host_context(packet, status)
+    methods = context.get('method_context') if context else None
+    if packet and 'production_context_version' not in packet:
         from .method_context import build_method_context
         methods = build_method_context(packet, 'design')
     body = {'format': 'hex.harness-plan.v1', 'run': str(run), 'workflow': workflow,
@@ -200,6 +227,8 @@ def plan(run: Path, *, _dispatch_lock_held: bool = False) -> dict:
                            'evidence_refs': presentation['evidence_refs'],
                            'diagnostics': presentation['diagnostic_details']},
             'notice': '流程计划不授权调用；本地推进只复用 resume，判断与生成分别在原入口执行。'}
+    if context is not None:
+        body['host_context'] = context
     return {**body, 'checkpoint': digest(body)}
 
 
@@ -303,11 +332,17 @@ def drive(run: Path, *, max_steps: int = 8) -> dict:
     if status['stage'] == 'exported' and (not status.get('workflow_completion', {}).get('applicable')
                                          or status['workflow_completion']['complete']):
         reason = 'complete'
-    return {'format': 'hex.workflow-drive.v1', 'run': str(run), 'reason': reason,
+    body = {'format': 'hex.workflow-drive.v1', 'run': str(run), 'reason': reason,
             'steps_executed': len(events), 'events': events, 'requests_submitted': 0,
             'status': status, 'next_action': status['next_action'],
             'continue_in_host': reason == 'host_action_required',
             'notice': '本地步骤已推进；宿主继续执行 next_action 的创作、观察或登记动作。只有完整证据与正式交付均通过才完成。'}
+    if not status['blockers']:
+        from .workflow import read_packet
+        context = _current_host_context(read_packet(run), status)
+        if context is not None:
+            body['host_context'] = context
+    return body
 
 
 def case_record(run: Path, request_id: str | None = None) -> dict:

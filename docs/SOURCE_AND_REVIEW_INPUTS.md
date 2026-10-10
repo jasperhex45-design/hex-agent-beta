@@ -2,6 +2,8 @@
 
 适用于 `source_contract_version=1` 的新任务。由宿主维护内部文件，用户只用自然语言表达需求、授权和反馈。旧任务按原版本读取与导出，不能给旧文件补默认字段后重算摘要。
 
+仅在当前阶段需要来源字段、澄清版本或特殊图片接口时读取。当前完整流程按 [CODEX_START.md](../CODEX_START.md) 与真实任务状态执行；下述原生评审和预算接口保留各自合同范围，不作为所有新任务的默认阶段。
+
 ## 1. 原始消息与需求分开
 
 `prepare/refresh/run --sources inputs/task-sources.json` 读取以下格式。示例仅说明形状，不是当前用户需求或授权：
@@ -53,3 +55,31 @@ Need的 `must_keep/avoid` 每项由 `constraint_evidence` 绑定来源。`user_e
 调用记录缺失或错配时宿主入口先停下补证，不能登记新Eval。证据对应后先看图写事实，再定位需求、参考、设计、编译或执行问题；仍缺少区分原因的依据时用unknown。只有明确not_met可支撑revise：每个revision_target绑定失败criterion_id和具体change，同时列出preserve。uncertain、已接受/否决、已ready或额度用尽均不自动生成。两图比较同时写收益与损失；机器结论在用户反馈前保存，用户可以都不保留。
 
 锁残留时使用 `recover-lock --run ...`，只有原进程已退出或PID已被其他进程复用的证据才会释放；状态不明保持阻断。恢复锁不删请求、不改授权、不退回已用预算。
+
+## 5. 已看见会话图片但没有附件字节
+
+仅当宿主实际看到真实用户会话中的图片、工具未暴露其字节时，使用 `add-host-reference --run RUN --file REFERENCE_JSON` 保存独立 `host_visible_references`。搜索标题、网页图或未看到的链接不适用；取得网页像素参考的方法见 [设计研究](../.agents/skills/liu-aesthetic-agent/references/design-study.md)。
+
+按当前导出的 `HostVisibleReference.schema.json` 填写：
+
+| 字段 | 要求 |
+| --- | --- |
+| `id`、`source_id` | 独立参考 ID 与已存在的真实用户消息 ID |
+| `locator` | 图片所在真实会话位置 |
+| `evidence_type`、`observation_method` | `host_attested`、`conversation_image` |
+| `observation_limits` | 实际可见范围与观察限制 |
+| `role`、`note`、`evaluation_only` | 研究职责与说明，`evaluation_only=true` |
+
+随后通过 `observe` 保存真实 findings，并用 `choices.reference_uses` 关联当前决定和检查。宿主观察不能转录成用户原话；没有看见的部分保持未知。
+
+`metadata_digest` 只绑定来源与宿主声明，不是像素 SHA 或平台认证。这类记录只能支持观察研究，不能作为身份图、编辑画布、生成输入或基准参考；需要这些职责必须取得真实图片字节。API 或隔离评审只收到元数据时，不得声称重新看过原图，对依赖原图的判断记不确定。
+
+## 6. 更新或替换参考
+
+先用 `python -m hex_agent.reference_roles list --run RUN` 核对当前像素与宿主参考。当前清单容量是同时绑定上限，允许保存真实淘汰原因后换入有价值的新参考，不为绕过容量新建任务。
+
+```text
+python -m hex_agent.reference_roles remove --run RUN --reference-id HOST_ID --expected-metadata-digest DIGEST --expected-packet-digest PACKET_DIGEST
+```
+
+移除像素参考使用其 `--expected-sha256`，宿主参考使用独立元数据摘要。输入均由宿主从当前记录读取，不让用户填写 ID 或猜摘要。新增、移除或替换会使受影响观察和方案失效，随后重新 `observe`、设计与编译。冻结或已试图任务通过关联版本继续，不原地改旧派发，也不把旧观察套给新图片。

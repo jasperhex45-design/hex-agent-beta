@@ -1,140 +1,106 @@
-# Hex Agent 启动与接续
-本 Beta 使用独立源码布局，通过本文件第 5 节的安装入口建立本机绑定。先核对实际目录、项目虚拟环境与宿主支持，再启用集成。云端提交或文件存在不代表本机已经信任或加载 hooks。
+# HEX 操作入口
 
-## 一个入口与当前规则
+本文件只保存一套操作顺序。首次启动读第 1–2 节，此后按当前 `next_action` 和 `host_context` 读取所需章节；安装、特殊素材和历史接口不作为每题前置。共同边界见 [AGENTS.md](AGENTS.md)，已加载的内容无需重读。
 
-用户说“用 HEX”时，宿主按 [AGENTS.md](AGENTS.md) 和当前任务状态持续执行本题适用阶段。新任务使用完整流程要求；旧任务保留已保存合同、来源、预算和停止状态。宿主写内部记录，用户只需表达目标与反馈。
+下文 `PY`、`ENTRY`、`RUN` 等由宿主替换为主 Skill 已核验的项目解释器、`scripts/hex_entry.py` 和真实绝对路径；工程目录中也可用项目解释器执行 `-m hex_agent`。用户不填写内部占位符。
 
-从工程目录可使用项目解释器执行 `python -m hex_agent`；从任意目录使用项目解释器与 `scripts/hex_entry.py` 的绝对路径。Windows 的 `Hex.ps1` 也进入同一公共入口。核心 Skill 旧名和内部 `liu_agent` 仅保留兼容，不从旧命令示例推断新默认。
+## 1. 接住需求并准备任务
 
-安装副本的主 Skill 通过同目录 `installation.json` 解析真实解释器、入口脚本和工程路径。不要依赖当前工作目录、猜旧目录或把安装副本的相对路径当作工程位置。下文的 `RUN`、`BRIEF` 等代表宿主已准备的真实绝对路径，不让用户填写占位符。
+先完成主 HEX Skill 的需求判断：模糊时用 Copilot 只问当前关键问题；目标清楚或用户确实委托后继续必要研究。原话、真实回答、已给素材与宿主提案分别保存，未定场景和光线不先锁入 brief。仅讨论产品或代码不建立视觉 run。
 
-## 1. 准备或恢复任务
+已有会话绑定或明确旧任务时直接按第 5 节恢复。新任务在工程 `inputs/` 保存最小 brief、sources 与必要素材，run 使用 `outputs/`；其它目录先核对 `allowed_run_roots`。按真实需求填写目标模型与交付类型，不无故加载未使用的目标：
 
-先确认用户需要提示词、新图还是局部编辑，分别保存 `prompt_only`、`image`、`local_edit`。已给出目标就继续；仅有“用 HEX”且没有目标时，只问一个必要问题。不要因讨论产品或修改代码而创建视觉任务。
+| 需求与当前能力 | `--deliverable-kind` |
+| --- | --- |
+| 只需目标模型提示词，或开始时已确认无可用生图工具 | `prompt_only`；说明图片需在对应模型中执行 |
+| 需要新图且有可用生成路线 | `image` |
+| 修改真实父图且有可用编辑路线 | `local_edit`；绑定父图与修改范围 |
 
-已有 run 先读取 `status` 与统一流程状态，再按 `harness plan` / `resume` 的真实结果继续。绑定了本会话时优先该任务；明确修改另一张图时核对真实父图。不要重新创建一份任务来回避旧预算或冻结输入。
+用户已指定模型则保留；未指定时按实际可用能力选择。工具适配器存在不证明账户或工具可用。已建立的成图任务缺图时保留真实未完成状态，不把它静默改成提示词任务后宣称成图完成。
 
-新任务默认将输入放在工程的 `inputs/`、run 放在 `outputs/`，使用真实绝对路径；其它目录须已在安装配置的 `allowed_run_roots` 内。保存真实消息来源、必要素材及最小 brief 后准备，不把宿主想到的场景和光线先锁成用户要求。单车外观摄影走 `car prepare`，包括只给“汽车生活向”而未指定车型的任务：Brief 的 `vehicle_identity=open` 无须身份图，`preserve` 保留必要身份素材；其它题材走通用 `prepare`。新 Windows 任务保留原生语义知识策略，完整流程要求与知识策略分别保存。实际 Need 后才执行有限检索，允许零采用。
-
-公共入口为新任务自动启用 `--workflow-profile full-flow-v1`；它不覆盖现有知识／领域执行策略。宿主显式填写交付类型。下方以成图为例，按本题选择通用或汽车准备命令的一条；仅提示词填 `prompt_only`，真实父图编辑填 `local_edit`。
-
-如果本题显式使用 legacy 执行策略，原 native Eval／比较仍按原状态完成，再附加完整流程证据；默认生产策略不需要为形式再跑旧 native Eval。不要把 workflow profile 与 execution profile 混为一项。
-
-```text
-python -m hex_agent prepare --brief BRIEF --sources SOURCES --out RUN --deliverable-kind image
-python -m hex_agent car prepare --brief BRIEF --sources SOURCES --out RUN --deliverable-kind image
-python -m hex_agent workflow status --run RUN
-python -m hex_agent workflow drive --run RUN
-```
-
-`workflow drive` 默认每次最多 8 个本地可验证步骤，可用 `--max-steps` 调整。它不调用生成模型，也不替宿主理解、设计、编译或看图；遇到这些步骤会返回当前状态和下一步。宿主完成实际动作后继续 `drive` / `status`，不把正常交回宿主的阶段当作需要用户填表或重新授权。
-
-准备成功后读取当前 `HOST_TASK.md`、`creation-instructions.md`、`production-context.json`、`packet.json` 和原话。默认离线 Need 是草稿，由宿主按用户要求形成真实 Need 并 `refresh`；更新后再设计。不要提前写好完整画面或模型提示词再补办这些步骤。
-
-新任务先填写 `direction_review` 判断意图是否清楚。模糊时进入 Copilot，先用一个开放问题问清最影响方向的感受、用途或用户偏好，再开始找图和设计；无需预制风格选项，焦距、曝光等技术取舍由宿主承担。把真实回答绑定原任务，已有清楚目标或明确委托就继续，不反复问已回答的要求。
-
-## 2. 参考、设计与模型编译
-
-汽车读取 [.agents/skills/cl-hex-car-photography/SKILL.md](.agents/skills/cl-hex-car-photography/SKILL.md)，其它静态视觉任务读取 [.agents/skills/liu-aesthetic-agent/SKILL.md](.agents/skills/liu-aesthetic-agent/SKILL.md)。只加载必要素材和实际目标模型资料，不读取整个工程历史或图库。
-
-新任务先在 Need 的 `visual_research` 中记录路线：开放目标、明确要求研究或已拒绝方向选 `study`；用户已指定的视觉方向或有界局部修改可选 `specified_direction` / `bounded_edit` 并绑定真实来源。用户明确禁止研究时，用 `user_waived` 与 `user_prohibited_study` 绑定原话，状态为 `skipped_by_user`，不称已研究。宿主自己的初稿不是免研究依据。
-
-`study` 按 [设计研究](.agents/skills/liu-aesthetic-agent/references/design-study.md) 主动找并实际看案例，以用户目标判断视觉关系和适用性。不确定就换来源、场景或表现方法继续研究；找不到合适案例或剩余取舍需要用户偏好时，再用 Copilot 说明实见差异与问题，请用户参与选择，不强行选一个交差。明确了情绪目标仍需把它落实为视觉依据，不能自动改成免研究。
-
-新任务使用自适应研究规则，不再要求固定两个方向或固定参考总数；按实际需要用 `creative_directions` 保留提案和取舍，最终形成一个有效 Plan。一次检索或当前参考清单的容量是批次限制，不是风格范围的上限；可继续搜索，并让当前清单保留对决定有用的材料和真实观察。扩展研究不增加生成预算，也不要求分别生图。核心不自动调用浏览器，宿主按下一步实际调用可用搜索与看图工具；结构检查不证明审美判断正确。旧冻结任务沿原研究版本接续，不静默改写。
-
-遇到图片访问失败，先检验当前宿主可用的浏览器和本地文件路径，打开作品详情并亲自看图；取得文件后再打开本地副本核对，以仅研究的职责接入。网页图不能登记成用户会话图片。具体获取、换批与判断方法见设计研究；参考的差异应改变设计决定，而非只增加相似图片的数量。
-
-在 `ReferenceAnalysis` 的 `selection_state` / `selection_reason` 保存当前判断与依据：`exploring` 继续扩展真实参考，`uncertain` / `no_suitable_reference` 回到 Copilot 解决偏好或方向，`acceptable` 才继续最终设计。新研究版本要求可采用的实见参考与 choices / checks 关联；全部舍弃说明尚未找到合适依据，不能填成已选定。旧冻结的研究版本 1 保留原合同，新任务使用版本 2。
-
-必要参考先亲自看图，使用当前参考 schema 写真实观察并 `observe`；身份、风格、照明、评价参考各自承担既定职责。研究参考可保持 `evaluation_only`，不强迫上传给生成模型。用 Plan 的 `choices.reference_uses` 关联实际观察、采用或舍弃依据与当前检查；仅搜到链接、读过文字或填了美感标签不构成看图证据。不得伪造引用或覆盖用户硬限制。`open_creation`、检索关闭和零采用知识都不能单独将研究标为不适用。
-
-按真实研究目的填写 `visual_research.evidence_requirement`：旧图反馈复盘、视觉作品参考、专业作品分析分别为 `feedback_review`、`visual_reference`、`professional_analysis`；finding 标明 `source_kind`。专业分析需要同一作品的来源、实际观察及专业解读摘录，旧生成图不能充作专业作品学习。
-
-最终 Plan 用既有 `choices.action` 写使画面成立的必要关系与允许变化边界，`cooperation` 说明选择之间的作用，`tradeoff` 说明可以让位的视觉收益。无助于目标的细节在最终选择前省去；已经选定的 choice 均须进入正文。冻结 checks 使用同一允许变化边界，不把可变实现升级为硬限制。Image 摄影按实际主体组织关系，只有可见人物动作或接触承担表达时才明确手部职责，不为补齐未入镜身体改变取景。详见 [必要关系与看图反馈](docs/ESSENTIAL_CREATION_FEEDBACK.md)。
-
-宿主实际看到了用户会话中的图片、但工具未暴露附件字节时，可用 `add-host-reference --run RUN --file REFERENCE_JSON` 保存独立 `host_visible_references`：填写 `id`、已存在的真实用户 `source_id`、图片所在会话 `locator`、`evidence_type=host_attested`、`observation_method=conversation_image`、观察限制 `observation_limits`、研究职责 `role/note` 与 `evaluation_only=true`。不能把宿主图像描述转录为用户原话；搜索标题、链接或未看到的图片不适用。随后用同一 `observe` 把实际观察写入 findings，再关联 choices/checks。示例与字段 schema 可用 `schemas` 导出为 `HostVisibleReference.schema.json`。
-
-这种记录的 `metadata_digest` 只绑定来源与宿主声明，绝不是像素 SHA 或平台认证。它只能支持观察研究，不能作为身份图、编辑画布、生成输入或基准参考；需要这些职责仍须取得真实图片字节。新增记录使旧观察与方案失效，冻结后须建立关联版本。隔离评审只收到独立元数据；没有看到截图的评审者不得声称比较过参考原图，依赖原图的判断记不确定。API 没收到会话图片字节，不能替宿主重新观察。
-
-宿主参考清单满时可先淘汰再换入，不需要新建任务来绕过容量。`list` 分别列出像素参考和宿主参考；宿主参考移除使用当前元数据摘要，像素参考仍使用 `--expected-sha256`。移除会使旧观察与方案失效，随后沿原入口补入参考并重新观察、编译，冻结与已试图任务仍拒绝原地改动。
+单车外观摄影先读 [汽车方法](.agents/skills/cl-hex-car-photography/SKILL.md)，将下方 `prepare` 换为 `car prepare`；其它题材使用通用入口。公共入口自动启用 `full-flow-v1`，知识/领域 execution profile 另行保留。
 
 ```text
-python -m hex_agent.reference_roles list --run RUN
-python -m hex_agent.reference_roles remove --run RUN --reference-id HOST_ID --expected-metadata-digest DIGEST --expected-packet-digest PACKET_DIGEST
+PY ENTRY prepare --brief BRIEF --sources SOURCES --out RUN --deliverable-kind KIND
+PY ENTRY workflow drive --run RUN
 ```
+
+## 2. 只执行当前阶段
+
+新生产任务的 `workflow drive` / `harness plan --run RUN` 返回 `host_context`。执行其中 `instruction`，按 `input_files` 读取本阶段所需输入；`method_context` 说明适用方法来源，不代表要全文加载整个方法库。`stage`、`packet_digest` 与 `instruction_sha256` 绑定当前上下文，任务更新后重新取得，不能复用旧阶段内容。
+
+先依据指导和真实来源形成 Need，保存 `direction_review` 与必要 `question_records`，再用 `refresh` 更新。默认离线 Need 是草稿，不是已理解证明；不得先完成设计或提示词，再补办 HEX 指导。回答绑定原问题与真实来源，用户明确委托的技术取舍由宿主承担。
+
+`drive` 默认最多推进 8 个本地可验证步骤，可用 `--max-steps` 调整；它不调用生成模型，不替宿主理解、设计、编译或看图。宿主完成返回的动作后继续 `drive`，正常交回宿主不需要用户再次授权。
+
+旧返回没有 `host_context` 时，按真实下一步读取原 `HOST_TASK.md`、`creation-instructions.md`、`production-context.json`、`packet.json` 中的必要部分，沿原合同继续；不为了取得新字段改写旧包。
+
+## 3. 参考、方案与目标模型编译
+
+Need 中按真实来源选择 `visual_research`：
+
+| 路线 | 适用条件 |
+| --- | --- |
+| `study` | 开放目标、明确研究请求或已拒绝的方向；主动找并实际看作品 |
+| `specified_direction` / `bounded_edit` | 用户已给定视觉方向或有界局部修改，并有真实来源 |
+| `user_waived` | 用户明确禁止研究，绑定原话与 `user_prohibited_study`，记为 `skipped_by_user` |
+
+`study` 读取 [设计研究](.agents/skills/liu-aesthetic-agent/references/design-study.md)。不确定就扩展有意义的来源；仍无适用案例或用户偏好未解时回 Copilot。没有参考、检索关闭、零采用知识或宿主自行拟定场景都不等于免研究。研究按决定是否有依据收束，不固定风格菜单、方向数或参考总数，也不要求为每个方向生图。
+
+实际观察后 `observe`，通过 `choices.reference_uses` 关联发现、采用/舍弃依据及可见检查。`selection_state` 为 `exploring` 时继续研究，`uncertain/no_suitable_reference` 时解决缺口，`acceptable` 后形成有效 Plan；全部舍弃不能冒充已有依据。人物、平面、分镜静帧和通用改图只读 [通用方法](.agents/skills/liu-aesthetic-agent/SKILL.md)，汽车只读汽车方法。
 
 ```text
-python -m hex_agent refresh --run RUN --need NEED_JSON --sources SOURCES_JSON
-python -m hex_agent prepare-compilation --run RUN --plan PLAN_JSON --target TARGET --tool TOOL
-python -m hex_agent preflight --run RUN --solution SOLUTION_JSON
+PY ENTRY refresh --run RUN --need NEED --sources SOURCES
+PY ENTRY prepare-compilation --run RUN --plan PLAN --target TARGET
+PY ENTRY preflight --run RUN --solution SOLUTION
 ```
 
-在 `prepare-compilation` 后读取实际生成的模型输入，再编写完整正文与 adaptation。中文、英文都保留原需求的关系、数量、主次、精确文案及已选决定的允许变化边界；可合并重复描述，不能私自省略 choice。使用该工具真实支持的参数。汽车在预览核对后继续 `car freeze-input`，按本题实际模型传必要比例和分辨率。预览与 preflight 成功均不等于已经生成或完成交付。
+对本题实际目标分别 `prepare-compilation`，真实执行时传已核验的 `--tool TOOL`。按返回的 `model_compile` 阶段上下文与当前 `compilation-input.json` 写完整正文/adaptation。不同模型改变表达与可用参数，保留同一需求、必要关系、允许变化、数量及精确文字；不以统一长模板或程序隐式补词代替适配。汽车在 preflight 后按专属方法预览并冻结输入。
 
-## 3. 真实生成或编辑
+专业作品分析、旧图反馈与视觉作品参考的证据要求不同；本题需要时读 [反馈与创作依据](docs/FEEDBACK_CREATION_CONTEXT.md)。只看到会话图片却拿不到字节、参考换批或来源字段不明时读 [来源接口](docs/SOURCE_AND_REVIEW_INPUTS.md)，不在普通任务加载全部字段。
 
-仅提示词任务进入对应完成检查。成图和编辑任务继续原有权限与执行链：有效来源登记 → `dispatch` → 实际执行器或宿主工具 → `record-result`。已有本题授权沿用；内部登记、任务恢复、检查或跨会话交接不要求用户重复授权。新增范围、预算耗尽或必要许可确实缺失时才说明具体阻塞。
+## 4. 交付提示词或真实图片
 
-派发后使用冻结的完整正文、模型、素材顺序与参数，不改实参后宣称同一调用。小云雀与 ComfyUI 使用原 `execute-*` / `query-*`；宿主图片工具使用 dispatch 中的真实参数并立即记录回执与图片。`pending/unknown` 只查询原编号，失败如实计入原账本，不能换 run 重发。
+`prompt_only` 完成需求、设计、编译与必要冻结检查后直接 `workflow complete`，交付各目标模型提示词，不执行像素、OCR 或图片评审，不声称生成效果已验证。
 
-局部编辑必须绑定真实父图、反馈、新 change_scope 与 preserve。用已有 `refresh --out` 建立关联版本；必要时使用原 `--edit-reference` 与 `--parent-request-id`。参考、Need 或模型变化后重新观察和编译；不修改已冻结派发。原图、保留项、父子关系及累计预算继续有效。
+成图/编辑沿本题已有许可执行 `authorize-generation → dispatch → 实际工具或执行器 → record-result`，原样使用冻结正文、素材顺序、模型与实参，保存真实回执及图片。小云雀/ComfyUI 使用现有 execute/query 入口；宿主工具使用 dispatch 的真实参数。只查询 `pending/unknown` 原请求，不重复提交。
 
-## 4. 检查与完成
-
-通过 `record-feedback` 或 `calibration record` 保存真实评价后，CLI 自动登记来源，相关新任务将适用原话保存为 `user_feedback_context`，并传给设计与编译。接受、拒绝、局部认可与相对喜欢分别保留，当前要求优先，不要求用户重复反馈。可见失败与原因未知分开：看出差距可以记录 `not_met`，不知成因则保留 `diagnosis=unknown`。
-
-收到图片后可以先给用户看真实预览，同时继续本题适用的检查。图片返回、导出提示词或普通 `finalize` 的产物不能单独代替统一完成状态。
-
-成图与编辑任务核验真实文件和当前候选绑定；用户明确要求画内文字时核对原 checks 并调用 OCR，没有文字要求时不加载 OCR。宿主按隔离的评审输入实际看当前图片，再记录每项观察、失败或未知。只能填写亲自核对的证据，不把报告模板、命令成功或自评声明当成视觉事实。
-
-成图／编辑任务先取得当前检查要求模板，宿主依据真实用户来源填写 `text`：明确画内文字才选 `required` 并逐字绑定原标准；没有该要求则填写 `not_applicable`、依据与真实 source_ids，items 保持空。禁字要求不能反转为要求生成文字。保存返回的 packet/contract 摘要与实际内容，再登记；这是内部记录，不是用户问卷。
+收到图可以先展示真实预览，再按当前阶段推进：
 
 ```text
-python -m hex_agent workflow requirements --run RUN
-python -m hex_agent workflow requirements --run RUN --file REQUIREMENTS_JSON
-python -m hex_agent workflow check --run RUN --request-id REQUEST_ID
-python -m hex_agent workflow prepare-review --run RUN --request-id REQUEST_ID
-python -m hex_agent workflow record-review --run RUN --request-id REQUEST_ID --report REVIEW_JSON
-python -m hex_agent workflow complete --run RUN
+PY ENTRY workflow requirements --run RUN
+PY ENTRY workflow requirements --run RUN --file REQUIREMENTS
+PY ENTRY workflow check --run RUN
+PY ENTRY workflow prepare-review --run RUN
+PY ENTRY workflow record-review --run RUN --report REVIEW
+PY ENTRY workflow complete --run RUN
 ```
 
-候选唯一时可以省略 `--request-id`；双模型或多个候选时必须由实际结果定位，不自动选最后一张。`prepare-review` 只准备绑定当前候选的材料与 `review_record_template`；宿主必须实际打开候选和必要参考，按原标准填写该模板后才执行 `record-review`，不能让模板原样充当已看图记录。每个应交付候选分别完成适用检查。
+只有明确画内文字要求才登记 OCR 的 `required` 与原精确文案；否则按真实来源记 `not_applicable`，禁字要求不能反转为生成文字。多个候选时为每个应交付候选传真实 `--request-id`，不默认取最后一张。读取 `prepare-review` 的当前模板后实际打开候选及必要参考，填写观察再 `record-review`；模板本身不是已看图证据。
 
-`record-review` 返回当前原图的 `feedback_card`，失败或不确定时也会生成，不必等到正式完成。`workflow status` 在质量未满足时保留 `candidate_receipts` 与 `feedback_cards`。宿主须展示实际图片与观察，不能以 HTML 文件存在证明用户已经看见。默认完整流程的案例与第二阶段诊断读取同一请求的有效评审，不要求先成功导出；可见差距、待验证原因和用户接受分别记录。
+失败或不确定时也展示当前原图和返回的 `feedback_card`；`workflow status` 保留有效 `candidate_receipts/feedback_cards`。可见差距与原因未知分开，反馈页存在不证明用户已经看见。看图反馈与必要关系的方法见 [原图反馈](docs/ESSENTIAL_CREATION_FEEDBACK.md)。
 
-`prompt_only` 完成需求、设计与模型编译检查后直接进入 `workflow complete`，不执行像素、OCR 或看图步骤。无需手填 completion 凭证：命令核对当前状态后调用原导出路径，并验证导出文件与完成证据一致。
+明确问题沿原父图、许可与预算有限修复；没有新证据或控制、连续同类失败时停止该路线，说明缺口。只有统一完成状态通过才称完整流程已完成。交付实际产物、简短设计理由、真实检查和未验证项；预期收益、真实观察和用户接受分别说明。
 
-检查存在问题时保存具体证据，按现有许可和可用控制处理；需要新图就沿关联编辑版本与原预算执行。不能为了得到通过报告改写检查标准、虚构用户接受，或无依据地连续抽卡。暂时没有可行控制、必要素材或额度时报告阻塞与下一步，保留未完成状态。
+## 5. 续改、反馈与旧任务恢复
 
-仅在统一完成门禁通过后说明“完整流程已完成”，交付实际产物、简短设计理由、检查结果和仍需用户判断的部分。使用导出的 `design-explanation.md` 解释收益时区分预期与真实观察；工程通过、工具成功、视觉结果和用户接受分别记录。对象、结构和文件检查属于基础可用性，不称审美满分；本题的情绪、主次和表达是否成立另据实际图像判断，比较报告保留整体结论与不利分项。
+先查原 `status` / `harness plan`，按真实 `resume` 下一步接续。已核验许可只是内部登记或父子预算关联缺失时，用已有恢复入口修复，不重复问用户。冻结后的续改用 `refresh --out` 建关联版本，保留真实父图、反馈、新 `change_scope/preserve` 与累计预算；必要时传 `--edit-reference` / `--parent-request-id`。变更参考、Need 或模型后重新观察与编译。
 
-## 5. Codex 绑定与中断接续
+真实接受、拒绝、局部认可和相对喜欢用原反馈入口保存；CLI 自动登记适用来源，不把相对更好当最终接受，也不把跨题反馈自动套入本题。专业反馈召回、来源失效和诊断边界按需读上述反馈文档。
 
-宿主集成提供上下文提醒与任务绑定；Skill 文案本身不拦截宿主外的动作。先核对目标 Codex 环境和配置，再安装，保留现有配置；在云端验证源码不代表用户本机已经安装或信任 hooks。
+完整流程与 execution profile 独立；显式 legacy 执行策略仍完成原 native Eval/比较，默认生产策略不重复两套评审。没有 `workflow_policy` 的旧包沿 `status/resume/finalize` 恢复，不补新默认或宣称已通过新验收。明确停止用原 `stop-generation`，普通暂停用当前 `codex pause`；锁残留按来源接口的 `recover-lock` 核对，不删账本。
+
+## 6. 只在安装或绑定需要时读取
+
+先核对真实环境、解释器与宿主支持。仓库已有 `.codex/hooks.json` 和 `hex_repo_bridge.py` 时，只有同步到本机、依赖存在且宿主实际信任并执行 hooks 后才可能自动绑定；独立包或其它目录可使用安装入口：
 
 ```text
-python scripts/hex_entry.py codex install --dry-run
-python scripts/hex_entry.py codex install
+PY ENTRY codex install --dry-run
+PY ENTRY codex install
+PY ENTRY codex bind --config CONFIG --session-id SESSION --workspace WORKSPACE --run RUN
+PY ENTRY codex status --config CONFIG --session-id SESSION --workspace WORKSPACE
 ```
 
-需要安装用户级主 Skill 时，向安装命令传真实 `--skills-dir`；目标 Codex 配置不在默认工程位置时传 `--codex-dir`。run 位于默认工程范围外时，由安装时的 `--run-root` 明确绑定允许范围。路径由实际环境决定，不使用示例路径冒充成功安装。
+安装先核对计划改动并保留现有配置；用户级主 Skill 才传真实 `--skills-dir`，自定义配置目录用 `--codex-dir`，额外 run 范围用 `--run-root`。已安装 Skill 从 `installation.json` 读取 `config_path`；否则用真实仓库根 `.codex/hex-integration.json`。绑定只用 hook 提供的真实会话 ID 与工作目录，不让用户填内部编号。安装成功不证明已信任或自动监督；宿主不支持时说明实际状态并继续可执行步骤。
 
-准备成功后，若 hooks 尚未自动绑定，使用 hook 提供的真实会话 ID 与工作目录绑定真实 run。安装副本从 `installation.json` 读取 `config_path`；仓库默认配置为仓库根 `.codex/hex-integration.json`。
-
-```text
-python scripts/hex_entry.py codex bind --config CONFIG --session-id SESSION --workspace WORKSPACE --run RUN
-python scripts/hex_entry.py codex status --config CONFIG --session-id SESSION --workspace WORKSPACE
-```
-
-宿主不支持或尚未信任 hooks 时如实说明监督状态，继续可以执行的 HEX 任务步骤，不假报自动监管。真实需暂停时使用当前 `codex pause`，不要伪造用户停止；恢复仍先读取原 run。用户已指定宿主型号或独立生图对话时保留分工，只有实际完成交接后才报告已切换。
-
-## 按需参考
-
-- [Windows 工作流](docs/HEX_WINDOWS_WORKFLOW_20261007.md)：原生检索、OCR 和离线研究的真实边界。
-- [来源输入](docs/SOURCE_AND_REVIEW_INPUTS.md)：真实原话和来源 schema。
-- [模型适配](docs/MODEL_ADAPTATION_AND_VALUE_20260926.md)：目标模型输入与正文绑定。
-- [Beta 说明](BETA.md)：安装边界、实际结果反馈和公开发行范围。
-
-研发按需读取具体源码；工程状态与历史报告留在开发库。普通创作不先跑 pytest，不因旧报告里的单次“停止生成”误停新任务。
+仅对应场景再读： [Windows 检索与 OCR](docs/HEX_WINDOWS_WORKFLOW_20261007.md)、[Qwen 单父图](docs/HEX_QWEN_SINGLE_PARENT_EDIT_20261007.md)、[Qwen 蒙版编辑](docs/HEX_QWEN_MASKED_EDIT_20261007.md)。历史安装记录和另一台机器的配置不证明当前能力；指定宿主型号或独立会话的分工以真实交接为准。

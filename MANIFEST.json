@@ -1,17 +1,17 @@
 {
-  "version": "0.3.9b1",
+  "version": "0.3.9b2",
   "scope": "product_source_only",
   "channel": "public_beta",
-  "source_commit": "3bffda5d7ada7c740d7272c169c273b80559f601",
+  "source_commit": "87fbf5eb7b886cd11b15dc631117c09be60f480d",
   "notice": "公开 Beta 源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。公开访问不改变现有许可，文件摘要不证明审美或工具可用性。",
   "files": [
     {
       "path": ".agents/skills/cl-hex-car-photography/SKILL.md",
-      "sha256": "c3aee66e898ed257eea313df7a9038d20c1561d71fe661165540fac1a165f9ed"
+      "sha256": "e688a58b9e15da78b2e48b2a75ba381c28d6a4e8efa1908d194760ae52ced43a"
     },
     {
       "path": ".agents/skills/hex/SKILL.md",
-      "sha256": "06c0960f6a02914792e7831a9a1d191253c56cc2d690fbf8a5b63ccd013981fd"
+      "sha256": "be41ca3a7eb4efa29fa604a2a94a3992fb2f39550e0a9e6858afa87177d35ef0"
     },
     {
       "path": ".agents/skills/hex/agents/openai.yaml",
@@ -19,7 +19,7 @@
     },
     {
       "path": ".agents/skills/liu-aesthetic-agent/SKILL.md",
-      "sha256": "ef013624a3615364b258330cbae043bb0004cd79a7c9213d6dccf4652b1ef9b0"
+      "sha256": "cf0fb87870c15fa2e0d4a624778553b88230621ddf04787920cae48528a35ff2"
     },
     {
       "path": ".agents/skills/liu-aesthetic-agent/references/design-study.md",
@@ -55,7 +55,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha256": "4c571fd04337d9e287219d67c3139bbaccd8233277ecfc5234575264bc8ffdb6"
+      "sha256": "e2258a4ec84799214eda92cbb3a3aadff630bb7b1ebf5bda95ec6225bc984cb9"
     },
     {
       "path": "ART_STRUCTURE_START.md",
@@ -63,15 +63,15 @@
     },
     {
       "path": "BETA.md",
-      "sha256": "46721c2ee01e2f38cd76ef665feec7bc47b04729c31fcde70048aa1c4056fa19"
+      "sha256": "e587adc61e082b77b2ef6216fe4b00d76a891ba3e3d3f21ba643b97bbe18d367"
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "7cd59bddd215ba04d72885ab02f2eed3705454bafc4ad621e262421aa7e617d7"
+      "sha256": "1b2c628a3c21af7ea56706fe4924cac5b817223d442a751ee789b76c15a778a5"
     },
     {
       "path": "CODEX_START.md",
-      "sha256": "d0d1e51cd346c70ac8abdc630bc8d789ec15d7212b7db473e3209d4b53b39b3f"
+      "sha256": "a2178140924beae9cb1d7246a5da019a46dc2da8cfc653b05e4d66c7ef80d266"
     },
     {
       "path": "Hex.ps1",
@@ -83,7 +83,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "17fe5d71c2aa24eabffbc02f0eede5fc161991752c16b678f20ad9c084100b89"
+      "sha256": "c902c3f1bed5bb9fbfc82fd6eba4b2d17749de0bbd26da3d1b38f612b61f59ee"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -122,6 +122,10 @@
       "sha256": "7020ec2d1b42819b746c87018ed5ce7e9ec033879de9c5c40bf70de77c04b6f4"
     },
     {
+      "path": "docs/FEEDBACK_CREATION_CONTEXT.md",
+      "sha256": "a9cf7245adbdd2391dce92454a1c519151db98762df23b69fdb315bb61ae4862"
+    },
+    {
       "path": "docs/HEX_QWEN_MASKED_EDIT_20261007.md",
       "sha256": "98b4e1a4648701c9db60d5b07c8913e0f4f2a3e7886406b2856f23f83a576d69"
     },
@@ -131,7 +135,7 @@
     },
     {
       "path": "docs/HEX_WINDOWS_WORKFLOW_20261007.md",
-      "sha256": "e6d61ed3f925d508737ac914ec87109b81dbd99d154701f4233bb3e48dc527a3"
+      "sha256": "362dc864f0bcacff12e37b71e09f2db88e84b2b9ca4c51f093fa9107bb213950"
     },
     {
       "path": "docs/KNOWLEDGE_AND_UPDATES.md",
@@ -151,7 +155,7 @@
     },
     {
       "path": "docs/SOURCE_AND_REVIEW_INPUTS.md",
-      "sha256": "8759e1e6e2845635ec6bb4f5665c8f43e69f0838af4c2b4d2f502d68c0796c34"
+      "sha256": "6435a5c3ae8d394b53f61c61de6b09f01f914c9db15b11833a6db02cfcc72b99"
     },
     {
       "path": "examples/character-brief.json",
@@ -375,7 +379,7 @@
     },
     {
       "path": "liu_agent/__init__.py",
-      "sha256": "f269e2801d0dec8e7b57818d7fba4e83860a5b651c6bfb86f9cd6fae4eadb5a4"
+      "sha256": "c1b6f666965047bb91feed734149e5d33c3e209086e3d016fe332e22258d8aa0"
     },
     {
       "path": "liu_agent/__main__.py",
@@ -479,7 +483,7 @@
     },
     {
       "path": "liu_agent/co_creation.py",
-      "sha256": "d50b3f079ca4d98185ccf7dc0c46517e467f1beb964ddbc388c3ad74663fc45a"
+      "sha256": "2a84fea8889bcf43e2dbb7d791296dc943ba6154e30a1c32635c4ec49e83e708"
     },
     {
       "path": "liu_agent/codex_integration.py",
@@ -571,11 +575,11 @@
     },
     {
       "path": "liu_agent/harness.py",
-      "sha256": "d95e5bebfe6e1c56d0d246207c868b8f87334ffcf176afff05c9265a71d22496"
+      "sha256": "9adc64d8e03ce15da225816c3d2c955aad552f5e2985726bda0c0d5d68c00c57"
     },
     {
       "path": "liu_agent/host.py",
-      "sha256": "cf635540500ed733726e1a737cfb316c4eb04c431b3eb85e5e902e91d71c9cb6"
+      "sha256": "81dd94202cfb29c69d74eda6287b3b21f14b8a11ebc54f42748a42cb8cb56ced"
     },
     {
       "path": "liu_agent/host_references.py",
@@ -583,7 +587,7 @@
     },
     {
       "path": "liu_agent/instructions.py",
-      "sha256": "0d1ab2b980587d8e75d1d82a677e5a7e185a0b65b96ffc236e2a76adb009175f"
+      "sha256": "52e11ecd734581065a18bd075a981d2906159d744ab6bfcf6fca71d2debdfa71"
     },
     {
       "path": "liu_agent/intent_review.py",
@@ -719,7 +723,7 @@
     },
     {
       "path": "liu_agent/run_status.py",
-      "sha256": "c1a8eb85dadc93a07485d3002d423c361bad085c670b33f2184222d58a7bf9eb"
+      "sha256": "c67aee652547de8c9c28075c532cc0237be3c25aa1bcd436bf6c7ba8b05c8856"
     },
     {
       "path": "liu_agent/smart_intake.py",
@@ -767,7 +771,7 @@
     },
     {
       "path": "liu_agent/visual_research.py",
-      "sha256": "44ba00c7ddce1bb40e0e33ae7a557c802452c759b928297bdaf37dba6dd5053a"
+      "sha256": "5eeb59318f6019b15c376ab1a74ff74b4e4916ea23228896e7ad0acdeeb4c34e"
     },
     {
       "path": "liu_agent/visual_retrieval_trial.py",
@@ -779,7 +783,7 @@
     },
     {
       "path": "liu_agent/workflow.py",
-      "sha256": "720c62614d8bd0020aa190ac0d3e5331f76f3e0601f8dd5fa6edc670bd59f142"
+      "sha256": "a2ab25a5924a503e1a4f1f20c94403904ff0e078fd44e006eaaab1bd617cc776"
     },
     {
       "path": "liu_agent/workflow_policy.py",
@@ -787,7 +791,7 @@
     },
     {
       "path": "pyproject.toml",
-      "sha256": "5bc4077cb797e5ca3be2411c078b177c03f8f54d805770b1c9e69b661eb163bd"
+      "sha256": "c35f60255daabc81bd3c418a67fc17e86bab1daa6dd6775c31d181b6b14aa723"
     },
     {
       "path": "requirements.txt",
@@ -951,7 +955,7 @@
     },
     {
       "path": "scripts/release_local.py",
-      "sha256": "9893b5b88549e8d16c00934c334e535bce3f681ca77cf864003dc0a8c4a82ee7"
+      "sha256": "42bbde7039ac42e66e7cab992e75e989fef08b3d7647ca8fe54a50a26f8721b6"
     },
     {
       "path": "scripts/runtime/native-requirements.lock.txt",

@@ -413,7 +413,9 @@ def _inspect_run(run: Path, *, _dispatch_lock_held: bool = False) -> dict:
         if not (run/'solution.json').exists():
             if has_generation or (run/'acceptance.json').exists() or (run/'result.json').exists():
                 raise AgentError('已有后续证据但缺少solution.json；不能推断恢复方案')
-            from .co_creation import blockers as direction_blockers, early_blockers, initial_assessment_required, copilot_enabled
+            from .co_creation import blockers as direction_blockers, early_blockers, initial_assessment_required, copilot_enabled, intake_enabled
+            if intake_enabled(packet) and packet.get('need_mode') == 'offline_heuristic':
+                return stage('needs_parse', 'refresh', '先依据真实用户原话和已有上下文完成需求理解；离线草稿的问题不是已确认的用户问讯。明确目标或真实委托可继续，关键目标仍未知才登记并提出一个问题。')
             if copilot_enabled(packet) and early_blockers(packet):
                 return stage('needs_input', 'refresh', early_blockers(packet)[0], questions=early_blockers(packet))
             if initial_assessment_required(packet):

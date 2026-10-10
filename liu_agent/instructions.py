@@ -316,7 +316,7 @@ def stage_instruction(stage: str, packet: dict) -> str:
     from .knowledge_context import adapt_instruction
 
     name = stage.upper() if isinstance(stage, str) else ''
-    from .co_creation import instruction as interaction_instruction, copilot_enabled
+    from .co_creation import instruction as interaction_instruction, copilot_enabled, intake_enabled
     interaction = interaction_instruction(packet)
     interaction += _creation_evidence_instruction(name, packet)
     if name in ('PARSE', 'DESIGN', 'STRATEGY', 'DIRECTION'):
@@ -329,6 +329,8 @@ def stage_instruction(stage: str, packet: dict) -> str:
                         '需要更多参考就继续研究，偏好未定或无合适候选则以已有 QuestionRecord 做针对性 Copilot；不要代答用户或凭本观察生成最终方案。')
     if name == 'DIRECTION' and interaction:
         if copilot_enabled(packet):
+            if intake_enabled(packet):
+                return _workflow_instruction(packet, PRODUCTION_COMMON + interaction + '\n依据真实原话与最新已回答的澄清，重新理解当前要达成的目标并返回 Need。将答案吸收到 intent、subject、understanding、假设及 visual_research 的视觉问题中，再记录 direction_review；不能只把旧判断改为 direct 而沿用未吸收回答的目标。保留有来源的硬限制、已回答记录和已确定选择，用户新的明确变更按原来源契约处理。需求回查由宿主完成，不等于再次问用户；目标明确则进入适用研究，仍有会改变目标的未知才提出一个关键问题，不代答、不形成最终 Plan。')
             return _workflow_instruction(packet, PRODUCTION_COMMON + interaction + '\n依据真实原话完成当前需求回查并返回 Need；初始判断不以已有参考或方向草案为前提。保留原 Need 其余字段，只补 direction_review 与必要 question_records；目标明确直接研究，重要含糊先提问，不代答、不形成最终 Plan。')
         return _workflow_instruction(packet, PRODUCTION_COMMON + interaction + '\n依据已观察参考完成方向回查并返回Need；保留原Need其余字段原值，只补direction_review及待选question_records，不代答、不形成最终Plan。')
     allowed = {'PARSE', 'OBSERVE', 'DESIGN', 'STRATEGY', 'COMPILE', 'MODEL_COMPILE',
