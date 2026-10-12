@@ -31,6 +31,28 @@ def enabled(packet):
     return True
 
 
+def _validate_limited_exit_inputs(packet):
+    """Research limits cannot replace missing inputs or grant execution rights.
+
+    Check current inputs in status/design, not assessment: refresh assesses the
+    new Need before rebuilding its source-bound reference policy. Attempts are
+    host reports, not authenticated retrieval or quality evidence.
+    """
+    need, brief = packet.get('need', {}), packet.get('brief', {})
+    targets = brief.get('targets')
+    if (not _nonblank(need.get('intent')) or not isinstance(targets, list) or not targets
+            or any(not _nonblank(target) for target in targets)
+            or brief.get('scope') not in ('create', 'edit', 'color_only', 'relight', 'scene')
+            or need.get('questions')
+            or any(row.get('status') == 'open' for row in need.get('question_records', []))):
+        raise AgentError('needs_input：limited_exit 不能替代目标、模型、身份、文字或范围的决定性输入；先解决已有未决问题')
+    # Preserve required identity/transfer material and the actual edit parent.
+    # The design/dispatch callers also retain their source, binding, permission
+    # and budget checks; research disclosure cannot supersede any of them.
+    from .reference_gate import validate_reference_policy
+    validate_reference_policy(packet)
+
+
 def assessment(packet):
     current_evidence = creative_context_enabled(packet)
     if not enabled(packet):
@@ -66,6 +88,14 @@ def assessment(packet):
             raise AgentError('仅复盘已有图须有本题用户来源；未定方向的开放创作不能据此免除寻找视觉参考')
         if value.evidence_requirement == 'professional_analysis' and not messages:
             raise AgentError('专业分析职责须绑定本题用户来源，不能把宿主提案变成永久研究要求')
+    if value.limited_exit is not None:
+        if (value.route != 'study' or value.trigger != 'open_brief' or
+                value.evidence_requirement not in (None, 'visual_reference')):
+            raise AgentError('limited_exit 只适用于 study/open_brief 的开放视觉研究；不能绕过 explicit_research、rejected_direction 或 professional_analysis')
+        from .workflow_policy import policy as workflow_policy
+        selected = workflow_policy(packet)
+        if selected is None or selected['version'] != 2:
+            raise AgentError('limited_exit 仅限完整流程 policy v2；旧任务保留原研究门控，不自动迁移')
     return value
 
 
@@ -86,7 +116,10 @@ def validate_refresh(previous, current, sources, *, current_brief=None):
             old_ids = {row['id'] for row in verified_sources(previous.get('input_sources'))}
             if not any(ref.source_id not in old_ids for ref in new.source_refs):
                 raise AgentError('撤销明确研究要求需要新的用户指令，不能复用旧原话改判')
-    if creative_context_enabled(previous) and old and old.route == 'study' and new:
+    if old and old.route == 'study' and (
+            creative_context_enabled(previous) or old.evidence_requirement is not None):
+        if new is None:
+            raise AgentError('已有研究职责不能通过省略字段撤销；变更须保留研究判断并引用新的用户指令')
         levels = {'feedback_review': 0, 'visual_reference': 1, 'professional_analysis': 2}
         weaker = (new.route != 'study' or
                   levels.get(new.evidence_requirement, -1) < levels.get(old.evidence_requirement, -1))
@@ -209,6 +242,9 @@ def status(packet):
     observed = observed_sources(packet)
     if value is None:
         state = 'needs_assessment'
+    elif value.limited_exit is not None:
+        _validate_limited_exit_inputs(packet)
+        state = 'limited_with_disclosure'
     elif value.route != 'study':
         state = 'skipped_by_user' if value.route == 'user_waived' else 'not_required'
     elif packet['visual_research_version'] == 2 and observed:
@@ -238,6 +274,15 @@ def status(packet):
                       selection_reason=selection.get('selection_reason', ''))
     if creative_context_enabled(packet):
         result['evidence_requirement'] = value.evidence_requirement if value else None
+    if state == 'limited_with_disclosure':
+        limitation = value.limited_exit.model_dump()
+        reason = {'sources_unavailable': '来源不可访问',
+                  'no_decision_gain': '继续研究无决策增量'}[limitation['reason']]
+        disclosure = (f'视觉研究有限：{reason}。已尝试：' + '；'.join(limitation['attempts'])
+                      + '。未解决：' + limitation['unresolved']
+                      + '。首稿仅沿已有授权继续，不代表研究充分、审美已验证或新增生成许可。')
+        result.update(limited_exit=limitation, disclosure=disclosure,
+                      disclosure_required=True, research_sufficient=False)
     return result
 
 
@@ -249,7 +294,8 @@ def validate_design(packet, design):
         raise AgentError('needs_visual_research：先按真实原话填写 Need.visual_research；开放创作不自动免研究')
     if current['state'] in ('not_required', 'skipped_by_user'):
         return current
-    if not current['observed_reference_ids']:
+    limited = current['state'] == 'limited_with_disclosure'
+    if not current['observed_reference_ids'] and not limited:
         if creative_context_enabled(packet):
             raise AgentError('needs_visual_research：实际观察尚未满足本题研究职责；旧AI图仅能复盘，专业分析须绑定作品像素、出处及已保存正文中的摘录')
         raise AgentError('needs_visual_research：先取得并实际观察本题视觉案例；身份图或文字检索不能替代')
@@ -261,8 +307,12 @@ def validate_design(packet, design):
         raise AgentError('needs_reference_selection：方向仍拿不准或没有合适参考，进入 copilot 用已有 question_records 澄清取舍，不能强行生成')
     used = {use.reference_id for choice in design.choices for use in choice.reference_uses}
     connected = sorted(used.intersection(current['observed_reference_ids']))
-    if not connected:
+    if not connected and (current['observed_reference_ids'] or not limited):
         raise AgentError('needs_visual_research：实际观察须改变一个设计决定，沿 reference_uses 连接可见关系、选择与检查；不适用可明确 reject 并说明原因')
+    if limited:
+        # Keep any real reference bindings, including reasoned rejections, but
+        # never upgrade a disclosed shortfall to a sufficient selected direction.
+        return {**current, 'decision_reference_ids': connected}
     if current['version'] == 2 and not any(
             use.disposition == 'adopt' and use.reference_id in connected
             for choice in design.choices for use in choice.reference_uses):
@@ -305,4 +355,14 @@ study 使用真实案例：先解决具体视觉问题，实际看图、observe 
         instruction += '''本题使用 creative_context_version=1。在 Need.visual_research.evidence_requirement 区分 feedback_review（用户要求复盘已有图）、visual_reference（寻找可用视觉作品）和 professional_analysis（学习对具体作品的专业分析）；不要把旧AI图复盘替代后两种职责，已记录职责只有新的用户指令可以降低。
 observe 时每项 finding 填 source_kind：generated_candidate、user_reference 或 external_work。外部作品复用参考的 source_url、credit 与真实像素；同一张作品可以继续用，不为形式重复搜索。专业分析还须通过 attach-research 保存 sources 中该作品的 url/title/author/excerpt/reference_ids；finding.professional_source_url 指向其中唯一来源，professional_excerpt 摘录该来源正文。图片必须实际看过，摘要或 seen=true 不能替代它；来源记录和引用绑定也不自动证明专业判断适用于本题。
 '''
+    if (packet.get('workflow_policy') or {}).get('version') == 2:
+        instruction = instruction.replace(
+            '参考缺失、不可访问或没有帮助时如实报告缺口，继续研究或说明阻塞；不能删研究要求、补空字段或增加形容词冒充完成。',
+            '参考缺失先做必要研究；实际尝试后来源仍不可访问或持续无决策增量，可沿下面的研究受限出口，不能伪造完成。')
+        instruction = instruction.replace(
+            'uncertain/no_suitable_reference 进入已有 copilot 问答澄清偏好或目标，再按回答研究。',
+            'uncertain/no_suitable_reference 中确有关键用户选择未决时才进入 copilot；需求已明确且研究受阻时可披露 limited_exit。')
+        instruction += '''\n开放研究可按真实情况提供 limited_exit={reason:sources_unavailable或no_decision_gain, attempts:非空真实尝试列表, unresolved:未解决事项}。
+仅study/open_brief的视觉参考研究可用；明确必做研究、被否决方向的再研究、专业分析及关键目标/身份/文字/父图/范围未决不能走此出口。
+取得 limited_with_disclosure 后将 disclosure 实际展示，保留已有参考的采用/舍弃绑定，沿原授权和预算自主首稿；不把受限状态写成acceptable、研究充分或审美通过。\n'''
     return instruction

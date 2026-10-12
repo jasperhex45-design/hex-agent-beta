@@ -123,9 +123,24 @@ def render_workflow_review(result: dict) -> tuple[list[str], str]:
     if not rows:
         text = '本次交付提示词，已核对方案与编译；未调用生图，也未记录图片或视觉验收。'
         return ['## 交付前检查', text], '<section class="panel"><h2>交付前检查</h2><p>' + esc(text) + '</p></section>'
-    note = '本地检查与本次视觉复核已按当前任务登记；视觉判断是宿主报告，是否采用仍由你决定。'
+    decision = result.get('human_acceptance')
+    note = ('已按你的确认保留本版；检查记录和未满足项仍保留。' if decision == 'accepted_by_user' else
+            '已记录你不采用本版；原图与检查保留，不自动重画。' if decision == 'rejected_by_user' else
+            '检查已记录，是否采用由你决定；技术细节可按需展开。')
+    if completion.get('independent_review') is False:
+        note += ' 本次为探索首稿自检，未做独立评审。'
+    study = completion.get('visual_research') or {}
+    if study.get('research_sufficient') is False:
+        note += ' 参考研究不足：' + str((study.get('limited_exit') or {}).get('unresolved', '具体缺口见记录。'))
     markdown = ['## 交付前检查', note]
     sections = ['<section class="panel"><h2>交付前检查</h2><p>' + esc(note) + '</p>']
+    differences = list(dict.fromkeys(row['candidate_evidence']
+        for accepted in completion.get('accepted_deviations', []) for row in accepted['deviations']))
+    if differences:
+        markdown.extend(['已确认保留的差异：', *differences])
+        sections.append('<p>已确认保留的差异：</p>' + bullets(differences))
+    markdown.append('<details>\n<summary>查看检查详情</summary>\n')
+    sections.append('<details><summary>查看检查详情</summary>')
     check_names = {'image.read': '图片读取', 'image.ratio': '画幅比例',
                    'image.size': '输出尺寸', 'image.format': '文件格式'}
     verdicts = {'met': '满足', 'not_met': '未满足', 'uncertain': '待核实'}
@@ -152,7 +167,14 @@ def render_workflow_review(result: dict) -> tuple[list[str], str]:
             findings = [str(item['candidate_evidence']) for item in items]
             markdown.extend(['### 本题逐项观察', *findings])
             sections.append('<details><summary>本题逐项观察</summary>' + bullets(findings) + '</details>')
-    return markdown, ''.join(sections) + '</section>'
+    derived = completion.get('derived_delivery')
+    if derived:
+        facts = ['首稿尺寸：未满足（原not_met保留）', '已解决范围：仅同比例缩小到冻结尺寸',
+                 '最终图已重新检查与评审；原模型只生成一次，本地返修一次。']
+        markdown.extend(['### 原失败与本地解决证据', *facts])
+        sections.append('<h3>原失败与本地解决证据</h3>' + bullets(facts))
+    markdown.append('</details>')
+    return markdown, ''.join(sections) + '</details></section>'
 
 
 # Only the passage from "整体表达、空间或媒介不成立才回设计；" through
@@ -280,7 +302,9 @@ def render_adaptation_explanation(result: dict) -> tuple[str, str]:
 def _export_production(result: dict, run: Path) -> None:
     """Show the uncompressed candidate before optional author/research commentary."""
     trial = next((row for row in result['trials'] if row['round'] == result.get('selected_trial_round')), result['trials'][0])
-    raw = within(run, trial['file']).read_bytes()
+    display = result.get('delivery_asset') or trial
+    image_label = '最终交付图（本地同比缩小）' if result.get('delivery_asset') else '首张原图'
+    raw = within(run, display['file']).read_bytes()
     with Image.open(io.BytesIO(raw)) as image:
         mime = Image.MIME.get(image.format, 'image/png')
     original = 'data:' + mime + ';base64,' + base64.b64encode(raw).decode('ascii')
@@ -290,9 +314,11 @@ def _export_production(result: dict, run: Path) -> None:
     acceptance = presentation['facets']['user_decision']
     feedback = '可以采用这一版、保留部分、局部修改或换方向；直接说明想保留和改变什么。'
     positive = presentation.get('candidate_feedback')
-    if positive:
+    if positive or result.get('human_acceptance') in ('accepted_by_user', 'rejected_by_user'):
         feedback = presentation['next_action']
-    parts = [f"# {result['brief']['title']}", f"![首张原图]({trial['file']})", md_escape(acceptance),
+    confirmed = result.get('human_acceptance') == 'accepted_by_user'
+    image_state = '已确认保留' if confirmed else '已拒绝，保留作对照' if result.get('human_acceptance') == 'rejected_by_user' else '等待你的判断'
+    parts = [f"# {result['brief']['title']}", f"![{image_label}]({display['file']})", md_escape(acceptance),
              feedback, '选择仅适用于当前图片；以下按钮只复制回复，不会代你登记反馈。']
     feedback_sources_html = ''
     if positive:
@@ -318,16 +344,16 @@ def _export_production(result: dict, run: Path) -> None:
         parts.append('<details>\n<summary>机器研究记录（不参与验收）</summary>\n\n' + research + '\n\n' + '\n\n'.join(review_md) + '\n</details>')
     if adaptation_md:
         parts.append('<details>\n<summary>设计与模型写法</summary>\n\n' + adaptation_md + '\n</details>')
-    accept_text = '接受这一版，候选 ' + trial['sha256']
-    reject_text = '拒绝这一版，候选 ' + trial['sha256']
-    candidate_id = trial.get('request_id') or (trial.get('generation_evidence') or {}).get('request_id', '')
-    action_buttons = ''.join('<button data-copy="'+key+'">'+label+'</button> '
-                            for key, label in [('accept-reply', '采用这一版'), ('preserve-reply', '保留部分'),
-                                               ('edit-reply', '局部修改'), ('direction-reply', '换方向')])
+    accept_text = '接受这一版，候选 ' + display['sha256']
+    reject_text = '拒绝这一版，候选 ' + display['sha256']
+    candidate_id = display.get('asset_id') or trial.get('request_id') or (trial.get('generation_evidence') or {}).get('request_id', '')
+    actions = ([] if confirmed else [('accept-reply', '采用这一版')]) + [
+        ('preserve-reply', '保留部分'), ('edit-reply', '局部修改'), ('direction-reply', '换方向')]
+    action_buttons = ''.join('<button data-copy="'+key+'">'+label+'</button> ' for key, label in actions)
     action_replies = ''.join('<span id="'+key+'" hidden>'+esc(text)+'</span>' for key, text in [
-        ('preserve-reply', '保留这张的【认可部分】，候选 '+candidate_id+'，图片 '+trial['sha256']),
-        ('edit-reply', '修改这张的【改变内容】，保留【认可部分】，候选 '+candidate_id+'，图片 '+trial['sha256']),
-        ('direction-reply', '这张换一个创作方向：【目标与关系】，候选 '+candidate_id+'，图片 '+trial['sha256'])])
+        ('preserve-reply', '保留这张的【认可部分】，候选 '+candidate_id+'，图片 '+display['sha256']),
+        ('edit-reply', '修改这张的【改变内容】，保留【认可部分】，候选 '+candidate_id+'，图片 '+display['sha256']),
+        ('direction-reply', '这张换一个创作方向：【目标与关系】，候选 '+candidate_id+'，图片 '+display['sha256'])])
     action_summary = ''
     if presentation.get('candidate_actions'):
         active = presentation['candidate_actions']['active']
@@ -349,12 +375,12 @@ def _export_production(result: dict, run: Path) -> None:
         parent_url = 'data:'+parent_mime+';base64,'+base64.b64encode(parent_raw).decode('ascii')
         parent_preview = '<section class="panel"><h2>前版 / 本版</h2><div class="grid"><div><p>前版</p><a href="'+parent_url+'" target="_blank"><img src="'+parent_url+'" alt="实际父图"></a></div><div><p>本版</p><a href="'+original+'" target="_blank"><img src="'+original+'" alt="本次改版"></a></div></div><p>点击图片查看局部。改善与保留是否成立待实际对照；已返回图片不等于已修好。</p></section>'
     page = f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(result['brief']['title'])} · Hex Agent</title><style>{CSS}</style></head><body><main>
-<h1>{esc(result['brief']['title'])}</h1><section class="panel" id="original-candidate"><img alt="首张原图，等待你的判断" src="{original}"><a href="{esc(trial['file'])}" download>打开或保存原图</a></section>
+<h1>{esc(result['brief']['title'])}</h1><section class="panel" id="original-candidate"><img alt="{esc(image_label)}，{image_state}" src="{original}"><a href="{esc(display['file'])}" download>打开或保存{esc(image_label)}</a></section>
 <section class="panel"><h2>这一版的反馈</h2><p>{esc(acceptance)}</p><p>{esc(feedback)}</p>{action_summary}{feedback_sources_html}{action_buttons}<details><summary>更多选择</summary><button data-copy="reject-reply">复制“拒绝这一版”</button></details><p class="caption">复制后发给 Hex Agent 才会登记；页面不会自动保存选择。</p><span id="accept-reply" hidden>{esc(accept_text)}</span><span id="reject-reply" hidden>{esc(reject_text)}</span>{action_replies}</section>
 {parent_preview}
 <details><summary>设计与实际提示词</summary><p>{esc(result['design']['expression'])}</p>{adaptation_html}{prompt_html}</details>
 {'<details><summary>机器研究记录（不参与验收）</summary><p>'+research+'</p>'+review_html+'</details>' if review else ''}
-<footer>原图文件与调用记录已核对；这不代表视觉质量已获认可。</footer></main><div class="toast" role="status" aria-live="polite"></div><script>{JS}</script></body></html>'''
+<footer>图像、来源与检查记录分别保留；你的选择只适用于当前版本。</footer></main><div class="toast" role="status" aria-live="polite"></div><script>{JS}</script></body></html>'''
     if result['brief'].get('model_comparison'):
         gallery = []
         comparison_parts = [f"# {result['brief']['title']}"]
@@ -392,6 +418,10 @@ def _export_production(result: dict, run: Path) -> None:
                           for target, row in result['prompts'].items()]
         parts = comparison_parts + [guidance, md_escape(acceptance) if relative else acceptance, result['notice'],
                                     '## 设计与模型写法', adaptation_md, *prompt_details]
+    if result.get('delivery_asset'):
+        history = '<details class="panel"><summary>原首稿与处理记录</summary><p>首稿未覆盖，原尺寸问题保留记录；本地处理没有再次调用生图模型。</p><a href="' + esc(trial['file']) + '">查看原首稿</a><p><a href="bounded-repair.json">查看完整处理记录</a></p></details>'
+        page = page.replace('</main>', history + '</main>', 1)
+        parts.extend(['## 原首稿保留', f"[查看原首稿]({trial['file']})", '[本地变换回执](bounded-repair.json)'])
     workflow_md, workflow_html = render_workflow_review(result)
     parts.extend(workflow_md)
     if workflow_html:
@@ -399,6 +429,8 @@ def _export_production(result: dict, run: Path) -> None:
     atomic_text(run/'result.html', page)
     atomic_text(run/'result.md', '\n\n'.join(parts)+'\n')
     exported = ['result.html', 'result.md', *[f'prompts/{target}.txt' for target in result['prompts']]]
+    if result.get('delivery_asset'):
+        exported += [display['file'], trial['file'], 'bounded-repair.json']
     if adaptation_md:
         atomic_text(run/'design-explanation.md', adaptation_md)
         exported.append('design-explanation.md')
@@ -409,6 +441,10 @@ def _export_production(result: dict, run: Path) -> None:
 def export_result(result: dict, run: Path) -> None:
     """One result page, not a workflow UI. Escape all model/user strings."""
     adaptation_md, adaptation_html = render_adaptation_explanation(result)
+    if result.get('delivery_asset'):
+        from .bounded_repair import delivery_asset
+        if result['delivery_asset'] != delivery_asset(run):
+            raise AgentError('待导出派生图与原run的变换证据不一致')
     write_json(run / "result.json", result)
     from .visual_decision import record_only
     if record_only(result.get('acceptance', {})) and result.get('trials'):

@@ -1,35 +1,45 @@
 {
   "id": "flux-klein",
-  "version": 3,
+  "version": 4,
   "label": "Local FLUX.2 Klein 9B FP8",
   "language": "en",
   "status": "experimental",
-  "provider_version": "ComfyUI 0.37.2; Flux2_Klein/flux-2-klein-9b-fp8.safetensors; Flux2_Klein/qwen_3_8b_fp8mixed.safetensors; flux2-vae.safetensors",
-  "last_checked": "2026-09-29",
+  "provider_version": "ComfyUI 0.37.2; Flux2_Klein/flux-2-klein-9b-fp8.safetensors; Flux2_Klein/qwen_3_8b_fp8mixed.safetensors; flux2-vae.safetensors; local binding recorded 2026-09-29, not revalidated 2026-10-12; family docs distinguish 4B/9B/9B KV and Base",
+  "last_checked": "2026-10-12",
   "review_after_days": 30,
   "writing_rules": [
     "用连贯的英语描述主体、动作或状态、具体环境及空间关系；先写本题最重要的可见关系，不堆砌质量词。",
     "以明确的构图位置、表面材质、光源方向和色彩关系落实共同设计；短而准确的正文也可完整，不能为适配删掉用户硬限制。",
     "当前蒸馏路线没有负向提示分支，把避项转成目标状态；需要准确文字时用引号包围并交代位置。",
     "按真实工具区分创建与编辑：纯文工具不接参考；comfyui.flux-klein-edit 只接一张已登记父图。编辑正文以明确改动开头，随后列出具体保留项，不把完整重绘描述替代本轮改动。两条路线均不自动扩写提示词，也不承诺像素或身份完全不变。",
-    "编译照明关系时先区分画内可见物体与画外照明手段：沿用同一Plan的受光面、反射、投影方向及软硬关系，不把“大面积柔光”等效果自行具体化为画面角落的softbox或灯具。只有当前需求/Plan明确要求灯具入画，才描述其可见位置；已有灯具的保留仍服从本题preserve。原图修光时说明旧投影如何被目标投影替换，并保留未修改的场景、主体与留白；不得用新增器材或重排布景实现修光。用可见结果的正向描述，不添加不存在的负向提示参数。"
+    "编译照明关系时先区分画内可见物体与画外照明手段：沿用同一Plan的受光面、反射、投影方向及软硬关系，不把“大面积柔光”等效果自行具体化为画面角落的softbox或灯具。只有当前需求/Plan明确要求灯具入画，才描述其可见位置；已有灯具的保留仍服从本题preserve。原图修光时说明旧投影如何被目标投影替换，并保留未修改的场景、主体与留白；不得用新增器材或重排布景实现修光。用可见结果的正向描述，不添加不存在的负向提示参数。",
+    "HEX整理的新建骨架（不是官方固定语法）：[主要主体与动作]出现在[环境]；[重要空间关系与构图]；[光源]使[表面]呈现[可见材质和色彩关系]；[必要次要内容]。编译为英语，不增加本题方案以外的场景或固定风格。",
+    "HEX整理的单父图编辑骨架：把图1的[明确对象/区域]由[原状态]改为[目标状态]；保留[结构、位置、构图及本题保护项]；让[修改材质/光影]与原场景连贯。用本轮变化而不是完整新建场景主导编辑。",
+    "仅对已核验支持多参考的目标入口，HEX骨架可写：图1提供[底图/主体]，图2只提供[物件/材质/风格]；把[允许内容]放在[位置与空间关系]，保留[保护项]。这不扩展当前comfyui.flux-klein-edit单父图合同。",
+    "官方Klein帮助页建议连贯叙述、具体光线构图与环境，并说明没有内置prompt upsampling；先识别实际工作流是否另有PE节点，避免重复扩写改变方案。"
   ],
   "setup_rules": [
+    "按当前任务读取 knowledge/model-prompts/flux-klein.md；型号和模式匹配直接读缓存，新增版本、冲突或未覆盖能力才定向补查。",
     "tool=comfyui.flux-klein；先冻结 endpoint、width、height、seed，batch_size=1。",
     "沿用本机现成蒸馏工作流：BasicGuider、Euler、Flux2Scheduler 4步，不借用 Qwen 2.1 的采样配置。",
     "目前测试尺寸仅 512/768/1024 像素组合；图片与参数必须由实际回执核验。",
-    "comfyui.flux-klein-edit 使用 LoadImage→VAEEncode→ReferenceLatent 参考条件、CFG=1及空latent4步采样。单父图须为PNG，源文件及上传后字节哈希、源尺寸与输出尺寸一致，不静默缩放或改为低降噪img2img。"
+    "comfyui.flux-klein-edit 使用 LoadImage→VAEEncode→ReferenceLatent 参考条件、CFG=1及空latent4步采样。单父图须为PNG，源文件及上传后字节哈希、源尺寸与输出尺寸一致，不静默缩放或改为低降噪img2img。",
+    "本卡原有步数、调度器、尺寸与单父图条目是既有9B FP8蒸馏执行器合同，不是全Klein家族的提示词建议；2026-10-12未重新核验本地模型加载或节点可用性。",
+    "未明确本题型号时先问。4B、9B、9B KV、Base不能由历史卡自行代选；不同型号或Base需匹配真实工具，不静默路由到现有9B蒸馏执行器。"
   ],
   "limitations": [
     "节点注册和模型文件可选只证明本地准备情况，不证明已成功加载模型、完成生成或达到视觉目标。",
-    "编辑仅支持单父图、原尺寸指令编辑；多参考、蒙版、像素保护及任意模型或工作流替换未接入。实际改动与保留效果仍需查看生成图。"
+    "编辑仅支持单父图、原尺寸指令编辑；多参考、蒙版、像素保护及任意模型或工作流替换未接入。实际改动与保留效果仍需查看生成图。",
+    "官方多参考能力不等于现有HEX适配器已接通多参考、蒙版或像素保护；官方API帮助页的4张上限不作为所有本地实现的通用合同。",
+    "当前蒸馏路线没有负向分支不等于所有Base实现都不支持负面条件；按实际实现分别核验，不复制FLUX 3新控制或FLUX.2 pro/flex上限。",
+    "本次只更新官方提示词知识；历史evaluation_files不构成本版提示词卡的目标模型效果验证。"
   ],
   "sources": [
     {
       "label": "BFL Klein 官方快速生成与提示词说明",
       "url": "https://help.bfl.ai/articles/7592221790-how-do-i-generate-quickly-with-flux-2-klein",
       "kind": "official",
-      "checked_at": "2026-09-29"
+      "checked_at": "2026-10-12"
     },
     {
       "label": "本地 ComfyUI 节点接口与精确模型列表，只读核实",
@@ -42,6 +52,18 @@
       "url": "https://github.com/Comfy-Org/workflow_templates/blob/main/templates/image_flux2_klein_image_edit_9b_distilled.json",
       "kind": "official",
       "checked_at": "2026-09-29"
+    },
+    {
+      "label": "BFL官方FLUX.2仓库：Klein型号与生成编辑能力",
+      "url": "https://github.com/black-forest-labs/flux2",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "BFL文档目录：当前通用提示目录的代际边界",
+      "url": "https://docs.bfl.ai/llms.txt",
+      "kind": "official",
+      "checked_at": "2026-10-12"
     }
   ],
   "evaluation_files": [

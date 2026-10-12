@@ -710,6 +710,17 @@
           ],
           "default": null,
           "title": "Evidence Requirement"
+        },
+        "limited_exit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VisualResearchLimitedExit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -718,9 +729,44 @@
         "reason",
         "visual_question",
         "source_refs",
-        "evidence_requirement"
+        "evidence_requirement",
+        "limited_exit"
       ],
       "title": "VisualResearchAssessment",
+      "type": "object"
+    },
+    "VisualResearchLimitedExit": {
+      "additionalProperties": false,
+      "description": "Host-reported limits of open research, never proof of sufficient study.",
+      "properties": {
+        "reason": {
+          "enum": [
+            "sources_unavailable",
+            "no_decision_gain"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "attempts": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Attempts",
+          "type": "array"
+        },
+        "unresolved": {
+          "minLength": 1,
+          "title": "Unresolved",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason",
+        "attempts",
+        "unresolved"
+      ],
+      "title": "VisualResearchLimitedExit",
       "type": "object"
     }
   },

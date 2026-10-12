@@ -333,15 +333,35 @@ def read_stop(run: Path) -> dict | None:
         raise AgentError('停止生成证据损坏；不能推断仍有执行权限') from exc
 
 
+@contextmanager
+def _stop_record_lock(run: Path):
+    from .native_budget import dispatch_budget_lock, guard_api
+    if (run / 'api-state.json').exists():
+        # run_cloud owns the run lock across provider I/O. A terminal stop only
+        # writes STOP_FILE: it must not wait on that writer or alter its budget,
+        # reservations, packet or in-flight results. Serialize stop writers with
+        # a separate, crash-released OS mutex, not a second durable run lock.
+        guard_api(run)
+        from .run_lock import _metadata_guard
+        directory = run / 'api'
+        directory.mkdir(exist_ok=True)
+        with _metadata_guard(directory):
+            yield
+    else:
+        # Native dispatches still serialize stops with submission/shared budgets.
+        with dispatch_budget_lock(run):
+            yield
+
+
 def stop_generation(run: Path, source_id: str, sources_file: Path | None = None) -> dict:
     """Record an explicit host interpretation of a user's stop, without spending.
 
     No prose classifier or stop-to-grant conversion. Reopening requires an
     explicitly authorized linked task version with its existing budget rules.
+    Already in-flight requests are not cancelled by this local stop record.
     """
-    from .native_budget import dispatch_budget_lock
     run = Path(run).resolve()
-    with dispatch_budget_lock(run):
+    with _stop_record_lock(run):
         packet, messages = _packet_sources(run)
         sources = _sources(messages)
         if (run / AUTHORIZATION_FILE).exists():

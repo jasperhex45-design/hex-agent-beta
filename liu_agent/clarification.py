@@ -74,6 +74,12 @@ def reconcile_questions(previous_need: dict | None, need: Need, sources: dict, *
             if record.question in question_ids:
                 raise AgentError('同一澄清问题不能换ID重提或替换历史')
         else:
+            from .model_selection import MODEL_DECISION
+            if (old.status == 'open' and record.status == 'withdrawn'
+                    and record.affected_decision == MODEL_DECISION):
+                messages = resolve_refs(sources, record.source_refs)
+                if not messages or any(message['actor'] != 'user' for message in messages):
+                    raise AgentError('目标模型问题不可由Agent自行撤回；须绑定用户已有选择、回答或明确模型选择委托')
             if old.options and (old.options != record.options or old.recommended_id != record.recommended_id):
                 raise AgentError('已展示选项内容不可改写；用新问题与用户来源替代')
             if any(getattr(old, field) != getattr(record, field) for field in

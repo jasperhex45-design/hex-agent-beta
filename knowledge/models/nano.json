@@ -1,31 +1,56 @@
 {
   "id": "nano",
-  "version": 1,
+  "version": 2,
   "label": "Nano / Gemini Image",
   "language": "zh",
   "status": "experimental",
-  "provider_version": "family-profile; account/version to be confirmed",
-  "last_checked": "2026-09-19",
+  "provider_version": "Nano family: gemini-3-pro-image / gemini-nano-banana-2.1 / gemini-3.1-flash-image / gemini-3.1-flash-lite-image / gemini-2.5-flash-image; exact target and surface require user choice",
+  "last_checked": "2026-10-12",
   "review_after_days": 30,
   "writing_rules": [
-    "按语义描述主体、场景与需要改变的具体部位，避免关键词堆栈。",
-    "多图输入要分别说明身份、衣装、姿态、场景或风格角色。",
-    "修改已有图时清楚写出目标变化与保留项；不要把强词当作绝对锁定保证。"
+    "官方建议：用清楚的主体、动作、场景、构图与风格描述目标，写明用途；只补与当前方案相关的具体细节，不堆质量词。",
+    "HEX整理的新建骨架（不是官方固定语法）：为[用途]创作[画幅与媒介]；[主体与动作]位于[场景]；[构图与主次]；[光线、颜色和材质的可见关系]；如需文字补[准确原文、位置与层级]。删除不适用槽位。",
+    "HEX整理的参考骨架：图1提供[身份/结构]，图2只提供[姿势/风格/材质]，图3提供[环境]；将[主体]置于[目标场景与构图]，保留[重要特征]，统一[光线、尺度与接触关系]。只列真实且本题必要的参考。",
+    "HEX整理的编辑骨架：编辑图1中的[明确对象/区域]，把[原状态]改为[目标状态]；保留[本题保护项]；图2仅提供[允许借用属性]；让修改后的[光影/材质]与原图连贯。局部编辑不套完整新建场景。",
+    "官方建议：需要文字时给准确原文并说明字形、位置和层级；多参考要分配每张图的职责。后续对话写清本轮变化与已认可的保留项。",
+    "按具体目标状态表达避项，不混入Midjourney参数、Stable Diffusion权重语法或无依据采样值。",
+    "正文与输入必须保留同一需求、数量、精确文字及修改范围；强保留语句不作为像素或身份绝对锁定的保证。"
   ],
   "setup_rules": [
-    "Nano 是家族称呼；实际版本/通道由用户在使用端确认。",
-    "将列出的图片按角色上传，不能只复制文件名。"
+    "按当前任务读取 knowledge/model-prompts/nano.md；型号和模式匹配时复用缓存，新版本、接口差异、冲突或未覆盖能力才定向补查。",
+    "Nano是系列俗称。未有本题明确型号或真实委托时先问，不默认选Pro或沿用历史偏好；Pro、2.1、2、2 Lite与旧2.5分别记录。",
+    "本题模型已明确时保留。Gemini App、AI Studio、API和第三方入口的参考数量及输出规格不同，依实际入口配置。",
+    "参考图片按已登记角色上传，不能只复制文件名。输出尺寸与分辨率经实际设置和回执核验，正文中的4K不代替输出设置。"
   ],
   "limitations": [
-    "官方说明不等于本项目已验证效果；首次需按目标模型小样实测。",
-    "GPT测试只能验证方向，不能证明此模型会复现同样结果。"
+    "本卡只完成官方资料核验，未进行目标模型成图验证；不把方法建议、结构检查或GPT测试写成Nano已验证效果。",
+    "Nano Banana 2 Lite官方说明不以多参考输入或多轮连续编辑为优化目标；不能继承Pro的能力表。",
+    "本卡不证明帐号权限、工具接通或当前调用能力；不能保证像素、细节文字或复杂编辑完全符合目标。"
   ],
   "sources": [
     {
-      "label": "Gemini native image generation / prompting",
+      "label": "Google AI：Nano Banana image generation",
       "url": "https://ai.google.dev/gemini-api/docs/image-generation",
       "kind": "official",
-      "checked_at": "2026-09-19"
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Google DeepMind：Gemini Image prompt guide",
+      "url": "https://deepmind.google/models/gemini-image/prompt-guide/",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Google：Nano Banana Pro prompt tips",
+      "url": "https://blog.google/products-and-platforms/products/gemini/prompting-tips-nano-banana-pro/",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Google AI：Gemini Nano Banana 2.1",
+      "url": "https://ai.google.dev/gemini-api/docs/models/gemini-nano-banana-2.1",
+      "kind": "official",
+      "checked_at": "2026-10-12"
     }
   ],
   "evaluation_files": []

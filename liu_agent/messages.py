@@ -26,6 +26,7 @@ STATUS_LABELS = {
     'candidate_selection_uncertain': '两版取舍尚不确定',
     'completed_user_confirmed': '已记录用户选择保留这一版',
     'user_rejected': '用户已否决这一版 · 待重新诊断',
+    'accepted_with_deviations': '用户已确认带偏差收下 · 原检查结果保留',
     'generation_failed': '生成尝试失败 · 尚未取得候选图',
     'generation_pending': '请求已准备 · 尚未确认服务接收',
     'generation_outcome_unknown': '上次生成结果尚不确定',
@@ -416,10 +417,30 @@ def build_presentation(run: Path, result: dict | None = None, inspection: dict |
             description = inspection.get('next_action', {}).get('description')
             if not inspection['workflow_completion'].get('complete') and description:
                 next_action = description
+    if workflow_policy and workflow_policy.get('version') == 2:
+        completion = (inspection or {}).get('workflow_completion', {})
+        receipt = (completion.get('receipt', {}) if completion.get('applicable')
+                   else current.get('workflow_completion', {}))
+        if receipt.get('independent_review') is False:
+            review_text += '本次为探索首稿自检，未完成独立评审。'
+        if user_state == 'accepted_by_user' and receipt.get('delivery_outcome') == 'accepted_with_deviations':
+            from .delivery_review import accepted_deviation
+            try:
+                accepted = accepted_deviation(run, receipt['accepted_deviations'][0]['request_id'])
+            except (AgentError, OSError, ValueError, KeyError, IndexError) as exc:
+                accepted = None
+                errors.append('带偏差交付尚未核验：' + str(exc))
+            if accepted is not None:
+                delivery_text += '已按用户确认带偏差交付；原标准未全部满足，差异和首稿保留。'
+                next_action = '保留已确认的这一版，停止自动返修；新的修改须沿原任务与许可继续。'
+        research = receipt.get('visual_research') or {}
+        if research.get('state') == 'limited_with_disclosure':
+            review_text += '视觉研究不足已披露，不宣称参考研究完成。'
     if errors or stage == 'blocked':
         next_action = '先核对当前记录中缺失或不一致的证据，再继续；这次检查没有重发请求。'
     facets = dict(execution=execution_text, review=review_text, user_decision=user_text, delivery=delivery_text)
-    summary = [execution_text, user_text] if production else [execution_text, review_text, user_text]
+    summary = ([execution_text, user_text] if production and not (workflow_policy or {}).get('version') == 2
+               else [execution_text, review_text, user_text])
     if errors:
         summary.append('部分证据尚未核对成功，上述已核实文件不代表整条流程通过。')
     if current.get('producer', '').startswith('authored_demo'):
@@ -481,6 +502,12 @@ def failure_message(run: Path | None, operation: str, detail: str) -> dict:
               else '本次生成请求记录未通过核对。' if 'request' in detail.lower()
               else '需要的本地文件缺失或暂时无法读写。' if any(x in detail for x in ('WinError', 'Errno', 'No such file'))
               else '当前任务记录不能支持这一步，需先核对具体缺失或冲突。')
+    user_action = '需要你提供信息时，宿主应具体问清仍缺的需求、目标模型、素材或权限；已有答案和许可不重复询问。'
+    if detail.startswith('缺少已确认的目标生成模型'):
+        summary = ['本次目标模型尚未确认，暂不继续模型编译或生成。']
+        reason = '先核对本题已有的模型选择或明确选型委托，不能用默认模型代填。'
+        next_action = '已有明确选择就沿用；没有选择时，先在对话中询问。'
+        user_action = '如果本题还没选模型：这次准备给哪个模型使用？也可以明确交给我选。'
     return {'summary': summary, 'reason': reason, 'next_action': next_action,
-            'user_action': '只有缺少必要素材、账户配置或新的调用许可时，才需要你补充。',
+            'user_action': user_action,
             'diagnostic_detail': detail, 'presentation': presentation}

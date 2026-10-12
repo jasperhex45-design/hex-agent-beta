@@ -89,9 +89,14 @@ def make_packet(brief_file: Path, out: Path, kb: Path, state: Path, need_file: P
     if execution_policy and (aesthetic_library_path or aesthetic_query or style_context_enabled is True):
         raise AgentError('当前生产策略尚未启用经验回用；必要素材请作为本次 references 提供')
     brief_file = brief_file.resolve()
-    brief = Brief.model_validate(read_json(brief_file))
+    raw_brief = read_json(brief_file)
+    from .model_selection import require_explicit_targets
+    require_explicit_targets(raw_brief)
+    brief = Brief.model_validate(raw_brief)
     from .workflow_policy import build_policy as build_workflow_policy
-    completion_policy = build_workflow_policy(workflow_profile, deliverable_kind, scope=brief.scope)
+    completion_policy = build_workflow_policy(
+        workflow_profile, deliverable_kind, scope=brief.scope,
+        delivery_level=(brief.delivery_level or 'formal') if workflow_profile == 'full-flow-v1' else None)
     if execution_policy and brief.color_style:
         raise AgentError('生产配置尚未启用 color_style 库卡；请在当前需求中直接描述颜色要求')
     available = profiles(kb, state)
@@ -137,6 +142,8 @@ def make_packet(brief_file: Path, out: Path, kb: Path, state: Path, need_file: P
                   reference_policy_version=1, model_adaptation_version=1, quality_contract_version=1,
                   compilation_settings_version=1, reference_decisions_version=1,
                   creative_context_version=1)
+    from .prompt_guides import freeze_guides
+    packet['prompt_guides'] = freeze_guides(kb, brief.targets)
     # Only newly prepared tasks opt in. Historical packets retain their exact
     # frozen instructions and evidence; feedback is separate from experience.
     user_feedback_context.initialize(packet, kb, enabled=style_context_enabled)
@@ -212,16 +219,29 @@ def refresh_packet(packet: dict, out: Path, kb: Path, state: Path, need: Need, m
                     if e['kind'] != 'scope_rule' and (e['field'], e['text']) not in present)
     need = Need.model_validate(raw)
     change_fields = ('domain', 'scope', 'must_keep', 'avoid', 'targets')
-    if change and any(getattr(change, key) is not None and
+    changed_fields = [key for key in change_fields if change and getattr(change, key) is not None and
                       (packet['brief'][key] != getattr(change, key) or
-                       (key in ('must_keep', 'avoid') and need.model_dump()[key] != getattr(change, key)))
-                      for key in change_fields):
+                       (key in ('must_keep', 'avoid') and need.model_dump()[key] != getattr(change, key)))]
+    if changed_fields:
         messages = provenance.resolve_refs(packet.get('input_sources'), change.source_refs)
         if not messages or any(m['actor'] != 'user' for m in messages):
             raise AgentError('改变用户指定领域、编辑范围或限制必须引用明确用户新指令')
         previous_sources = {m['id'] for m in provenance.verified_sources(read_json(out/'packet.json').get('input_sources'))} if (out/'packet.json').exists() else set()
         if previous_sources and not any(m['id'] not in previous_sources for m in messages):
-            raise AgentError('范围变化须有新用户消息，不能重用旧指令扩大编辑范围')
+            # Natural answer() stores the reply before the host can absorb it.
+            # Reuse only that latest, still-unassessed model answer; never turn
+            # an old answer into authority for a new scope or a second switch.
+            from .model_selection import MODEL_DECISION
+            users = [m for m in provenance.verified_sources(packet.get('input_sources')) if m['actor'] == 'user']
+            latest_user = users[-1]['id'] if users else None
+            answered_model = (changed_fields == ['targets']
+                and previous_need.get('direction_review') is None
+                and latest_user in {ref.source_id for ref in change.source_refs}
+                and any(q.get('status') == 'answered' and q.get('affected_decision') == MODEL_DECISION
+                        and latest_user in {ref['source_id'] for ref in q.get('source_refs', [])}
+                        for q in previous_need.get('question_records', [])))
+            if not answered_model:
+                raise AgentError('范围变化须有新用户消息；仅可吸收当前尚待理解的目标模型回答，不能重用旧指令')
         prior_scope = SCOPE_LOCKS.get(packet['brief']['scope'])
         raw = need.model_dump()
         for field in ('must_keep', 'avoid'):
@@ -249,6 +269,9 @@ def refresh_packet(packet: dict, out: Path, kb: Path, state: Path, need: Need, m
             packet['model_profiles'] = {ident: available[ident].model_dump() for ident in selected}
             packet['profile_warnings'] = [f'{available[ident].label}：资料复核日期已过期'
                                           for ident in change.targets if stale(available[ident])]
+            if 'prompt_guides' in packet:
+                from .prompt_guides import freeze_guides
+                packet['prompt_guides'] = freeze_guides(kb, change.targets, packet['prompt_guides'])
             packet.pop('compilation_runtimes', None)
     if not (out/'acceptance.json').exists():
         # Version new/unfrozen tasks only; old frozen contracts must recompute
@@ -371,7 +394,7 @@ def refresh_packet(packet: dict, out: Path, kb: Path, state: Path, need: Need, m
 实际查看 references/；need.json 是草稿，必须由宿主重新理解后 refresh。
 按packet.reference_policy区分任务：新open_creation允许只用文字创作；reference_transfer需要实际观察的参考，观察参考不自动上传；local_edit必须有真实编辑输入。旧任务缺策略时沿用exploration_allowed原语义。开放创作不自动授予生成或上传许可。
 输出 solution.json（含design、spec和所选模型编译），先preflight固定标准。{'按完整流程交接继续，不因提示词写完就结束。' if packet.get('workflow_policy') else '无需试图时finalize。'}
-设计后先prepare-compilation生成当前任务与各目标模型的编译输入，宿主读取compilation-input.json自主编译；用户不负责选择提示词写法。拟用内置生图时在此步指定--target image --tool image_gen.imagegen，未知版本不猜。新任务必须填写adaptation，按同一视觉方案分别写完整正文及当前正文片段依据，不以相同正文换标题交付。
+设计后先prepare-compilation生成当前任务与各目标模型的编译输入，宿主读取compilation-input.json自主编译；用户不负责选择提示词写法。用户已选或明确委托确定内置生图时，才指定--target image --tool image_gen.imagegen；未选模型先问，不能凭工具可用代选，已有选择不重问，未知版本不猜。优先使用本目标已冻结的prompt_guide正文，未收录或版本/能力有冲突时再查官方。新任务必须填写adaptation，按同一视觉方案分别写完整正文及当前正文片段依据，不以相同正文换标题交付。
 有试图能力时最多按授权生成两张；每张须对照 acceptance.json 做一次实际看图Eval。
 用户不填写技术表格；本目录文件由你维护。别新建UI、子Agent、评分表。
 若 packet.json 包含 aesthetic_retrieval，只把它当作待核验的审美机制候选：本轮实际看图，再检查可见事实、迁移条件和反默认项，把采用决定写入 design.choices[].reference_uses；命中本身不是通过。
@@ -498,7 +521,7 @@ prepare-compilation 返回本模型的 model_compile 指导与真实 compilation
 执行配置：{policy(packet)['profile']}。先读 packet.json 中的 input_sources、brief 与当前 need，分清用户要求、允许自主决定和真正未知项。
 Need 是 offline_heuristic 时先按原话完成真实理解并 refresh；先判清需求，再决定是否需要 Copilot 问讯，不能先写完整方案再补需求记录。
 执行 workflow drive 或 harness plan，读取当前 host_context 与 next_action；只加载本阶段指令和所列输入。need.json 是兼容副本，无须重复读取。
-目标明确或已委托则继续本题研究与创作；缺必要身份、编辑素材或尚未解决的关键取舍时，按真实状态处理，不以自主设计覆盖。
+明确需求直接继续本题必要研究与创作；已有明确委托的决定由宿主承担。缺必要身份、编辑素材或尚未解决的关键取舍时，按真实状态处理，不以自主设计覆盖。
 完成当前动作后继续读取真实下一步。模型编译以 prepare-compilation 返回的指导为准；视觉复核只读已准备的隔离输入。
 原许可、父图、预算、未知请求和完成门禁继续沿用；本加载入口不增加调用额度，也不证明工具已执行或图像合格。
 ''')
@@ -552,7 +575,7 @@ def _write_production_context(out: Path, packet: dict) -> None:
 
 先理解当前需求，明确时直接设计；只有会改变路线的关键歧义才问一个问题。
 need_mode=offline_heuristic 时须完成真实理解并 refresh，不能拿关键词草稿生成。
-{'按需求找并实际看参考，拿不准就扩展不同案例；仍不合适则用 copilot 澄清，再选有观察依据的最终方向，不凑固定草案数量。' if packet.get('visual_research_version') == 2 else '研究后比较不同方向并选一个最终方向生成，用既有 choices/checks 记录观察如何改变选择；开放题与被拒绝方向须有两个创意草案及取舍理由。' if packet.get('visual_research_version') else '默认一个自主方向，用既有 choices/checks 表达当前任务的动作、关系和取舍，不要求凑三条。'}
+{'按需求找并实际看参考，已有依据就形成方案；重要用户选择未决才用 copilot。研究受阻按当前合同的退出条件处理，保留不足说明，不凑固定草案数量或重复问已确认需求。' if packet.get('visual_research_version') == 2 else '研究后比较不同方向并选一个最终方向生成，用既有 choices/checks 记录观察如何改变选择；开放题与被拒绝方向须有两个创意草案及取舍理由。' if packet.get('visual_research_version') else '默认一个自主方向，用既有 choices/checks 表达当前任务的动作、关系和取舍，不要求凑三条。'}
 必要素材先实际看图并 observe；观察许可与生成上传许可分开，evaluation_only 不上传。
 设计后执行 prepare-compilation，按真实目标工具/模型编译，再 preflight 固定方案。
 {'本题仅交付提示词，跳过图片调用与图片检查。' if full_flow and full_flow['deliverable_kind'] == 'prompt_only' else '真实许可先 authorize-generation；先 dispatch，按其 arguments 调用，再 record-result 保存实参和回执。'}
@@ -992,6 +1015,9 @@ def finish(run: Path, solution: Solution, producer: str, trials: list[dict] | No
     if workflow_receipt is not None:
         expected = [(row['request_id'], row['candidate_sha256'], row['route'])
                     for row in workflow_receipt['candidate_receipts']]
+        if workflow_receipt.get('derived_delivery'):
+            parent = workflow_receipt['derived_delivery']['asset']['parent']
+            expected = [(parent['request_id'], parent['candidate_sha256'], parent['route'])]
         actual = [(trial.get('request_id') or trial.get('generation_evidence', {}).get('request_id'),
                    trial['sha256'], trial.get('generation_evidence', {}).get('route')) for trial in trials]
         if len(actual) != len(expected) or set(actual) != set(expected):
@@ -1049,6 +1075,8 @@ def finish(run: Path, solution: Solution, producer: str, trials: list[dict] | No
         result['visual_decision_policy'] = dict(packet['visual_decision_policy'])
     if workflow_receipt is not None:
         result['workflow_completion'] = workflow_receipt
+        if workflow_receipt.get('derived_delivery'):
+            result['delivery_asset'] = workflow_receipt['derived_delivery']['asset']
     if packet.get('model_adaptation_version') == 1:
         result['model_adaptation'] = {target: row['adaptation'] for target, row in prompts.items()}
     from .feedback import apply_feedback, apply_relative_preference

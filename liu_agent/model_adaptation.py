@@ -185,6 +185,8 @@ def build_context(packet, spec, design, targets=None, revision=None) -> dict:
                     expression=design.get('expression'),
                     visual_research=evidence_context(packet),
                     user_feedback_context=_plain(frozen_context(packet)))
+    from .prompt_guides import selected_guides
+    guides = selected_guides(packet, targets)
     result = {"version": 1, "design_digest": digest(design), "targets": {}}
     for target in targets:
         profile = _plain(packet["model_profiles"][target])
@@ -193,6 +195,8 @@ def build_context(packet, spec, design, targets=None, revision=None) -> dict:
                    "runtime": _plain(packet.get("compilation_runtimes", {}).get(target,
                                       {"status": "unknown_not_inferred_from_family_profile"})),
                    "task": _plain(task), "choices": _plain(choices)}
+        if target in guides:
+            context['prompt_guide'] = guides[target]
         result["targets"][target] = {**context, "context_digest": digest(context)}
     return result
 

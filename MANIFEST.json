@@ -1,29 +1,29 @@
 {
-  "version": "0.3.9b3",
+  "version": "0.3.9b8",
   "scope": "product_source_only",
   "channel": "public_beta",
-  "source_commit": "15767f30905636a8ef38f333d6ec45ba557c89e7",
+  "source_commit": "55c0055f5d495a5cdb01eea7192662230deab274",
   "notice": "公开 Beta 源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。公开访问不改变现有许可，文件摘要不证明审美或工具可用性。",
   "files": [
     {
       "path": ".agents/skills/cl-hex-car-photography/SKILL.md",
-      "sha256": "e688a58b9e15da78b2e48b2a75ba381c28d6a4e8efa1908d194760ae52ced43a"
+      "sha256": "1b1b51097d8745b3a434ec1010f2154667f36c6d643b1ed39c749d7ba74f5f34"
     },
     {
       "path": ".agents/skills/hex/SKILL.md",
-      "sha256": "be41ca3a7eb4efa29fa604a2a94a3992fb2f39550e0a9e6858afa87177d35ef0"
+      "sha256": "808893b59a5e16131a06214c6bacd633ef6c96f550101a32609a53cc67fe317c"
     },
     {
       "path": ".agents/skills/hex/agents/openai.yaml",
-      "sha256": "78c5963e1095afe278ad6f671baba419b1b461a4d0e129b9f9897663e98a032a"
+      "sha256": "a794f5ecbc0877f2fdf1473e02d5dcc27dc67a1162f21b0846559b9e33dd4737"
     },
     {
       "path": ".agents/skills/liu-aesthetic-agent/SKILL.md",
-      "sha256": "cf0fb87870c15fa2e0d4a624778553b88230621ddf04787920cae48528a35ff2"
+      "sha256": "0b6765c2caf5e659f2da491105443070998950476b56c8e265eae4204323ab58"
     },
     {
       "path": ".agents/skills/liu-aesthetic-agent/references/design-study.md",
-      "sha256": "de065063889234a74f0ec03fc15563efc9a08512dd2f46df981995b45c48e0fc"
+      "sha256": "dde31b88c25a36027c3806c0728cb9bdd33593e080c1fd4d902169e7985e2f64"
     },
     {
       "path": ".agents/skills/liu-aesthetic-judgment/SKILL.md",
@@ -55,7 +55,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha256": "e2258a4ec84799214eda92cbb3a3aadff630bb7b1ebf5bda95ec6225bc984cb9"
+      "sha256": "063fb5a2b0d5e828ddae9a818606ea63acfff55d01bd7040227d80311c9abd1e"
     },
     {
       "path": "ART_STRUCTURE_START.md",
@@ -67,11 +67,11 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "a609fec49707e0e2065cfdcd27fcd9efdb74d1d81adc7f95b41ebac147142128"
+      "sha256": "b83f9f5d1ac3a523cf27b0e9006e7a836a069cdc8c503ef1a5deecb760048a8f"
     },
     {
       "path": "CODEX_START.md",
-      "sha256": "a456095f4d4e8cc75c15cb4b11780d9d1f3072cfe9477385f9086d97b3b5d4d0"
+      "sha256": "b49e6737067960f65d1990d632d4aa28fe4ffabd26dfc472d3b135f7674a4e54"
     },
     {
       "path": "Hex.ps1",
@@ -83,7 +83,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "c902c3f1bed5bb9fbfc82fd6eba4b2d17749de0bbd26da3d1b38f612b61f59ee"
+      "sha256": "a3ca83098dbc903fc137b0d8533605b8a1686b52dabd093479b7aed48d017e5b"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -126,6 +126,10 @@
       "sha256": "a9cf7245adbdd2391dce92454a1c519151db98762df23b69fdb315bb61ae4862"
     },
     {
+      "path": "docs/HEX_CORE_METHOD.md",
+      "sha256": "ffb00c24e08b14dd275cb682364c9c78f6b4918b27e751d33deff248c97aa80a"
+    },
+    {
       "path": "docs/HEX_QWEN_MASKED_EDIT_20261007.md",
       "sha256": "98b4e1a4648701c9db60d5b07c8913e0f4f2a3e7886406b2856f23f83a576d69"
     },
@@ -138,12 +142,20 @@
       "sha256": "362dc864f0bcacff12e37b71e09f2db88e84b2b9ca4c51f093fa9107bb213950"
     },
     {
+      "path": "docs/HOST_PORTABILITY.md",
+      "sha256": "51b4ebb26ba881c91ca782bfa27f3ca26abe6cf4744e10383252afc2d6be3b61"
+    },
+    {
       "path": "docs/KNOWLEDGE_AND_UPDATES.md",
       "sha256": "1e8b462dda39657ed4b944f727dca96bb39e1db897087941386eff7bf3b00ccf"
     },
     {
       "path": "docs/MODEL_ADAPTATION_AND_VALUE_20260926.md",
       "sha256": "142a24daa96e8da3623e21848f2bda5de3266108b45ee1dcbb30494788989753"
+    },
+    {
+      "path": "docs/PRIVATE_REFERENCE_LIBRARY.md",
+      "sha256": "f91f2212b4a3fb9084a1875dcc6fe548866ee13d2222b75b30c33cd6863a1aa6"
     },
     {
       "path": "docs/PROJECT_IDENTITY.md",
@@ -240,6 +252,14 @@
     {
       "path": "hex_agent/minimal_harness.py",
       "sha256": "5b6e4b8847da44f90cb8b1fc674cce906c473c5f39a0e5063a8ff12c6c10494a"
+    },
+    {
+      "path": "hex_agent/pinterest_source.py",
+      "sha256": "8611abb78fb7ed03771fc7617d64698be0c5f50e010cc7e50da43b89d9943319"
+    },
+    {
+      "path": "hex_agent/reference_catalog.py",
+      "sha256": "6d9efd4adb3886b3ff408b87d0817f034971be5bffa54119bbfade9270ddadd2"
     },
     {
       "path": "hex_agent/reference_library.py",
@@ -354,32 +374,84 @@
       "sha256": "70edf8dea5012474228ef1f1df07e377ba03f30c6124b2fc13fef98661ab1a43"
     },
     {
+      "path": "knowledge/model-prompts/README.md",
+      "sha256": "988009e8e077c4947820ebf111a4c207218b8c503cfa40c647935b889997e253"
+    },
+    {
+      "path": "knowledge/model-prompts/flux-klein.md",
+      "sha256": "cd1dbf1a00ec87e57489fe81502c562d891633549d99cc99a3eb9be974b20476"
+    },
+    {
+      "path": "knowledge/model-prompts/flux2.md",
+      "sha256": "4a482f51d27c011961958ed2a542f2aa00c6c315756a98f8e40c7880775c2ff5"
+    },
+    {
+      "path": "knowledge/model-prompts/image.md",
+      "sha256": "7de0bea4463925455dd3190ce6f13c98d7d67534cf21d44a3b3e705d3b9541df"
+    },
+    {
+      "path": "knowledge/model-prompts/krea.md",
+      "sha256": "f0e2dbe099e90de03ec8c720ef1f6362b5881a59742b0dfdf0fa215b54c1b889"
+    },
+    {
+      "path": "knowledge/model-prompts/midjourney.md",
+      "sha256": "c7e36d2eeb21c4b5dde55cb8b46422443fcb7a425ddffa53ce363fe1641e090d"
+    },
+    {
+      "path": "knowledge/model-prompts/nano.md",
+      "sha256": "440ad2d4998598121052dc2d2b935f9ec8493788b2d24cf941323b1f02c74c4b"
+    },
+    {
+      "path": "knowledge/model-prompts/qwen-image.md",
+      "sha256": "6c06dd5f3f468a702e775346140a1b3be8eb23b430bbc4b6200d6ab28eeff554"
+    },
+    {
+      "path": "knowledge/model-prompts/seedream.md",
+      "sha256": "b649990e1503a9c78e76a80ec50b93e0d18b566492e092a68dc66b1c0170b916"
+    },
+    {
+      "path": "knowledge/model-prompts/unknown-service.md",
+      "sha256": "6a7394ab6b05273ebb3356df0d7234e04a247a3fa777d64e3948054ac6784bca"
+    },
+    {
       "path": "knowledge/models/flux-klein.json",
-      "sha256": "7e5bcaad3b57d78ddfed526b9c70819cf23c0bb05ba7f90cf6671990c86c8d54"
+      "sha256": "e2e5cf4d6c07ab3e7507315ef7fa31a0064ff74a783ef51eebe16d83eb7ccc48"
+    },
+    {
+      "path": "knowledge/models/flux2.json",
+      "sha256": "f18830d7333233106d42f925853ab13c3305a3bb534ad714ac4da10db825a429"
     },
     {
       "path": "knowledge/models/image.json",
-      "sha256": "ebc7c24b25d6c83f9095735a25061ffe5c29b096cc5d9772933631a6be2b6c24"
+      "sha256": "4156dba086a597ef895a91dcbe4cd83777d6014ce86ff9707ca287909ebf837d"
+    },
+    {
+      "path": "knowledge/models/krea.json",
+      "sha256": "c665d7224e103641c1f255409964c9d0c188be16d78e72c416d111f8f5f766c2"
     },
     {
       "path": "knowledge/models/midjourney.json",
-      "sha256": "e8c6ea0d2ffcd51b58d9cbae4e11be726f18d621424c51dc4d00877431e68b6c"
+      "sha256": "0034ffa5abef6f33d9632404dcda91dcea5fb3883e11fb372a0f98d08c817795"
     },
     {
       "path": "knowledge/models/nano.json",
-      "sha256": "1b52a68a354397e3cf627e1b03592535a7705c325230d875c59f8a8001bfa1a4"
+      "sha256": "2d1eee4c20ad8c04c80254056101a6fedce13c156c07addc09bd010c8a7a00e9"
     },
     {
       "path": "knowledge/models/qwen-image.json",
-      "sha256": "aab500992cb6cda3f0e3827d86d40234868779acdb04d7a383c97d7ab1a6f9ba"
+      "sha256": "25086b286f35c315282c78b0328205300b22aa0d5ea38e062c9f4f41aa94601b"
     },
     {
       "path": "knowledge/models/seedream.json",
-      "sha256": "bd110d011890e7ff382a21bd21aca3c2a9f374795214e940a4f72742989daf95"
+      "sha256": "075e7c261d0d3d632ed0e398257a1fcd775aeebe995cd485bd62283513ec4b86"
+    },
+    {
+      "path": "knowledge/research-entrypoints.md",
+      "sha256": "58e9c08b50636305b212200752e1dbdd7782aac7fbd54000dcf824e464171775"
     },
     {
       "path": "liu_agent/__init__.py",
-      "sha256": "13b82685b7c49d4184db1279aa71c45636ba98e985883fe1105d94a780d6a6f5"
+      "sha256": "377f582dc5f70492f78f6a25521179937d3b80e27f1f47431a46b8eeae5f922a"
     },
     {
       "path": "liu_agent/__main__.py",
@@ -415,7 +487,7 @@
     },
     {
       "path": "liu_agent/adapters/vlm_review.py",
-      "sha256": "033794084de629d30008260c006f94df71e49630b04c5060f5ab77ec5a04070d"
+      "sha256": "ba5f23b26661181eb4fbceb8fe5b2ab6e79f519fdce7b4080887068d5ab86c60"
     },
     {
       "path": "liu_agent/aesthetic_library.py",
@@ -423,7 +495,7 @@
     },
     {
       "path": "liu_agent/api_recovery.py",
-      "sha256": "36e31673674b691a0f87243cd09b9063f172b3493a808488a4eec88901370966"
+      "sha256": "b31ff53df6c190fb3239cb593d4d7c65d2740d43030ea7f8a0615852b61c6cd5"
     },
     {
       "path": "liu_agent/art_structure/__init__.py",
@@ -454,6 +526,10 @@
       "sha256": "ae7b42fcd4a92501865e4a8c8e6d37d1179355d715d03f1268d7ca1a15b79551"
     },
     {
+      "path": "liu_agent/bounded_repair.py",
+      "sha256": "421695b79731a300b0e956e774dff702c2fecab578ca8ef269a7715ff7258599"
+    },
+    {
       "path": "liu_agent/brief_registry.py",
       "sha256": "3b14911f588873612a5a3a34f628335aba0fbe487506d5f5b4d37392f426c476"
     },
@@ -471,19 +547,19 @@
     },
     {
       "path": "liu_agent/car_photography.py",
-      "sha256": "7325da6cea8c5dda25fed7f77adbdff4c49d3e0426841a51705dcac806fb2ef5"
+      "sha256": "2d6a2f43cd21a155f615fada66f8e68e6c3d5edb4b093aee6d6c7f28d21519d7"
     },
     {
       "path": "liu_agent/clarification.py",
-      "sha256": "897da63c5f3f1968bc89f6706003c1fabd55adc2bb86d281955cbe52f2269795"
+      "sha256": "ec9e6000e7767fc2f0dddd359baa074353f9a847d4400186ca63d581a31f74bc"
     },
     {
       "path": "liu_agent/cli.py",
-      "sha256": "7e38d07a3cc4a321c65d954c91937d78283ccabd571e797923b17e734b75a88e"
+      "sha256": "b45e4de5f4f4840775fd33141399636809b29c604954d86992ffcc6fec59c148"
     },
     {
       "path": "liu_agent/co_creation.py",
-      "sha256": "532cf5c761052c1c4a92238253bce5dd3654420982585cfc5187f1e2722da79e"
+      "sha256": "bffb541300c1adaebc57313cde2e423cff2804b1b8aa67dc3f8f23f7f5e9bdd9"
     },
     {
       "path": "liu_agent/codex_integration.py",
@@ -491,7 +567,7 @@
     },
     {
       "path": "liu_agent/comfy_connector.py",
-      "sha256": "656353c6e253c85a9d9c76650e75850041d3558f6a1f34a340855fc09c0202af"
+      "sha256": "3469a2fb5bdf35e87bd653dcc5ea937da375761a959019074eaa114fc249daea"
     },
     {
       "path": "liu_agent/comfy_execution.py",
@@ -507,11 +583,15 @@
     },
     {
       "path": "liu_agent/contracts.py",
-      "sha256": "1dd79c0be10da4344beb0eb853f3b4403bd382b5ce3a2fc1e0cde753ce0067f4"
+      "sha256": "73ba6696002ab0b7e3d648cbde6f6627d1234b017c85f7cf75528e807f22c73e"
     },
     {
       "path": "liu_agent/creative_directions.py",
       "sha256": "ce20a0b08de97b79e02815c43290eca8f09a2411abb4986ec53a8414e5f97b7a"
+    },
+    {
+      "path": "liu_agent/delivery_review.py",
+      "sha256": "5ce52a5aa55ab6381bff345b45e0a26bd285a70aca3421f7ec2d505e9e9bc801"
     },
     {
       "path": "liu_agent/design.py",
@@ -535,7 +615,7 @@
     },
     {
       "path": "liu_agent/exporter.py",
-      "sha256": "33325c2b9e7e3dd8bbaef2e4561993c6afb7770179e28ef90aeb1c156108c9dd"
+      "sha256": "95e0d6240e8bafe8300e6c33e276dff046e8754b781f827535e85fdf5b4500ee"
     },
     {
       "path": "liu_agent/failure_diagnosis.py",
@@ -543,7 +623,7 @@
     },
     {
       "path": "liu_agent/feedback.py",
-      "sha256": "c78384ef8f82e1d281782c7720c2888d1193889b1b427ab8da22a9380a91dfdb"
+      "sha256": "17c9e8f9b690b4adf09a4ecc4e35d47b8110c821f5d4f60a4122d5279f430c27"
     },
     {
       "path": "liu_agent/feedback_card.py",
@@ -559,7 +639,7 @@
     },
     {
       "path": "liu_agent/generation_authorization.py",
-      "sha256": "0f6d475edff18cb2e6defde87f72569a106eab2208ba30c3898fdc300d60266d"
+      "sha256": "1e9a14bdb413aff6c1933a5a0fe063f1a2a63d185b0d265e62c876b95b01e154"
     },
     {
       "path": "liu_agent/generation_evidence.py",
@@ -567,7 +647,7 @@
     },
     {
       "path": "liu_agent/generation_permission.py",
-      "sha256": "b0532d11e5335f6f5aeb4b1f0784b500d1833df39533334854853c1206513ec0"
+      "sha256": "5e6e4c470004e6f95ec3376dfefd0cbbddfa1eca4c4b450a6de329e28f0c552f"
     },
     {
       "path": "liu_agent/generation_spec.py",
@@ -575,11 +655,11 @@
     },
     {
       "path": "liu_agent/harness.py",
-      "sha256": "9adc64d8e03ce15da225816c3d2c955aad552f5e2985726bda0c0d5d68c00c57"
+      "sha256": "84870b284f1fc3d01c7a11c5afaed9150ecc1541e80baa87cdd057b618038d1f"
     },
     {
       "path": "liu_agent/host.py",
-      "sha256": "81dd94202cfb29c69d74eda6287b3b21f14b8a11ebc54f42748a42cb8cb56ced"
+      "sha256": "dd1c0545cce6036e70cb5e5c31ad8f98b84e65e34985ddba697d8fb2662c47d4"
     },
     {
       "path": "liu_agent/host_references.py",
@@ -587,7 +667,7 @@
     },
     {
       "path": "liu_agent/instructions.py",
-      "sha256": "52e11ecd734581065a18bd075a981d2906159d744ab6bfcf6fca71d2debdfa71"
+      "sha256": "904b0814aa7a65eefe2bccd356f01c179dbfd9ddba154eace230e22d7d7b23d3"
     },
     {
       "path": "liu_agent/intent_review.py",
@@ -607,7 +687,7 @@
     },
     {
       "path": "liu_agent/messages.py",
-      "sha256": "6502edcbfd1f065c70cdfa69db2d7d87f4e63821343c356fbd8b0acdbd5ced6f"
+      "sha256": "cd16d7708e335db522dfc9515c03b289a637fdd700726e5fe11ef28324b1113c"
     },
     {
       "path": "liu_agent/method_context.py",
@@ -619,11 +699,15 @@
     },
     {
       "path": "liu_agent/model_adaptation.py",
-      "sha256": "5661cb6bd5a38acbd8bc87c1a53fc4386b907344b09341ca7523de7b938153be"
+      "sha256": "3fb7bebcaf2baec194e4f599413c2effdcd925b2a6990d14b7701cc97b804233"
+    },
+    {
+      "path": "liu_agent/model_selection.py",
+      "sha256": "ca5e96db40797cf548ecb74f586828d43d93f31e9b483908cc5e987e1867cd46"
     },
     {
       "path": "liu_agent/native_budget.py",
-      "sha256": "ca43cc0e3d3f1105ede7c7b31b687ba81ccae45ebc7908477fbbe39127aa24b5"
+      "sha256": "b7a7b3d4dd2f6a0c1139088cc39fba26c6d316c5a802432a88774fa52e6eab20"
     },
     {
       "path": "liu_agent/native_runtime.py",
@@ -632,6 +716,10 @@
     {
       "path": "liu_agent/network.py",
       "sha256": "af931ad73699333f4e21a1df8a986aaa2f2391b69a88a47aeb90ac29a087fd21"
+    },
+    {
+      "path": "liu_agent/pinterest_source.py",
+      "sha256": "1869e8537a82ff275dcb63c093ee6e0213053a94b7aaca8b3456d40ac3932512"
     },
     {
       "path": "liu_agent/pippit_connector.py",
@@ -650,12 +738,16 @@
       "sha256": "995d0abe3e8a646fd14e93dc6dc71cd59d2e96b0758f7952be7d7fbee49cafc9"
     },
     {
+      "path": "liu_agent/prompt_guides.py",
+      "sha256": "35500485f3bdf22151547c8acda96b82a0467142bbb3eef397f5f83c77adc4a9"
+    },
+    {
       "path": "liu_agent/prompt_relations.py",
       "sha256": "5f4ab41f603d02f86fc61eb49fca039fe5f58687db5df343169241e294dc7d34"
     },
     {
       "path": "liu_agent/provenance.py",
-      "sha256": "5e7ccdf00df5424808e12b7074b8c0f990ff56384a468ec4fd6e72c1101da597"
+      "sha256": "8a372ae5c98f5de2830e9d26489c4041397f04871a6f59206b0772221e119e9e"
     },
     {
       "path": "liu_agent/provider.py",
@@ -663,7 +755,11 @@
     },
     {
       "path": "liu_agent/quality_review.py",
-      "sha256": "e0f86467be78fb328fab5d244c0a90287e1be6e9d38ece609d6fcd5d4eede39d"
+      "sha256": "2935cb3095b387794686f9af68f31c60497487e4963676bf9b16e54fe8728cc4"
+    },
+    {
+      "path": "liu_agent/reference_catalog.py",
+      "sha256": "b6f278003d43c98513f3ac142ad99b92b760fe61fc2bcde729130ff5199fb259"
     },
     {
       "path": "liu_agent/reference_gate.py",
@@ -671,7 +767,11 @@
     },
     {
       "path": "liu_agent/reference_library.py",
-      "sha256": "2142e28884ff8c4426cbbdfd3c14fc0eec3a1dd59519a453530c85b4eef51bb0"
+      "sha256": "634d13e18ff64bd026bc57533d8c0559ffa53bf63261c19f1e202c7340434d5c"
+    },
+    {
+      "path": "liu_agent/reference_review.py",
+      "sha256": "f397a41af3eb825367f5540db237b26b32289214a262d2f6e4ef4c49e3288d11"
     },
     {
       "path": "liu_agent/reference_roles.py",
@@ -723,7 +823,7 @@
     },
     {
       "path": "liu_agent/run_status.py",
-      "sha256": "64f6ddfa4b827e293c5c55c6cdd52dfe9eef93cfeea2c5084230fec2f183ebc4"
+      "sha256": "4faef557d52d8ff9e1d858ad5d714c60e58275afcd133e639961cbe326f178e4"
     },
     {
       "path": "liu_agent/smart_intake.py",
@@ -735,7 +835,7 @@
     },
     {
       "path": "liu_agent/task_review.py",
-      "sha256": "a81a16605b949e3d7b58708930e969b0f45a413d646171d199bb53edf88357c4"
+      "sha256": "658aa44e4b931e1d53797cd1e95d3a0a072465979f9b6660433bf067d32b36ad"
     },
     {
       "path": "liu_agent/task_verification.py",
@@ -771,7 +871,7 @@
     },
     {
       "path": "liu_agent/visual_research.py",
-      "sha256": "c19de495ab341cc9d3be85c858295b0cd9421fde432cc6c4b411089dd4f3b238"
+      "sha256": "ddbbfc81eb98fd918750015a29874ef1a6381e732703ac7de4972c0cc3a22aaf"
     },
     {
       "path": "liu_agent/visual_retrieval_trial.py",
@@ -779,19 +879,19 @@
     },
     {
       "path": "liu_agent/windows_runtime.py",
-      "sha256": "c7b1b377a4dac7dac6c115403f942a05c7ba6e33a56bd3df2ce64f016d8d2dbe"
+      "sha256": "33f8c011788bc8f85da6d08d5d343631593638c0d4998cf6a83e8b7446f87253"
     },
     {
       "path": "liu_agent/workflow.py",
-      "sha256": "a2ab25a5924a503e1a4f1f20c94403904ff0e078fd44e006eaaab1bd617cc776"
+      "sha256": "f5dddd1b61b1959845f1fcffb582a1a426b3a0c8757cdcf57d8ac42bed3b820a"
     },
     {
       "path": "liu_agent/workflow_policy.py",
-      "sha256": "12fd048627b09174c7d5e276b151d1f8bf42d216be48cc3c202c8ee70e3dc981"
+      "sha256": "6ace91f8fea6f49aefc7281aa4487fd3045e930e1af65ddd7ff06438ea687116"
     },
     {
       "path": "pyproject.toml",
-      "sha256": "62282f52c2ebf33397c5be56488160856df58ea2e2c1042d5bed0f784a6ea3c7"
+      "sha256": "a22162706a0f6a688ae086440e0c1237112541350ad1ce5b7a8e6c731caa51fa"
     },
     {
       "path": "requirements.txt",
@@ -815,7 +915,7 @@
     },
     {
       "path": "schemas/Brief.schema.json",
-      "sha256": "1c6c406eb6fa630e4f76a9ce38c7645c1f551a3620c3e0570eef94c0d863e601"
+      "sha256": "4a2a00a4f390c1e241ac5a73a59b0830b9964af6969adf5238b2c8687a5a9a70"
     },
     {
       "path": "schemas/CalibrationImage.schema.json",
@@ -879,7 +979,7 @@
     },
     {
       "path": "schemas/Need.schema.json",
-      "sha256": "fa1aaae5fd7801659b0ed6d5d14e559f14b0be76f1aaa93ddacfc45cbcc473dd"
+      "sha256": "57adabc635b89700aa28bae1a473d3ab9e12306d137e8766644020cd6a3a235b"
     },
     {
       "path": "schemas/PairComparison.schema.json",
@@ -942,6 +1042,10 @@
       "sha256": "1608fd27f6bb74e1806451e2879027a789735fbec6b7593297b9812dd1c50f03"
     },
     {
+      "path": "scripts/build_skill_package.py",
+      "sha256": "b42008205b9db82590c9d75aee5508622d4449452ed2ef801aa4d1937f454608"
+    },
+    {
       "path": "scripts/codex_hook.py",
       "sha256": "dba74ae59bafa1392e8edf20fef9085aaf8fb8af9ad6bf4e45cc1296b8f743e1"
     },
@@ -955,7 +1059,7 @@
     },
     {
       "path": "scripts/release_local.py",
-      "sha256": "42bbde7039ac42e66e7cab992e75e989fef08b3d7647ca8fe54a50a26f8721b6"
+      "sha256": "4c8dac85245a74937d0c1d0d75e36444f4743f83b2d8082b7899e116c2f1a9ee"
     },
     {
       "path": "scripts/runtime/native-requirements.lock.txt",
@@ -996,6 +1100,10 @@
     {
       "path": "scripts/runtime/ocr_runtime.py",
       "sha256": "b8a02e40380e004e887428e1355c20d5de207675cac0447cf440b0801d0f4686"
+    },
+    {
+      "path": "scripts/skill_bundle_entry.py",
+      "sha256": "12f27b7243f7bbb14d78ecb0affa6d2593834561e216f9a73e64046de1f3d707"
     },
     {
       "path": "scripts/verify_package.py",

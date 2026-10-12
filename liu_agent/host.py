@@ -45,14 +45,18 @@ def validate_receipt(run: Path, attempt: dict) -> None:
         raise AgentError('实际工具参数文件已改变，不能验收')
 
 
-def dispatch(run: Path, target: str, tool: str, *, provider_options: dict | None = None):
+def dispatch(run: Path, target: str | None, tool: str, *, provider_options: dict | None = None):
     if not tool.strip():
         raise AgentError('记录现场实际可用的工具名称')
     from .generation_spec import validate_tool_target
-    validate_tool_target(tool, target)
+    if target is not None:
+        validate_tool_target(tool, target)
     from .comfy_connector import TOOL_TARGETS
     if provider_options is not None and tool not in {'pippit.generate-image.seedream-5-pro', *TOOL_TARGETS}:
         raise AgentError('provider_options 仅用于已接入的小云雀或本地 ComfyUI 连接器')
+    from .model_selection import resolve_task_target
+    target = resolve_task_target(read_packet(run), target, action='派发')
+    validate_tool_target(tool, target)
     from .native_budget import dispatch_budget_lock
     with dispatch_budget_lock(run) as shared_budget:
         from .generation_authorization import require_not_stopped
@@ -70,6 +74,9 @@ def dispatch(run: Path, target: str, tool: str, *, provider_options: dict | None
         completed = [a for a in attempts if a['status'] == 'completed']
         from .visual_decision import record_only
         packet = read_packet(run)
+        # Recheck inside the budget lock so a concurrent change cannot reuse
+        # the previously selected target after the task contract has changed.
+        target = resolve_task_target(packet, target, action='派发')
         from .workflow_policy import require_image_deliverable
         require_image_deliverable(packet)
         from .user_feedback_context import require_current
@@ -86,6 +93,9 @@ def dispatch(run: Path, target: str, tool: str, *, provider_options: dict | None
                 raise AgentError('此模型首图已经尝试；失败也占额度，不允许重抽')
             # Each target has one primary image; another target is not a revision.
             completed = []
+        if (attempts and not comparison and record_only(packet)
+                and packet.get('workflow_policy', {}).get('version') == 2):
+            raise AgentError('v2首轮已经占用；只有独立返修授权与可控问题可走 host.assess_repair/execute_repair，不能凭剩余额度重抽')
         if completed and record_only(packet):
             prefix = ('首图已返回，按 workflow status 完成检查与复核后交付；' if packet.get('workflow_policy')
                       else '首图已返回，先交由用户接受或拒绝；')
@@ -131,7 +141,9 @@ def dispatch(run: Path, target: str, tool: str, *, provider_options: dict | None
                                else shared_budget['attempted_images'])
         require_image_permission(max_images=authorized_max,
                                  attempted_images=permission_used,
-                                 review=review if completed else None, user_decision=decision)
+                                 review=review if completed else None, user_decision=decision,
+                                 workflow_version=(packet.get('workflow_policy', {}).get('version')
+                                                   if attempts and not comparison and record_only(packet) else None))
         solution = Solution.model_validate(read_json(run/'solution.json'))
         adaptive = packet.get('model_adaptation_version') == 1
         if adaptive:
@@ -157,6 +169,19 @@ def dispatch(run: Path, target: str, tool: str, *, provider_options: dict | None
         atomic_text(run/'dispatch-prompt.txt', request['prompt'], newline='')
         write_json(run/'dispatch.json', attempt)
         return attempt
+
+
+def assess_repair(run: Path, request_id: str | None = None, *, issue: str = 'output_size') -> dict:
+    """Read-only v2 local repair assessment; no generation or inferred consent."""
+    from .bounded_repair import evaluate
+    return evaluate(run, request_id, issue=issue)
+
+
+def execute_repair(run: Path, expected_checkpoint: str, request_id: str | None = None, *,
+                   issue: str = 'output_size') -> dict:
+    """Execute exactly the supported, explicitly authorized local repair."""
+    from .bounded_repair import execute
+    return execute(run, expected_checkpoint, request_id, issue=issue)
 
 
 def record_result(run: Path, request_id: str, status: str, image_path: Path | None, tool_note: str,
@@ -257,7 +282,7 @@ def _validate_compilation_output_options(packet, design, runtime):
         raise AgentError(f'{exc}；请修正生效的 generation_options（brief 优先于 design），再准备编译') from exc
 
 
-def prepare_compilation(run: Path, plan_path: Path, target: str = 'image', tool: str | None = None):
+def prepare_compilation(run: Path, plan_path: Path, target: str | None = None, tool: str | None = None):
     """Prepare model-aware input locally; the host supplies the intelligent prose."""
     from .contracts import Plan, Compilation
     from .workflow import compilation_input, ensure_references_mutable, save_packet, validate_spec, production_host_context
@@ -265,6 +290,8 @@ def prepare_compilation(run: Path, plan_path: Path, target: str = 'image', tool:
     from .generation_spec import host_capabilities, validate_tool_target
     with dispatch_lock(run):
         packet = read_packet(run)
+        from .model_selection import resolve_task_target
+        target = resolve_task_target(packet, target)
         if packet['brief'].get('model_comparison') and read_dispatches(run):
             raise AgentError('模型比较已开始；沿用首次调用前冻结的两份正文，不再编译，'
                              '也不将第一张反馈用于第二个模型。未完成调用仅查询原请求。')

@@ -1,20 +1,25 @@
 {
   "id": "qwen-image",
-  "version": 5,
+  "version": 6,
   "label": "Local Qwen Image 2.1 INT8",
   "language": "zh",
   "status": "experimental",
   "provider_version": "ComfyUI 0.37.2; qwen_image_2.1_int8_convrot.safetensors; qwen3vl_8b_int8_convrot.safetensors; qwen_image_2.1_vae_bf16.safetensors",
-  "last_checked": "2026-10-07",
+  "last_checked": "2026-10-12",
   "review_after_days": 30,
   "writing_rules": [
-    "用具体中文描述主体数量、位置、朝向、材质与环境；把多个物体的相对关系写清，避免只列名词。",
-    "本题准确文案用引号逐字保留，明确文字承载物、朝向和阅读位置；无文案任务不用额外安排文字。",
-    "画面主次、光色和构图应来自同一设计，再独立写成此模型正文；不要把另一模型提示词仅换模型名称。",
-    "当前 CFG=1 路线不使用负向提示，避项要在正向目标状态中表达；本地连接器不自动调用提示词增强器。",
-    "单父图编辑正文先写具体变化及可见目标，再写需求中的保留项；方向相对图像坐标明确表达，不把新动作写成整体重绘。"
+    "先确认本题目标模型、使用入口及新建/编辑模式；用户未选择且当前任务无既定选择时先问，核心目标或修改范围模糊也先问，再进入PE扩写。",
+    "新建骨架：媒介与风格→主体及动作/状态→场景背景→空间关系→有作用的材质、颜色与光源→准确文字和层级（按需）。当前本地路线可用中文，不堆砌质量词或只列名词。",
+    "官方T2I PE提供英文观察式长描述范式；约400–500词和8–14位置短语仅属于可选PE规范，不是所有Qwen输入门槛，不为凑长度添加用户未要求的物件、文案或未确认的主题。",
+    "编辑骨架：直接写目标操作与明显可见的新状态→画布与参考职责→实际关键保留项→必要融合。保留内容用概括约束与图片指向，不重新描写整幅图；区分修改此图和借主体另创场景。",
+    "准确文案逐字保留并说明承载位置与层级；说明文字语言和画内文案语言分别处理，无文案任务不新增文字。多人或多物体的数量、朝向及空间关系不能被语义压缩删掉。",
+    "只有实际使用官方Edit PE且入口接收多图时，才按其协议用<image1>等标签；当前单父图路线自然指向输入图，不把标签误写成已接入的多参考能力。",
+    "画面主次、光色和构图来自同一需求与设计，再独立编译为本模型正文；不能只把别的模型提示词换标题。当前CFG=1路线不使用负向提示，避项用正向目标状态表达，本地连接器不自动调用PE。"
   ],
   "setup_rules": [
+    "按需读取 knowledge/model-prompts/qwen-image.md；它缓存官方T2I/Edit写法与HEX整理骨架，编译只使用当前已确认模式，不加载所有模型卡。",
+    "2026-10-12更新核验官方提示资料；以下本机节点与路由记录沿用原核验日期，本次没有重新探测本地ComfyUI、托管API或账号能力。",
+    "采用官方PE时仅将rewritten_prompt映射到图像正文，wh_ratio与ratio_follow按协议互斥并映射实际尺寸选项；该JSON不是通用Qwen API请求体。",
     "纯文单张 tool=comfyui.qwen-image，仍只接受512、768、1024方图；先冻结 endpoint、width、height、seed。",
     "单父图编辑 tool=comfyui.qwen-image-edit，TextEncodeQwenImage21 同时连接 images.image_1 与VAE，使用节点输出的64通道latent；不能换为旧16通道latent。",
     "编辑必须显式冻结reference_resolution为0、512、768或1024；0按父图尺寸取32倍数，其余按约resolution平方像素和原图长宽比取32倍数。width/height须与实际处理尺寸一致；上传原始PNG的尺寸与哈希另行记录。",
@@ -25,13 +30,58 @@
   "limitations": [
     "普通comfyui.qwen-image-edit仅一张PNG父图且不支持mask；处理尺寸与输出latent来自首张参考，不保证无损、身份或非目标像素不变。两条编辑路线均不支持多参考、透明输出控制、提示词增强或任意工作流。",
     "蒙版路线保护非目标RGB像素，但蒙版范围和目标内容仍由模型判断；接触引导图仅供验收，不是已接入的姿态条件。区域边界接缝、目标状态和必要接触关系的质量必须看真实图片。",
-    "本机已核对节点和文件；档案存在、节点通过、非目标像素不变均不能代替实际生成与视觉评估。"
+    "本机已核对节点和文件；档案存在、节点通过、非目标像素不变均不能代替实际生成与视觉评估。",
+    "提示词缓存包含官方基础版/Turbo与多图PE资料，不扩展当前连接器范围；模板遵循、格式检查或本卡读取均不代表当前图片效果得到验证。"
   ],
   "sources": [
-    {"label":"Qwen Image 2.1 官方模型说明","url":"https://huggingface.co/Qwen/Qwen-Image-2.1","kind":"official","checked_at":"2026-09-29"},
-    {"label":"ComfyUI 官方 Qwen Image 2.1 T2I 模板，CFG与采样参数依据","url":"https://github.com/Comfy-Org/workflow_templates/blob/main/templates/image_qwen_image_2_1_t2i.json","kind":"official","checked_at":"2026-09-29"},
-    {"label":"本地 ComfyUI TextEncodeQwenImage21 及加载器接口","url":"http://127.0.0.1:8188/object_info","kind":"user_material","checked_at":"2026-10-07"},
-    {"label":"ComfyUI原生Qwen参考编码与缩放实现","url":"https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_qwen.py","kind":"official","checked_at":"2026-10-07"}
+    {
+      "label": "Qwen Image 2.1 官方模型说明",
+      "url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
+      "kind": "official",
+      "checked_at": "2026-09-29"
+    },
+    {
+      "label": "ComfyUI 官方 Qwen Image 2.1 T2I 模板，CFG与采样参数依据",
+      "url": "https://github.com/Comfy-Org/workflow_templates/blob/main/templates/image_qwen_image_2_1_t2i.json",
+      "kind": "official",
+      "checked_at": "2026-09-29"
+    },
+    {
+      "label": "本地 ComfyUI TextEncodeQwenImage21 及加载器接口",
+      "url": "http://127.0.0.1:8188/object_info",
+      "kind": "user_material",
+      "checked_at": "2026-10-07"
+    },
+    {
+      "label": "ComfyUI原生Qwen参考编码与缩放实现",
+      "url": "https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_qwen.py",
+      "kind": "official",
+      "checked_at": "2026-10-07"
+    },
+    {
+      "label": "Qwen-Image-2.1官方仓库；核对基础版与Turbo及PE入口",
+      "url": "https://github.com/QwenLM/Qwen-Image-2.1",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Qwen官方T2I提示词重写规范；属于可选PE输出范式",
+      "url": "https://github.com/QwenLM/Qwen-Image-2.1/blob/main/prompt_rewrite/prompts/system_prompt_t2i.txt",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Qwen官方Edit提示词重写规范；编辑职责、语言与比例协议",
+      "url": "https://github.com/QwenLM/Qwen-Image-2.1/blob/main/prompt_rewrite/prompts/system_prompt_edit.txt",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "iamyoki非官方Qwen Skill；有官方规则出处，未获独立效果认证",
+      "url": "https://github.com/iamyoki/qwen-image-2.1-skill",
+      "kind": "external",
+      "checked_at": "2026-10-12"
+    }
   ],
   "evaluation_files": []
 }

@@ -1,0 +1,65 @@
+{
+  "id": "krea",
+  "version": 1,
+  "label": "Krea 2 / 用户确认的本地或网页入口",
+  "language": "en",
+  "status": "experimental",
+  "provider_version": "Official Krea 2 open RAW/Turbo and web Medium/Large/Turbo documentation checked; not FLUX.1 Krea dev; no execution connector verified by this profile",
+  "last_checked": "2026-10-12",
+  "review_after_days": 30,
+  "writing_rules": [
+    "用户只说Krea且本题未明确实际型号时先问：Krea2本地RAW/Turbo，还是网页Medium/Large/Turbo，或FLUX.1 Krea dev；目标含义和修改范围模糊时先澄清，再编译。",
+    "新建骨架：媒介/风格→主体和动作→场景→属于各主体的外观/材质与空间关系→构图景别→光线与颜色→准确画内文字（按需）。默认输出连贯英文模型正文，不夹带规划标签、JSON或无关参数。",
+    "保留用户原有主体、动作、颜色、数量、空间关系与媒介。已有brief详细时仅轻修，不为增加词数添加人物、道具、故事或未确认的新颜色。",
+    "把主体与属于它的属性和动作写在一起，避免多个主体间属性错配；用具体材质、受光和构图关系落实风格，少用空泛质量词。需要文字时逐字放入双引号并说明位置。",
+    "网页参考创作：正文说明新图内容；实际style-reference只提供已确认的色彩、纹理、媒介或构图线索。没有实际传图不写成模型已获得参考；参考强度、moodboard和creativity不伪装成正文语法。",
+    "编辑现图必须先核对实际入口能力；若确认支持编辑，可按目标变化→画布/参考职责→关键保留项→必要融合组织。该骨架是HEX方法，不能宣称本地Krea2已支持Qwen式多图指令编辑或像素保护。",
+    "从同一用户brief与设计独立编译，不把其他模型正文换名。宽泛风格探索仅用于用户已委托的视觉选择，不能代替核心需求问询。"
+  ],
+  "setup_rules": [
+    "按需读取 knowledge/model-prompts/krea.md；只读取用户已确认入口所需的生成、参考或编辑部分。",
+    "本档案新增的是提示知识缓存与目标模型写法；未核实HEX已接入Krea API、网页会话或本地执行器。无可用执行通道时如实交付提示词，不伪造请求与图片回执。",
+    "本地RAW/Turbo与网页Medium/Large/Turbo分别记录；网页style-reference、moodboard及生成滑杆不能自动视为本地权重能力。",
+    "尺寸、采样、LoRA、参考强度与creativity使用真实入口的参数；不把MJ的--sref/--stylize或传统CLIP加权写法当作原生Krea2语法。",
+    "使用任何参考前保留其身份/风格/画布职责与真实上传授权；只读观察不等于已作为生成输入。"
+  ],
+  "limitations": [
+    "官方仓库确认Krea2本地RAW/Turbo与文生图方法；本次没有运行模型、调用服务或验证参考编辑效果。",
+    "官方网页文档及开源代码属于不同入口，参数和功能不能混用；FLUX.1 Krea dev不是Krea2别名。",
+    "模板缓存、格式合格或来源官方不证明HEX稳定提升画质；社区示例没有同版本可追溯实图对照时只作候选，不标高好评认证。",
+    "官方参考文章文字已读，示例图未逐张视觉审核；不能用文本说明代替当前任务的实际看图与素材判断。"
+  ],
+  "sources": [
+    {
+      "label": "Krea官方开源模型仓库；本地RAW/Turbo区别",
+      "url": "https://github.com/krea-ai/krea-2",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Krea2官方提示指南；自然语言与文字引号",
+      "url": "https://github.com/krea-ai/krea-2/blob/main/docs/prompting.md",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Krea2官方提示扩写规范；忠实原意、轻修已有细节",
+      "url": "https://github.com/krea-ai/krea-2/blob/main/docs/expansion.txt",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Krea网页官方风格参考与moodboard方法",
+      "url": "https://www.krea.ai/blog/krea-2-deep-dive-walkthrough",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Krea网页Turbo官方文档；平台控制不等于本地能力",
+      "url": "https://www.krea.ai/docs/user-guide/features/krea-2-turbo",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    }
+  ],
+  "evaluation_files": []
+}

@@ -291,6 +291,29 @@ def validate_arguments(arguments: dict, target: str, *, tool: str | None = None,
         raise AgentError('冻结 ComfyUI workflow 与已注册模型或实参不一致')
 
 
+def _required_input_present(node: dict, name: str, schema) -> bool:
+    if name in node['inputs']:
+        return True
+    # The registered Qwen node flattens its autogrow group into images.image_1.
+    # A text-only workflow may omit it only when the live template permits zero.
+    if node['class_type'] != 'TextEncodeQwenImage21' or name != 'images':
+        return False
+    try:
+        if not isinstance(schema, list) or schema[0] != 'COMFY_AUTOGROW_V3':
+            return False
+        template = schema[1]['template']
+        names, minimum = template['names'], template['min']
+        required = template['input']['required']
+        supplied = [key[len(name) + 1:] for key in node['inputs'] if key.startswith(name + '.')]
+        return (isinstance(names, list) and all(isinstance(key, str) and key for key in names)
+                and len(set(names)) == len(names) and type(minimum) is int
+                and 0 <= minimum <= len(names) and set(required) == {'image'}
+                and required['image'][0] == 'IMAGE'
+                and len(supplied) >= minimum and all(key in names for key in supplied))
+    except (KeyError, TypeError, IndexError):
+        return False
+
+
 def validate_live_nodes(arguments: dict, node_info: dict, *, before_upload: bool = False) -> None:
     """Read-only presence/schema check; does not load models or prove generation."""
     if not isinstance(node_info, dict):
@@ -335,6 +358,11 @@ def validate_live_nodes(arguments: dict, node_info: dict, *, before_upload: bool
             fields = inputs.get(group, {})
             if not isinstance(fields, dict):
                 raise AgentError('本地节点字段结构无效：' + node['class_type'])
+            if group == 'required':
+                for name, schema in fields.items():
+                    if not _required_input_present(node, name, schema):
+                        raise AgentError('本地节点新增或缺少必填输入；尚未上传或提交：'
+                                         + node['class_type'] + '.' + name)
             for name, value in node['inputs'].items():
                 if before_upload and node['class_type'] == 'LoadImage' and name == 'image':
                     continue

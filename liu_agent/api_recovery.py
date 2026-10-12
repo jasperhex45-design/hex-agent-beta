@@ -142,6 +142,10 @@ class DurableProvider:
     def _call(self, phase, kind, request, invoke):
         from .native_budget import guard_api
         guard_api(self.run)
+        from .generation_authorization import require_not_stopped
+        # A terminal stop also prevents later paid evaluation/revision/search;
+        # local evidence recovery and the current in-flight result remain valid.
+        require_not_stopped(self.run)
         from .visual_decision import policy, record_only
         from .workflow import read_packet
         context_packet = self.context.get('packet') or {}
@@ -152,8 +156,6 @@ class DurableProvider:
         if workflow_policy(packet) != workflow_policy(context_packet):
             raise AgentError('API当前完整流程与请求快照不同；不能移除交付要求再提交')
         if kind == 'image':
-            from .generation_authorization import require_not_stopped
-            require_not_stopped(self.run)
             from .generation_permission import require_image_permission
             if (self.run/'host-dispatches.json').exists():
                 raise AgentError('已有宿主生成记录；不能通过API另起预算')
@@ -170,7 +172,9 @@ class DurableProvider:
                 decision = verified_feedback(self.run)[2]['decision']
             require_image_permission(max_images=min(self.state['limits']['image_tests'], self.state['limits']['max_images']),
                                      attempted_images=sum(r['kind'] == 'image' for r in self.state['requests']),
-                                     review=prior_review, user_decision=decision)
+                                     review=prior_review, user_decision=decision,
+                                     workflow_version=(packet.get('workflow_policy', {}).get('version')
+                                                       if record_only(packet) else None))
         unresolved = [r for r in self.state['requests'] if r['state'] in ('pending', 'outcome_unknown')]
         if unresolved:
             raise AgentError('API存在pending/outcome_unknown请求；先核对真实结果，禁止重发')
@@ -210,7 +214,13 @@ class DurableProvider:
         self.budget._prepaid = event
         self.budget._reservation_active = True
         started = monotonic()
+        invoked = False
         try:
+            # Stops can now be recorded while run_cloud owns the run lock.
+            # Recheck after durable reservation, immediately before handing
+            # off to the provider. Once handed off, no cancellation is claimed.
+            require_not_stopped(self.run)
+            invoked = True
             result = invoke()
             if isinstance(result, bytes):
                 filename = f'api/outputs/{ident}.png'
@@ -234,11 +244,13 @@ class DurableProvider:
             self.persist()
             return result
         except BaseException as exc:
-            if kind == 'image' and request.get('generation_spec') is not None:
+            if invoked and kind == 'image' and request.get('generation_spec') is not None:
                 parameters = getattr(self.delegate, 'last_generation_evidence', None)
                 if parameters:
                     row['generation_parameters'] = copy.deepcopy(parameters)
-            row['state'] = 'failed' if event.get('state') in ('http_error', 'received') else 'outcome_unknown'
+            # A local pre-invoke denial is known not to have reached the provider;
+            # its durable reservation still counts. Never refund or retry it.
+            row['state'] = 'failed' if not invoked or event.get('state') in ('http_error', 'received') else 'outcome_unknown'
             row['error_type'] = type(exc).__name__
             event['elapsed_seconds'] = monotonic()-started
             self.persist()

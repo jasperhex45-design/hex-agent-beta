@@ -18,7 +18,7 @@ KINDS = ('prompt_only', 'image', 'local_edit')
 _ERRORS = (AgentError, OSError, ValueError, TypeError, KeyError, AttributeError)
 
 
-def build_policy(name='legacy', deliverable_kind=None, *, scope='create'):
+def build_policy(name='legacy', deliverable_kind=None, *, scope='create', delivery_level=None):
     if name == 'legacy':
         if deliverable_kind is not None:
             raise AgentError('deliverable-kind 需要 full-flow-v1，不能给旧策略静默添加交付要求')
@@ -31,8 +31,15 @@ def build_policy(name='legacy', deliverable_kind=None, *, scope='create'):
     stages = ['intent', 'references', 'design', 'compile', 'verify']
     if kind != 'prompt_only':
         stages += ['execute', 'check_requirements', 'image_check', 'visual_review']
-    return {'version': 1, 'name': PROFILE, 'deliverable_kind': kind,
-            'required_stages': stages + ['deliver']}
+    value = {'version': 1, 'name': PROFILE, 'deliverable_kind': kind,
+             'required_stages': stages + ['deliver']}
+    if delivery_level is not None:
+        if delivery_level not in ('exploratory', 'formal', 'high_risk'):
+            raise AgentError('未知交付级别；不能静默降级')
+        if delivery_level == 'exploratory' and scope != 'create':
+            raise AgentError('严格修改范围任务不能降为探索自检；使用 formal 或 high_risk')
+        value.update(version=2, delivery_level=delivery_level)
+    return value
 
 
 def policy(packet):
@@ -40,10 +47,17 @@ def policy(packet):
     if value is None:
         return None
     if (not isinstance(value, dict) or type(value.get('version')) is not int
-            or value.get('version') != 1 or value.get('name') != PROFILE):
+            or value.get('version') not in (1, 2) or value.get('name') != PROFILE):
         raise AgentError('未知或损坏的完整流程策略；请按原版本恢复')
+    level = value.get('delivery_level') if value['version'] == 2 else None
+    brief = packet.get('brief', {})
+    if value['version'] == 2:
+        if level is None or level != (brief.get('delivery_level') or 'formal'):
+            raise AgentError('交付级别与任务起始声明不一致；不能在失败后降级')
+        if level == 'exploratory' and any(r.get('role') == 'identity' for r in packet.get('references', [])):
+            raise AgentError('身份保持任务须独立评审，不能降为探索自检')
     expected = build_policy(PROFILE, value.get('deliverable_kind'),
-                            scope=packet.get('brief', {}).get('scope', 'create'))
+                            scope=brief.get('scope', 'create'), delivery_level=level)
     if value != expected:
         raise AgentError('完整流程必要阶段或交付类型与版本定义不一致')
     return value
@@ -61,7 +75,7 @@ def host_instruction(packet):
         return ''
     return f'''## 完整流程继续执行
 
-当前流程 full-flow-v1；交付类型 {selected['deliverable_kind']}。workflow status 是当前下一步的依据。
+当前流程 full-flow-v1，合同版本 {selected['version']}；交付类型 {selected['deliverable_kind']}，交付级别 {selected.get('delivery_level', 'legacy_strict')}。workflow status 是当前下一步的依据。
 使用 python -m hex_agent workflow drive --run RUN 推进本地检查；返回宿主步骤后继续执行该动作，再 drive。
 prompt_only 在设计、编译与冻结标准通过后直接 workflow complete，不提交图片调用。
 image/local_edit 必须取得真实图片；用 workflow requirements --file FILE 登记文字检查适用性，绑定真实 source_ids 与冻结 criterion_id。用户要求保持默认 user_requirement；宿主自拟文字显式用 text.source_kind=design_proposal，引用 assistant 提案并绑定非 hard 设计标准，不冒充用户硬要求。只有明确应出现的画内文字才填 OCR exact_text；无要求说明 not_applicable，不能用空项躲过已冻结文字。
@@ -69,6 +83,7 @@ workflow check 自动运行当前图片检查与必要 OCR；默认保留已安�
 准备复核输入不等于看图；退出码正常不等于检查项通过。未满足或不确定时处理真实问题，保留原请求与失败记录，不以降低标准或自动补图获得通过。
 所有必要证据绑定当前需求、合同、候选与请求后，workflow complete 才可正式交付。机器看图判断仍是宿主报告，用户是否接受另行记录。
 此策略不改原 execution-profile：显式研究配置仍须原生 Eval/比较；默认生产配置只追加完整流程复核，不用机器判断决定补图或挑图。
+{('新合同允许探索首稿使用实际作者自检，标明未独立评审；正式/高风险及用户准确文字检查要求隔离评审，不能因不可用降级。只有硬要求、文件/OCR及整体目标均成立时，才可披露作者非硬性局部偏差，使用用户对该披露消息的真实回复登记accepted_by_user，再workflow complete。原not_met保持，不把接受变成全部质量通过。研究limited_exit沿真实尝试披露不足，不伪造acceptable；显式必做研究和未决关键输入不适用。' if selected['version'] == 2 else '旧合同不自动启用研究受阻、自检或带偏差收下出口。')}
 '''
 
 
@@ -87,7 +102,7 @@ def _task(run):
     return packet, contract, solution
 
 
-def _candidates(run, packet, contract):
+def _candidates(run, packet, contract, *, derived=True):
     """Use each route's existing proof, including pending/failed reservations."""
     from .task_review import _candidate
     pending = []
@@ -116,6 +131,16 @@ def _candidates(run, packet, contract):
             raise AgentError('完成检查的候选与原执行字节摘要不同')
         candidates.append({**row, 'request_id': evidence['request_id'], 'route': evidence['route'],
                            'candidate_file_sha256': source_sha, 'evidence_digest': evidence['digest']})
+    if derived:
+        from .bounded_repair import delivery_asset
+        asset = delivery_asset(run)
+        if asset is not None:
+            if pending or len(candidates) != 1 or candidates[0]['sha256'] != asset['parent']['candidate_sha256']:
+                raise AgentError('最终派生图不对应唯一原模型首稿')
+            canonical, evidence, source_sha = _candidate(run, packet, contract, within(run, asset['file']))
+            candidates = [{**asset, 'request_id': asset['parent']['request_id'], 'route': 'local_transform',
+                           'target': candidates[0]['target'], 'candidate_file_sha256': source_sha,
+                           'evidence_digest': evidence['digest']}]
     return candidates, pending
 
 
@@ -290,10 +315,21 @@ def check(run, request_id=None, *, ocr_timeout=180, ocr_backend='paddleocr', ocr
         if pending:
             raise AgentError('仍有结果未知的原请求；先查询原请求，不把当前候选当全部完成')
         candidate = _choose(candidates, request_id)
+        if candidate['route'] == 'local_transform':
+            originals, _ = _candidates(run, packet, contract, derived=False)
+            original = _choose(originals, request_id)
+            if _path(run, 'checks', original).exists():
+                _bound_stage(run, 'checks', packet, contract, original, req)
+            else:
+                original_report = check_task_image(run, within(run, original['file']),
+                    ocr_requirements=req['text']['items'], ocr_timeout_seconds=ocr_timeout,
+                    ocr_backend=ocr_backend, ocr_language=ocr_language)
+                _save(_path(run, 'checks', original), _envelope(packet, contract, original, req, original_report))
         report = check_task_image(run, within(run, candidate['file']),
                                   ocr_requirements=req['text']['items'], ocr_timeout_seconds=ocr_timeout,
                                   ocr_backend=ocr_backend, ocr_language=ocr_language)
-        if report.get('generation_binding', {}).get('state') != 'verified_existing_generation':
+        if report.get('generation_binding', {}).get('state') != (
+                'verified_local_transform' if candidate['route'] == 'local_transform' else 'verified_existing_generation'):
             raise AgentError('未绑定执行证据的本地诊断不能登记为完整流程检查')
         evidence = _save(_path(run, 'checks', candidate), _envelope(packet, contract, candidate, req, report))
         card = None
@@ -322,6 +358,12 @@ def prepare_review(run, request_id=None):
             raise AgentError('先核对原请求结果，不重复生成')
         candidate = _choose(candidates, request_id)
         report = prepare_task_review(run, within(run, candidate['file']))
+        from .delivery_review import self_check_allowed
+        if not self_check_allowed(contract, req):
+            from .instructions import GOAL_FIRST_REVIEW
+            report['instructions'] = GOAL_FIRST_REVIEW
+            report['payload']['review_mode'] = 'goal_first_isolated'
+            report['payload']['notice'] = '正式或高风险交付须实际独立隔离评审；不可用时保留阻塞，不降级。'
         _save(_path(run, 'review-inputs', candidate), _envelope(packet, contract, candidate, req, report))
         return {'review_input': str(_path(run, 'review-inputs', candidate)), 'report': report,
                 'model_call_state': 'not_run', 'next': '实际打开候选及必要参考，用原标准填写 review_record_template，再 workflow record-review。准备材料不等于完成看图。'}
@@ -338,6 +380,8 @@ def record_review(run, report_file, request_id=None):
         candidate = _choose(candidates, request_id)
         raw = Path(report_file).read_bytes()
         report = validate_task_review(run, within(run, candidate['file']), Path(report_file))
+        from .delivery_review import require_review_context
+        require_review_context(contract, report['review'], req)
         if report['review'].get('holistic', {}).get('image_access') != 'viewed':
             raise AgentError('完整流程必须实际看当前图片；准备输入或未看图的报告不能替代')
         if sha(raw) != report['source_report_sha256']:
@@ -372,17 +416,23 @@ def _bound_stage(run, section, packet, contract, candidate, req):
         raise AgentError('阶段报告绑定的需求、图片、合同或检查要求已变化')
     report = value['report']
     binding = report.get('generation_binding', {})
-    expected_binding = {'state': 'verified_existing_generation', 'route': candidate['route'],
+    expected_binding = {'state': ('verified_local_transform' if candidate['route'] == 'local_transform'
+                                   else 'verified_existing_generation'), 'route': candidate['route'],
                         'request_id': candidate['request_id'], 'candidate_sha256': candidate['sha256'],
                         'candidate_file_sha256': candidate['candidate_file_sha256'],
                         'packet_digest': packet['digest'], 'contract_digest': contract['digest'],
                         'evidence_digest': candidate['evidence_digest']}
+    if candidate['route'] == 'local_transform':
+        expected_binding.update(asset_id=candidate['asset_id'], parent=candidate['parent'],
+                                transform_receipt_digest=candidate['transform']['receipt_digest'])
     if any(binding.get(k) != v for k, v in expected_binding.items()) or report.get('contract_digest') != contract['digest']:
         raise AgentError('阶段报告没有绑定当前真实生成证据')
     if section == 'reviews':
         from .task_review import validate_task_review
         source = within(run, f"workflow/review-sources/{report['source_report_sha256']}.json")
         verified = validate_task_review(run, within(run, candidate['file']), source)
+        from .delivery_review import require_review_context
+        require_review_context(contract, verified['review'], req)
         if verified != report or verified.get('source_contract_binding') != 'explicit_current_contract':
             raise AgentError('视觉评审原报告或合同绑定与登记证据不一致')
     return value
@@ -440,6 +490,40 @@ def _action(run, action, description, *, candidate=None, owner='code', executabl
             'requires_user_input': requires_user_input, 'wait_for_existing_request': False}
 
 
+def _derived_completion(run, packet, contract, req, candidate, final_receipt):
+    """Keep first-draft failures intact; prove only the narrowly resolved size."""
+    originals, _ = _candidates(run, packet, contract, derived=False)
+    original = _choose(originals, candidate['request_id'])
+    checked = _bound_stage(run, 'checks', packet, contract, original, req)
+    if _check_failures(checked['report'], req) != ['图片检查未满足：image.size']:
+        raise AgentError('本地缩小只解决首稿尺寸不符；其它失败不能被最终副本隐藏')
+    old_review = None
+    if _path(run, 'reviews', original).exists():
+        old_review = _bound_stage(run, 'reviews', packet, contract, original, req)
+        if old_review['report']['review']['decision'] != 'ready_for_user':
+            raise AgentError('原图存在视觉分歧，尺寸变换不能替代展示或消除原审美失败')
+    size = next((row for row in final_receipt['image_checks']['checks'] if row['id'] == 'image.size'), None)
+    if size is None or size['verdict'] != 'met':
+        raise AgentError('最终派生图仍未满足原冻结尺寸，停止交付')
+    from .bounded_repair import delivery_asset
+    return {'asset': delivery_asset(run), 'original_check': checked, 'original_review': old_review,
+            'original_check_file': str(_path(run, 'checks', original).relative_to(run)),
+            'resolved_failures': [{'check_id': 'image.size', 'original_verdict': 'not_met',
+                                   'final_verdict': 'met', 'final_check_digest': final_receipt['check_digest'],
+                                   'transform_receipt_digest': candidate['transform']['receipt_digest']}],
+            'notice': '首稿的not_met保持不变；最终图经单次本地变换、独立字节检查和当前视觉评审交付。'}
+
+
+def repair(run):
+    """Workflow/CLI entrypoint; execute only the current eligible local step."""
+    from .host import execute_repair
+    state = inspect_completion(run)
+    if state['state'] != 'needs_bounded_repair':
+        raise AgentError('当前workflow没有可执行的单次本地返修')
+    assessed = state['repair_assessment']
+    return execute_repair(Path(run), assessed['digest'], assessed['parent_request_id'])
+
+
 def inspect_completion(run, packet=None):
     """Read-only projection. It does not run OCR, a model, or any submission."""
     from .workflow import read_packet
@@ -493,6 +577,7 @@ def inspect_completion(run, packet=None):
             raise AgentError('提示词任务出现实际图片调用；核对执行范围，不能据此完成')
         receipts = []
         feedback_cards = []
+        accepted_deviations = []
         failures = []
         if selected['deliverable_kind'] != 'prompt_only':
             targets = set(packet['brief']['targets']) if packet['brief'].get('model_comparison') else None
@@ -537,7 +622,12 @@ def inspect_completion(run, packet=None):
                     feedback_cards.append(card)
                 if (candidate['sha256'] in delivered_hashes and
                         (review.get('holistic', {}).get('image_access') != 'viewed' or review.get('decision') != 'ready_for_user')):
-                    failures.append('视觉复核尚未达到当前标准：' + candidate['request_id'])
+                    from .delivery_review import accepted_deviation
+                    accepted = accepted_deviation(run, candidate['request_id']) if selected['version'] == 2 else None
+                    if accepted:
+                        accepted_deviations.append(accepted)
+                    else:
+                        failures.append('视觉复核尚未达到当前标准：' + candidate['request_id'])
                 receipts.append({'request_id': candidate['request_id'], 'candidate_sha256': candidate['sha256'],
                                  'route': candidate['route'], 'requirements_digest': req['digest'],
                                  'check_digest': checked['digest'], 'review_digest': reviewed['digest'],
@@ -547,6 +637,13 @@ def inspect_completion(run, packet=None):
                                  'check_evidence_file': str(_path(run, 'checks', candidate).relative_to(run)),
                                  'review_evidence_file': str(_path(run, 'reviews', candidate).relative_to(run))})
         if failures:
+            if failures == ['图片检查未满足：image.size'] and len(candidates) == 1 and candidates[0]['route'] == 'host':
+                from .bounded_repair import evaluate
+                assessed = evaluate(run, candidates[0]['request_id'])
+                if assessed['eligible']:
+                    return {**base, 'state': 'needs_bounded_repair', 'repair_assessment': assessed,
+                            'candidate_receipts': receipts, 'feedback_cards': feedback_cards,
+                            'next_action': _action(run, 'repair', '已有独立用户返修许可，按冻结尺寸在原run占用一次剩余槽位并本地同比缩小；首稿及失败记录保留。', candidate=candidates[0])}
             followup = (' 先结合原图与用户反馈做 Copilot 诊断；关键表达或偏好不明确时提出一个针对性问题，已有明确修改就沿已知范围修正，不重复问。'
                         if copilot_enabled(packet) else '')
             return {**base, 'state': 'quality_not_met', 'blockers': failures,
@@ -557,6 +654,15 @@ def inspect_completion(run, packet=None):
                    'candidate_receipts': receipts, 'required_stages_verified': True,
                    'human_acceptance': 'separate_explicit_user_feedback',
                    'visual_judgment_authority': 'host_reported_untrusted' if receipts else 'not_applicable'}
+        if candidates and candidates[0]['route'] == 'local_transform':
+            receipt['derived_delivery'] = _derived_completion(run, packet, contract, req, candidates[0], receipts[0])
+        if selected['version'] == 2:
+            receipt.update(delivery_level=selected['delivery_level'],
+                           independent_review=(all(row['review']['holistic']['review_context'] == 'isolated'
+                                                   for row in receipts) if receipts else None),
+                           quality_standards_met=not accepted_deviations,
+                           delivery_outcome='accepted_with_deviations' if accepted_deviations else 'required_checks_completed',
+                           accepted_deviations=accepted_deviations)
         if study is not None:
             from .visual_research import validate_design as validate_study
             receipt['visual_research'] = validate_study(packet, solution.design)
@@ -675,7 +781,7 @@ def complete(run):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(prog='hex-agent workflow')
-    parser.add_argument('action', choices=['status', 'requirements', 'check', 'prepare-review', 'record-review', 'complete', 'drive'])
+    parser.add_argument('action', choices=['status', 'requirements', 'check', 'prepare-review', 'record-review', 'repair', 'complete', 'drive'])
     parser.add_argument('--run', type=Path, required=True)
     parser.add_argument('--request-id')
     parser.add_argument('--file', type=Path)
@@ -701,6 +807,8 @@ def main(argv=None):
             if args.report is None:
                 raise AgentError('record-review 需要 --report，不能自动生成看图结论')
             result = record_review(args.run, args.report, args.request_id)
+        elif args.action == 'repair':
+            result = repair(args.run)
         elif args.action == 'drive':
             from .harness import drive
             result = drive(args.run, max_steps=args.max_steps)

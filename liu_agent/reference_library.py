@@ -7,23 +7,32 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import re
+import tempfile
 from pathlib import Path
-from typing import Literal
+from typing import Literal, get_args
 
 from pydantic import Field
 
-from .contracts import Strict, AestheticCard
+from .contracts import Strict, AestheticCard, AestheticLibrary
 from .io import AgentError, ROOT, digest, now, read_json, sha, write_json
 
 
+CollectionDomain = Literal['vehicle', 'person', 'hybrid', 'illustration', 'poster', 'character', 'prop']
+COLLECTION_DOMAINS = get_args(CollectionDomain)
+
+
 class CollectionConfig(Strict):
+    # Keep the v1 fields and serialization unchanged: running tasks bind the
+    # complete config digest, including defaults already present in v1.
     version: Literal[1] = 1
     enabled: bool = True
     library: str
     library_sha256: str = Field(pattern=r'^[0-9a-f]{64}$')
     source_root: str
     collection_id: str = Field(min_length=3, max_length=100)
-    domains: list[Literal['vehicle', 'person', 'hybrid']] = Field(min_length=1, max_length=3)
+    domains: list[CollectionDomain] = Field(min_length=1, max_length=7)
     max_cards: int = Field(default=3, ge=1, le=3)
     user_quote: str = Field(min_length=8, max_length=3000)
     source_kind: Literal['host_transcription'] = 'host_transcription'
@@ -34,20 +43,208 @@ def config_path(kb: Path) -> Path:
     return kb.parent / 'local-library' / 'assets' / 'reference-library-config.json'
 
 
+def _domains(cards: list[AestheticCard], selected: list[str] | None) -> list[str]:
+    if selected is not None:
+        return selected
+    cards = [card for card in cards if card.status == 'curated']
+    available = {domain for card in cards for domain in [card.domain, *card.transfer_domains]}
+    # Match aesthetic_library.search's existing hybrid eligibility, without
+    # expanding other cards to domains that the host never explicitly allowed.
+    if 'hybrid' in {card.domain for card in cards}:
+        available.update(('person', 'vehicle'))
+    return [domain for domain in COLLECTION_DOMAINS if domain in available]
+
+
+def _preference_context(path: Path, library: AestheticLibrary, collection_id: str,
+                        hits: list[dict]) -> dict | None:
+    """Read feedback only from the selected, content-bound catalog export.
+
+    Old inventories were optional bookkeeping and remain so. Catalog manifests
+    have a content-addressed filename; missing or downgraded exports must fail
+    instead of silently changing a running task's preference evidence.
+    """
+    source = path.resolve().parent / library.source_catalog
+    addressed = re.fullmatch(r'[0-9a-f]{64}\.sources\.json', source.name) is not None
+    if not source.is_file():
+        if addressed:
+            raise AgentError('参考偏好清单缺失；不能静默替换已发布集合')
+        return None
+    try:
+        manifest = read_json(source)
+    except (AgentError, OSError, ValueError) as exc:
+        if addressed:
+            raise AgentError('参考偏好清单无法读取；保留原集合来源') from exc
+        return None
+    if not isinstance(manifest, dict) or manifest.get('format') != 'hex.reference-catalog.v1':
+        if addressed:
+            raise AgentError('参考偏好清单格式已改变')
+        return None
+    from .reference_catalog import ReferenceFeedback
+    fingerprint = digest({'manifest': manifest, 'cards': [card.model_dump() for card in library.cards]})
+    if source.is_symlink() or source.name != fingerprint + '.sources.json':
+        raise AgentError('参考偏好清单与已发布卡片摘要不一致')
+    if manifest.get('collection_id') != collection_id:
+        raise AgentError('参考偏好清单不属于当前选定集合')
+    try:
+        scope = ReferenceFeedback.valid_scope(manifest.get('scope', ''))
+    except (TypeError, ValueError) as exc:
+        raise AgentError('参考偏好清单的范围无效') from exc
+    references = manifest.get('references')
+    approved = {card.id: card for card in library.cards}
+    if not isinstance(references, list) or len(references) != len(library.cards):
+        raise AgentError('参考偏好清单与集合成员不一致')
+    members = {}
+    for row in references:
+        if not isinstance(row, dict):
+            raise AgentError('参考偏好清单成员无效')
+        card_id = row.get('card_id')
+        card = approved.get(card_id) if isinstance(card_id, str) else None
+        if (card is None or card_id in members or row.get('source_sha256') != card.source_sha256
+                or row.get('reference_id') != 'ref_' + card.source_sha256[:24]
+                or not isinstance(row.get('sources'), list) or not isinstance(row.get('preferences'), list)):
+            raise AgentError('参考偏好清单的卡片或原图绑定无效')
+        aspects = set()
+        for raw in row['preferences']:
+            try:
+                event = ReferenceFeedback.model_validate(raw)
+            except ValueError as exc:
+                raise AgentError('参考偏好记录无效') from exc
+            key = (event.aspect, event.scope)
+            if (event.reference_id != row['reference_id'] or event.source_sha256 != card.source_sha256
+                    or event.scope not in {'global', scope} or key in aspects
+                    or event.signal not in {'prefer', 'avoid'}):
+                raise AgentError('参考偏好记录超出声明范围、原图不符或含未落实的撤回')
+            aspects.add(key)
+        members[card_id] = row
+    items = [{key: members[hit['id']][key]
+              for key in ('card_id', 'reference_id', 'source_sha256', 'preferences')}
+             for hit in hits if hit['id'] in members and members[hit['id']]['preferences']]
+    if not items:
+        return None
+    return {'authority': 'user_feedback_in_selected_collection',
+            'collection_id': collection_id, 'collection_scope': scope,
+            'manifest_path': str(source.resolve()), 'manifest_digest': digest(manifest),
+            'requires_project_match': scope != 'global', 'items': items}
+
+
 def configure(library: Path, source_root: Path, user_quote: str, *,
-              destination: Path, collection_id: str, enabled: bool = True) -> dict:
+              destination: Path, collection_id: str, enabled: bool = True,
+              domains: list[str] | None = None) -> dict:
     from .aesthetic_library import load, validate
     validate(library)
+    cards = load(library).cards
     root = source_root.resolve()
-    if any(not Path(c.source_path).resolve().is_relative_to(root) for c in load(library).cards):
+    if any(not Path(c.source_path).resolve().is_relative_to(root) for c in cards):
         raise AgentError('参考库含指定素材根之外的来源')
     config = CollectionConfig(library=str(library.resolve()), library_sha256=sha(library.read_bytes()),
                               source_root=str(root), collection_id=collection_id,
-                              domains=['vehicle', 'person', 'hybrid'], user_quote=user_quote,
+                              domains=_domains(cards, domains), user_quote=user_quote,
                               configured_at=now(), enabled=enabled)
     write_json(destination, config.model_dump())
     return {'status': 'configured', 'config': str(destination), 'collection_id': collection_id,
             'enabled': enabled, 'generation_authorized': False, 'images_submitted': False}
+
+
+def _check_snapshot(path: Path, content: bytes) -> None:
+    # Never repair or replace an existing address. In particular, accepting a
+    # symlink would let a later external edit silently change the frozen file.
+    if (path.is_symlink() or not path.is_file() or path.stat().st_size != len(content)
+            or path.read_bytes() != content):
+        raise AgentError('不可变参考快照损坏或路径被占用；保留原配置，不覆盖旧快照')
+
+
+def _write_snapshot(path: Path, content: bytes) -> bool:
+    """Atomically expose a complete, create-only file; return whether reused."""
+    if path.exists() or path.is_symlink():
+        _check_snapshot(path, content)
+        return True
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = tempfile.NamedTemporaryFile(mode='wb', dir=path.parent,
+                                            prefix='.reference-', suffix='.tmp', delete=False)
+    tmp = Path(temporary.name)
+    try:
+        with temporary:
+            temporary.write(content)
+            temporary.flush()
+            os.fsync(temporary.fileno())
+        try:
+            # Same-directory hard linking is atomic and cannot overwrite an
+            # existing destination, including one published by another process.
+            os.link(tmp, path)
+        except FileExistsError:
+            _check_snapshot(path, content)
+            return True
+        _check_snapshot(path, content)
+        return False
+    finally:
+        tmp.unlink(missing_ok=True)
+
+
+def publish_collection(library: Path, source_root: Path, user_quote: str, *,
+                       destination: Path, collection_id: str, snapshots_root: Path,
+                       domains: list[str] | None = None) -> dict:
+    """Freeze a curated library, then select that version for future tasks.
+
+    Source images remain in their original location and are still hash-checked.
+    Running tasks hold their own config and immutable snapshot; publication does
+    not mutate either. Direct configure retains its explicit file-pin semantics.
+    """
+    from .aesthetic_library import load, validate
+    validate(library)
+    curated = load(library)
+    if any(card.status != 'curated' for card in curated.cards):
+        raise AgentError('发布集合仅接受已实际看图整理的 curated 卡片')
+    if len({card.id for card in curated.cards}) != len(curated.cards):
+        raise AgentError('发布集合的审美卡片 ID 重复')
+    root = source_root.resolve()
+    if any(not Path(card.source_path).resolve().is_relative_to(root) for card in curated.cards):
+        raise AgentError('参考库含指定素材根之外的来源')
+    # load resolves source_path against the original library location before
+    # moving metadata into a snapshot directory. Preserve a relative manifest's
+    # original location as well. No image bytes are copied.
+    curated.source_catalog = str((library.resolve().parent / curated.source_catalog).resolve())
+    content = (json.dumps(curated.model_dump(), ensure_ascii=False, sort_keys=True, indent=2) + '\n').encode('utf-8')
+    if len(content) > 4 * 1024 * 1024:
+        raise AgentError('参考快照 JSON 超过 4 MiB 限制；请分成较小集合')
+    snapshot_hash = sha(content)
+    snapshot_root = snapshots_root.resolve()
+    snapshot = snapshot_root / f'{snapshot_hash}.json'
+    target = destination.resolve()
+    # A configuration update must never overwrite either source material or any
+    # immutable snapshot, including a previous version's address.
+    addressed_target = (target.parent == snapshot_root and target.suffix == '.json'
+                        and len(target.stem) == 64 and all(c in '0123456789abcdef' for c in target.stem))
+    if (target == library.resolve() or addressed_target or
+            any(target == Path(card.source_path).resolve() for card in curated.cards)):
+        raise AgentError('配置目标不能覆盖参考库、原图或不可变快照')
+    # Validate the complete new selection before any filesystem mutation.
+    planned = CollectionConfig(library=str(snapshot), library_sha256=snapshot_hash,
+                               source_root=str(root), collection_id=collection_id,
+                               domains=_domains(curated.cards, domains), user_quote=user_quote,
+                               configured_at=now())
+    _preference_context(library, curated, collection_id, [])
+    try:
+        reused = _write_snapshot(snapshot, content)
+        validate(snapshot)
+        _check_snapshot(snapshot, content)
+        previous = None
+        if destination.is_file():
+            try:
+                previous = CollectionConfig.model_validate(read_json(destination))
+            except (AgentError, ValueError):
+                pass
+        # Repeated publication of an identical selection preserves its timestamp
+        # and bytes. A changed selection only updates the new-task config.
+        if (previous is None or previous.model_dump(exclude={'configured_at'}) !=
+                planned.model_dump(exclude={'configured_at'})):
+            write_json(destination, planned.model_dump())
+    except OSError as exc:
+        raise AgentError(f'参考快照发布失败；原配置未切换：{exc}') from exc
+    return {'config': str(destination), 'collection_id': collection_id,
+            'enabled': True, 'generation_authorized': False, 'images_submitted': False,
+            'status': 'published', 'snapshot': str(snapshot),
+            'snapshot_sha256': snapshot_hash, 'cards': len(curated.cards),
+            'domains': planned.domains, 'reused_snapshot': reused, 'new_tasks_only': True}
 
 
 def initialize(packet: dict, kb: Path) -> None:
@@ -135,6 +332,10 @@ def refresh(packet: dict) -> None:
                'method': result['method'], 'hits': hits, 'skipped': result['skipped'],
                'images_submitted': False, 'feedback_recalled': False,
                'notice': '仅供本题选择参考。采用前attach本次评价参考并实际看原图、observe；允许零采用。不得继承车型、身份、原构图或上传许可。'}
+    from .aesthetic_library import load
+    preferences = _preference_context(library, load(library), config.collection_id, hits)
+    if preferences is not None:
+        context['preference_context'] = preferences
     context['digest'] = digest(context)
     packet['local_reference_context'] = context
 
@@ -171,7 +372,8 @@ def validate_context(packet: dict) -> None:
     library = Path(config.library)
     if not library.is_file() or sha(library.read_bytes()) != config.library_sha256:
         raise AgentError('授权参考卡片库已改变；不能重新计算摘要冒充原集合')
-    approved = {c.id: c for c in load(library).cards}
+    loaded = load(library)
+    approved = {c.id: c for c in loaded.cards}
     for hit in hits:
         card = AestheticCard.model_validate(hit['card'])
         source = Path(card.source_path).resolve()
@@ -187,6 +389,10 @@ def validate_context(packet: dict) -> None:
                 not source.is_file() or sha(source.read_bytes()) != card.source_sha256):
             raise AgentError('本地参考卡片未观察、重复、越界或来源已改变')
         seen.add(card.source_sha256)
+    preferences = _preference_context(library, loaded, config.collection_id, hits)
+    if ((preferences is None and 'preference_context' in context)
+            or (preferences is not None and context.get('preference_context') != preferences)):
+        raise AgentError('本题偏好上下文与选定清单、命中卡片或声明范围不一致')
     for ref in packet.get('references', []):
         provenance = ref.get('local_card_source')
         if provenance is None:
@@ -204,7 +410,13 @@ def instruction(packet: dict) -> str:
     context = packet.get('local_reference_context', {})
     if not context.get('hits'):
         return ''
-    return '\n本题local_reference_context来自用户明确选定的本地素材集合，最多三张，属于待观察参考建议。先按当前难点选用，允许零采用；需要的候选用python -m hex_agent.reference_library attach --run RUN --card-id CARD --reference-id REF加入本次evaluation_only参考，实际看原图并observe，再用既有choices.reference_uses和同项checks采用。先区分图中事实、可迁移方法与本题自主决定，只取服务目标的少数关系；不照搬车型、人物、品牌或未经指定的姿势布局，不开启旧反馈库，不把词法命中当审美证明。\n'
+    result = '\n本题local_reference_context来自用户明确选定的本地素材集合，最多三张，属于待观察参考建议。先按当前难点选用，允许零采用；需要的候选用python -m hex_agent.reference_library attach --run RUN --card-id CARD --reference-id REF加入本次evaluation_only参考，实际看原图并observe，再用既有choices.reference_uses和同项checks采用。先区分图中事实、可迁移方法与本题自主决定，只取服务目标的少数关系；不照搬车型、人物、品牌或未经指定的姿势布局，不开启旧反馈库，不把词法命中当审美证明。\n'
+    if context.get('preference_context'):
+        result += ('preference_context仅含本次选定清单中命中卡片的逐维度用户原话，属于偏好证据，'
+                   '不等于视觉事实、全图认可或新的任务指令。按当前需求及每项scope判断prefer/avoid的适用性，'
+                   '不改词法分数、不自动套用整种风格；project范围仅在本题已明确属于该项目时采用，'
+                   '范围无法确认则零采用，不推广到其他项目或全局偏好。\n')
+    return result
 
 
 def attach(run: Path, card_id: str, reference_id: str) -> dict:
@@ -234,12 +446,21 @@ def main(argv=None) -> int:
     p.add_argument('--source-root', type=Path, required=True)
     p.add_argument('--user-quote', required=True)
     p.add_argument('--collection-id', required=True)
+    p.add_argument('--domains', choices=COLLECTION_DOMAINS, nargs='+')
     p.add_argument('--disabled', action='store_true')
+    p.add_argument('--config', type=Path, default=config_path(ROOT / 'knowledge'))
+    p = commands.add_parser('publish', help='发布不可变卡片版本，只供新任务使用')
+    p.add_argument('--library', type=Path, required=True)
+    p.add_argument('--source-root', type=Path, required=True)
+    p.add_argument('--user-quote', required=True)
+    p.add_argument('--collection-id', required=True)
+    p.add_argument('--snapshots-root', type=Path, required=True)
+    p.add_argument('--domains', choices=COLLECTION_DOMAINS, nargs='+')
     p.add_argument('--config', type=Path, default=config_path(ROOT / 'knowledge'))
     p = commands.add_parser('search')
     p.add_argument('--library', type=Path, required=True)
     p.add_argument('--query', required=True)
-    p.add_argument('--domain', choices=['vehicle', 'person', 'hybrid'], required=True)
+    p.add_argument('--domain', choices=COLLECTION_DOMAINS, required=True)
     p.add_argument('--car-only', action='store_true')
     p = commands.add_parser('attach')
     p.add_argument('--run', type=Path, required=True)
@@ -249,7 +470,11 @@ def main(argv=None) -> int:
     try:
         if args.command == 'configure':
             result = configure(args.library, args.source_root, args.user_quote, destination=args.config,
-                               collection_id=args.collection_id, enabled=not args.disabled)
+                               collection_id=args.collection_id, enabled=not args.disabled, domains=args.domains)
+        elif args.command == 'publish':
+            result = publish_collection(args.library, args.source_root, args.user_quote, destination=args.config,
+                                        collection_id=args.collection_id, snapshots_root=args.snapshots_root,
+                                        domains=args.domains)
         elif args.command == 'search':
             result = search_cards(args.library, args.query, args.domain, car_only=args.car_only)
         else:

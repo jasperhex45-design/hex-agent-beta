@@ -90,10 +90,13 @@ class Brief(Strict):
     # Explicit car-entry choice: missing identity material must never silently
     # turn a preservation request into a fictional vehicle.
     vehicle_identity: Literal['preserve', 'open'] = 'preserve'
+    delivery_level: Literal['exploratory', 'formal', 'high_risk'] | None = None
 
     @model_serializer(mode='wrap')
     def legacy_dump(self, handler):
         result = handler(self)
+        if 'delivery_level' not in self.model_fields_set:
+            result.pop('delivery_level', None)
         if 'model_comparison' not in self.model_fields_set:
             result.pop('model_comparison', None)
         if 'vehicle_identity' not in self.model_fields_set:
@@ -133,6 +136,21 @@ class SourceRef(Strict):
     quote: str
 
 
+class VisualResearchLimitedExit(Strict):
+    """Host-reported limits of open research, never proof of sufficient study."""
+    reason: Literal['sources_unavailable', 'no_decision_gain']
+    attempts: list[str] = Field(min_length=1)
+    unresolved: str = Field(min_length=1)
+
+    @field_validator('attempts', 'unresolved')
+    @classmethod
+    def nonblank_disclosure(cls, value):
+        entries = value if isinstance(value, list) else [value]
+        if any(not entry.strip() for entry in entries):
+            raise ValueError('limited_exit 的尝试记录与未解决事项不能留空白')
+        return value
+
+
 class VisualResearchAssessment(Strict):
     """Host interpretation of this task, independent of generation references."""
     model_config = ConfigDict(json_schema_extra=lambda s: s.update(required=list(s['properties'])))
@@ -143,12 +161,14 @@ class VisualResearchAssessment(Strict):
     visual_question: str
     source_refs: list[SourceRef]
     evidence_requirement: Literal['feedback_review', 'visual_reference', 'professional_analysis'] | None = None
+    limited_exit: VisualResearchLimitedExit | None = None
 
     @model_serializer(mode='wrap')
     def legacy_dump(self, handler):
         result = handler(self)
-        if 'evidence_requirement' not in self.model_fields_set:
-            result.pop('evidence_requirement', None)
+        for field in ('evidence_requirement', 'limited_exit'):
+            if field not in self.model_fields_set:
+                result.pop(field, None)
         return result
 
 

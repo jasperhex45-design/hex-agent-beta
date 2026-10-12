@@ -136,6 +136,12 @@ def main(argv=None):
         if args[0] == 'workflow':
             from .workflow_policy import main as workflow_main
             return workflow_main(args[1:])
+        if args[0] == 'references':
+            from .reference_catalog import main as references_main
+            return references_main(args[1:])
+        if args[0] == 'pinterest':
+            from .pinterest_source import main as pinterest_main
+            return pinterest_main(args[1:])
         if args[0] in ('check', 'review', 'review-record'):
             from .task_review import main as review_main
             command = {'check': 'check', 'review': 'prepare-vlm', 'review-record': 'validate-review'}[args[0]]

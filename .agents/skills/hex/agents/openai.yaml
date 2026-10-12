@@ -1,7 +1,7 @@
 interface:
   display_name: "HEX 创作流程"
-  short_description: "将视觉需求推进到设计、生成、检查和可核查交付，自动接续当前任务"
-  default_prompt: "使用 $hex 按我的需求完成创作，并继续执行到本题适用的交付检查通过或说明具体阻塞。"
+  short_description: "先用可点击选项问清关键需求和模型，再研究素材并完成创作"
+  default_prompt: "使用 $hex 完成这次需求；关键意图或目标模型需要问时，首轮就用宿主选择组件给出贴题选项和自由填写，已有答案沿用，再研究素材、判断取舍、按对应模型指南完成所需交付。"
 
 policy:
   allow_implicit_invocation: true

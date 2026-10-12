@@ -1,8 +1,10 @@
 # HEX Beta · 公开测试
 
+跨宿主安装使用可重建的标准 HEX Skill 包，保留完整方法与模型资料；WorkBuddy、豆包工作及其它支持 Skills 的宿主入口与实际能力边界见 [跨宿主安装](docs/HOST_PORTABILITY.md)。导入支持不等于这些客户端已完成实测。
+
 让宿主模型按你的目标完成视觉创作：理解需求、看参考、形成画面、写适配目标模型的提示词，再根据实际结果检查和修改。
 
-**[下载 ZIP](https://github.com/jasperhex45-design/hex-agent-beta/archive/refs/heads/main.zip) · [GitHub 仓库](https://github.com/jasperhex45-design/hex-agent-beta) · [提交反馈](https://github.com/jasperhex45-design/hex-agent-beta/issues/new/choose)**
+**[下载 ZIP](https://github.com/jasperhex45-design/hex-agent-beta/archive/refs/heads/main.zip) · [版本与标准 Skill 安装包](https://github.com/jasperhex45-design/hex-agent-beta/releases) · [GitHub 仓库](https://github.com/jasperhex45-design/hex-agent-beta) · [提交反馈](https://github.com/jasperhex45-design/hex-agent-beta/issues/new/choose)**
 
 当前版本以 [pyproject.toml](pyproject.toml) 为准。本版更新见 [CHANGELOG.md](CHANGELOG.md)。这是公开测试版，任何人都可下载试用；功能范围与真实质量边界见 [BETA.md](BETA.md)。
 
@@ -66,7 +68,9 @@ cd hex-agent-beta
 
 ## 开始创作
 
-只说“我要做一个图”时，HEX 会先问最影响方向的需求；目标已明确或你已委托它决定时，会继续查找、观察适用参考再形成方案。你明确只要参考或方案时，本轮就在该阶段交付；只要某个模型提示词时，按该模型编写，不增加生图。
+只说“我要做一个图”时，HEX 先问最影响方向的需求；本次没说使用什么模型时，也先问模型，当前任务已回答过则沿用。明确需求后，再找素材、判断取舍，并按该模型的生成或编辑写法编写。你只要参考、方案或提示词时，就在所需阶段交付。
+
+[模型提示词资料](knowledge/model-prompts/README.md) 缓存官方写法与适用版本，按当前目标读取；[素材与信息入口](knowledge/research-entrypoints.md) 按需求选择 Designeer 的分类、Pinterest 或原始资料。缓存指南不代表模型账户已接通，也不代表效果已经验证。
 
 在支持文件、看图和相应生成工具的宿主中打开整个工程目录，然后说明需求，例如：
 

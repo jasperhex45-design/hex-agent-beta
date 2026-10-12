@@ -13,6 +13,8 @@ description: HEX 通用静态视觉方法的兼容入口，保留 hex-aesthetic-
 
 开放研究按 [设计研究](references/design-study.md) 观察并取舍，已有指定方向或局部修改沿统一入口的对应路线。用真实 findings 与 `choices.reference_uses` 说明采用的方法怎样改变本题决定；不以链接、形容词或文本命中冒充看过作品。
 
+本题提供 `local_reference_context` 时，按当前难点选用其中至多三张建议并实际观察；`preference_context` 保留逐属性、逐范围用户原话，项目偏好只在本题明确匹配时采用。整理新收藏或维护集合时按 [私人艺术风格库](../../../docs/PRIVATE_REFERENCE_LIBRARY.md)，不要在普通创作任务中自动重扫图库。
+
 ## 形成有效画面
 
 沿当前 Need / Plan / choices 设计，静态图保持 `narrative=null`。从主体关系、空间尺度、动作、视觉重心、光影、色彩和媒介中选真正影响本题的手段。写具体可见关系、配合作用、代价与失败条件；不要求填齐全部维度，也不用“高级”“电影感”代替设计。

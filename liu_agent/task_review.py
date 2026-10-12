@@ -24,6 +24,12 @@ def _candidate(run, packet, contract, image):
     from .generation_evidence import for_api, for_host
     run = Path(run)
     raw = Path(image).read_bytes()
+    from .bounded_repair import delivery_evidence
+    derived = delivery_evidence(run, Path(image))
+    if derived is not None:
+        if derived['candidate_sha256'] != sha(raw) or Path(image).read_bytes() != raw:
+            raise AgentError('最终派生图字节已变化，不能绑定旧变换回执')
+        return sha(raw), derived, sha(raw)
     api_markers = ('api-state.json', 'calls.json', 'image-tests.json', 'api')
     if any((run / name).exists() for name in api_markers):
         if not (run / 'api-state.json').is_file():
@@ -49,6 +55,10 @@ def _generation_binding(candidate_sha: str, evidence: dict, source_sha: str) -> 
               'request_id': evidence['request_id'], 'candidate_sha256': candidate_sha,
               'candidate_file_sha256': source_sha, 'evidence_digest': evidence['digest'],
               'packet_digest': evidence['packet_digest'], 'contract_digest': evidence['contract_digest']}
+    if evidence['route'] == 'local_transform':
+        result.update(state='verified_local_transform', asset_id=evidence['asset_id'],
+                      parent=evidence['delivery_asset']['parent'],
+                      transform_receipt_digest=evidence['delivery_asset']['transform']['receipt_digest'])
     if evidence['route'] == 'host':
         # Compatibility alias for existing host-side report consumers only.
         result['candidate_normalized_sha256'] = candidate_sha
@@ -158,10 +168,21 @@ def write_task_review_report(run: Path, result: dict, destination: Path, *, sour
     return destination
 
 
+def _delivery_requirements(run, packet, contract):
+    # Exploration can use self-review only after the actual text-risk boundary
+    # is known. Generic and workflow entrypoints must not disagree about it.
+    selected = packet.get('workflow_policy') or {}
+    if selected.get('version') == 2 and selected.get('delivery_level') == 'exploratory':
+        from .workflow_policy import _requirements
+        return _requirements(Path(run), packet, contract)
+    return None
+
+
 def prepare_task_review(run: Path, image: Path) -> dict:
     packet, contract, _ = _task(Path(run))
     candidate_sha, evidence, source_sha = _candidate(run, packet, contract, image)
-    result = prepare_input(packet, contract, packet['references'], candidate_sha, evidence)
+    result = prepare_input(packet, contract, packet['references'], candidate_sha, evidence,
+                           requirements=_delivery_requirements(run, packet, contract))
     result['packet_digest'] = packet['digest']
     result['contract_digest'] = contract['digest']
     result['local_images'] = {'candidate_file': str(Path(image).resolve()), 'candidate_source_sha256': source_sha,
@@ -204,7 +225,8 @@ def validate_task_review(run: Path, image: Path, review: Path) -> dict:
     # Require the image binding alongside the original ImageEval rather than
     # silently attaching arbitrary prior review text to today's image.
     result = validate_output(contract, record['review'], candidate_sha=candidate_sha,
-                             reviewed_candidate_sha=record['candidate_sha256'])
+                             reviewed_candidate_sha=record['candidate_sha256'],
+                             requirements=_delivery_requirements(run, packet, contract))
     if sha(Path(image).read_bytes()) != source_sha:
         raise AgentError('校验评审期间本地候选文件已变化')
     if review.read_bytes() != source_report:

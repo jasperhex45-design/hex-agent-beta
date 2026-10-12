@@ -275,6 +275,23 @@
       ],
       "title": "Vehicle Identity",
       "type": "string"
+    },
+    "delivery_level": {
+      "anyOf": [
+        {
+          "enum": [
+            "exploratory",
+            "formal",
+            "high_risk"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Delivery Level"
     }
   },
   "required": [

@@ -57,14 +57,15 @@ def validate_vehicle_identity(brief: dict, refs: list[dict], need: dict | None =
 
 
 def normalize_brief(raw: dict, origin: Path) -> dict:
-    """Default only omitted values; retain explicit model, scope, rights, order."""
+    """Retain explicit model, scope, rights and order; never choose a model."""
     if not isinstance(raw, dict):
         raise AgentError('汽车 brief 必须是 JSON 对象')
     value = deepcopy(raw)
     if value.get('domain', 'auto') not in ('auto', 'vehicle'):
         raise AgentError('汽车入口不接管其他领域任务')
     value['domain'] = 'vehicle'
-    value.setdefault('targets', ['seedream'])
+    from .model_selection import require_explicit_targets
+    require_explicit_targets(value)
     if (not isinstance(value['targets'], list) or len(value['targets']) != 1
             or not isinstance(value['targets'][0], str)
             or value['targets'][0] not in TOOLS):

@@ -1,4 +1,4 @@
-"""Pure image-permission checks; the two-image product cap is not consent."""
+"""Pure permission checks; generation allocation never implies v2 repair consent."""
 from __future__ import annotations
 
 from .io import AgentError
@@ -10,7 +10,8 @@ def _nonempty_text_list(value) -> bool:
 
 
 def require_image_permission(*, max_images: int, attempted_images: int,
-                             review: dict | None = None, user_decision: str | None = None) -> None:
+                             review: dict | None = None, user_decision: str | None = None,
+                             workflow_version: int | None = None) -> None:
     """Check an already-established user allowance and current reviewed decision.
 
     The caller supplies the actual allowance, including failure/unknown spending;
@@ -31,6 +32,8 @@ def require_image_permission(*, max_images: int, attempted_images: int,
         raise AgentError('用户已接受或否决当前方向；停止本版本生成，新需求须另建关联版本')
     if user_decision not in (None, 'not_recorded', 'not_verified'):
         raise AgentError('用户反馈状态未知，不能据此推断仍可生成')
+    if workflow_version == 2 and attempted_images:
+        raise AgentError('v2原生重试须走有独立用户返修授权的有界返修入口；剩余额度不是返修许可')
     if review is None:
         return
     if not isinstance(review, dict):
@@ -64,3 +67,20 @@ def require_image_permission(*, max_images: int, attempted_images: int,
         raise AgentError('修订必须列出1至2条非空的具体changes')
     if not _nonempty_text_list(review.get('preserve')):
         raise AgentError('修订必须列出非空preserve，说明需要保留的已有关系')
+
+
+def require_bounded_repair_permission(*, workflow_version: int, max_images: int,
+                                      attempted_images: int, repair_grant: dict | None,
+                                      repair_attempted: bool,
+                                      user_decision: str | None = None) -> None:
+    """Caller must first verify the grant's user source and measurable failure."""
+    if type(workflow_version) is not int or workflow_version != 2:
+        raise AgentError('有界自动返修只适用于 workflow policy v2；旧任务不迁移')
+    if repair_attempted is not False:
+        raise AgentError('单次返修已占用；失败、未知和中断均停止，不退回额度')
+    if (not isinstance(repair_grant, dict) or set(repair_grant) != {'scope', 'max_repairs'}
+            or repair_grant.get('scope') != 'downscale_to_requested_size'
+            or type(repair_grant.get('max_repairs')) is not int or repair_grant['max_repairs'] != 1):
+        raise AgentError('缺少独立的单次 repair_grant；generation_grant 和剩余额度都不是返修授权')
+    require_image_permission(max_images=max_images, attempted_images=attempted_images,
+                             user_decision=user_decision)

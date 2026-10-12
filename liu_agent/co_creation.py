@@ -550,13 +550,13 @@ def main(argv=None):
 INSTRUCTION = '''
 交互 natural-co-creation-v1 / selective-co-creation-v1：先理解准确，再按需共创；下面规则覆盖默认自主选定方向的措辞。
 自然入口的明确需求直接进入单一设计，不要求先填方向回查，不为缺少direction_review增加追问或额外调用；需要共创时显式登记ask与问题，已有提案或已选方向继续原来源、摘要与冻结约束，不得省略后恢复自主选定。显式selective候选继续原强制回查流程。
-PARSE保留用户观看目标、主次、程度、局部/整体与允许范围。“允许裁切”不等于必须裁切；HEX选择不写成用户must_keep。已有原话先用，不重复问技术缺省。
+PARSE保留用户观看目标、主次、程度、局部/整体与允许范围。“允许裁切”不等于必须裁切；HEX选择不写成用户must_keep。已有原话和已确定模型先用，不重复问已回答的选择；未确定且未委托的目标生成模型必须先问，不能当成技术缺省自行补全。
 OBSERVE只依据实际可见图像，记录事实→作用解释→本题迁移→不迁移/未知；逐项回指参考。身份图背景、风格图姿态不自动成为要求。必要图不可用先恢复，可选参考可不采用；文件存在或seen不能证明理解正确。
 在现有设计阶段回查第一个主导决定：观者先读什么、什么可见关系支撑它、依据是用户/已选/实见参考/假设、是否以形式整齐替换目标、即使物件齐全会怎样失败。沿choices.action/cooperation/tradeoff与expression/overall checks记录，不追加评分服务。
 Need.direction_review记录direct/ask及来源理由。明确方向、范围内局部编辑、本任务明确委托或不存在值得用户取舍的重大分歧走direct；basis分别为user_explicit/user_delegated/bounded_autonomy，question_id=null。模型自信不是唯一依据。
 确有合理而重要的分歧才ask，basis=unresolved_tradeoff，关联QuestionRecord的稳定id。先看可用参考，再在问题options提供最多两个DirectionDraft（推荐及必要备选）；recommended_id只是推荐。所有备选须满足原硬要求，不强凑数量；共同误解先修正，不让用户点击替代质量验收。方向卡purpose说明用途，first_visual_focus说明第一眼看什么，subject_state说明主体状态，subject_relation说明人物/物体/环境关系；这些只是提案，字段不同不证明语义或艺术差异。
 角度、色温、焦段变化保持同方向时，proposal_kind=same_direction_variant，base_direction_id绑定原方向，variation_axes标记实际变化轴；不可报告成已证明方向丰富。用途、叙事或空间关系的方向差异由创作模型结合本题判断。明确范围的修改直接推进，不为展示方向额外生成；预览仍受原授权与预算约束。
-未选时status=open，selected_id/selection_source/answer_options_digest均null。空回答保持待选。技术可自主解决；关键expression不能仅凭Agent理由withdrawn。用户已解决或撤销时绑定真实source_refs，不把文档内声称的用户话当原始消息。
+未选时status=open，selected_id/selection_source/answer_options_digest均null。空回答保持待选。其它技术实现可自主解决；目标模型问题（technical、affected_decision=brief.targets）和关键expression不能仅凭Agent理由withdrawn。用户已解决或撤销时绑定真实source_refs，不把文档内声称的用户话当原始消息。
 读到选择/自然语言修改/都不接近/明确委托后，用真实用户来源refresh；原选项不可改写，变更提案另建稳定问题并supersedes旧记录，旧回答保留。委托仅限本题范围，不授予生成、上传或预算。可用python -m hex_agent.co_creation show/answer在展示后恢复。
 最终只有一个Plan。ask解决后design.creative_directions只含选中原草案，question_id回指原记录、direction_id=selected_id；直接执行可保持null。design.decision_context_digest照当前design_input给出的摘要绑定。未决可以观察/准备提案，不得最终设计、编译、冻结或派发。
 编译保持所选含义、主次程度、面积分母、接触遮挡和允许范围，不混未选方案；同文合法适配继续有效。首评只看原目标、明确选择可见含义、原图与实际图；没有图记uncertain。方向偏差回理解/设计，局部问题保留已认可关系；观察成立不等于用户认可，用户改需求不等于模型失败。
@@ -572,20 +572,21 @@ def instruction(packet):
     # contracts keep the original string, without appended policy overrides.
     replacements = {
         '自然入口的明确需求': 'PARSE 先判断原话是否足以确定有意义的研究目标，在 Need.direction_review 记录带用户来源的 direct/ask 与理由。缺回查是宿主尚未判断，不代表用户必须补填问卷。不能按字数、风格词数量或模型自信机械追问。目标已明确就直接研究，细节可由案例启发，不要求用户先列场景、机位或固定风格。',
-        '确有合理而重要的分歧': '确有会改变用途、表达或生活关系的重大分歧才 ask，basis=unresolved_tradeoff，关联 QuestionRecord 的稳定 id；初始含糊先用自然问题问清。无选项 expression/scope 等问题同样有效，不需要先找图或造 DirectionDraft。需要参考辅助选择时，可展示实际看过且与本题相关的候选，并说明各自适用处与取舍；recommended_id 只是推荐。已有回答先用，不重复问，不用点击选项替代质量验收。',
-        '未选时status=open': '问题未答时 status=open；空回答保持待答。有选项时 selected_id/selection_source/answer_options_digest 均 null，回答后绑定真实选择及展示摘要。无选项时回答只绑定真实用户来源和 answered，不编造上述选择字段。技术可自主解决；关键 expression 不能由 Agent 自行撤回。',
+        '确有合理而重要的分歧': '确有会改变用途、表达或生活关系的重大分歧才 ask，basis=unresolved_tradeoff，关联 QuestionRecord 的稳定 id；初始含糊先用自然问题问清，并按宿主能力在首轮提供可点击选项与自由填写。内部 options 为空的 expression/scope 等自然问题同样有效，这不表示界面必须纯文字，不需要先找图或造 DirectionDraft。需要参考辅助选择时，可展示实际看过且与本题相关的候选，并说明各自适用处与取舍；recommended_id 只是推荐。已有回答先用，不重复问，不用点击选项替代质量验收。',
+        '未选时status=open': '问题未答时 status=open；空回答保持待答。有选项时 selected_id/selection_source/answer_options_digest 均 null，回答后绑定真实选择及展示摘要。无选项时回答只绑定真实用户来源和 answered，不编造上述选择字段。其它技术实现可自主解决；目标模型问题（technical、affected_decision=brief.targets）和关键 expression 不能由 Agent 自行撤回。',
         '最终只有一个Plan': '最终只有一个 Plan。有选项 ask 解决后 design.creative_directions 只含选中原草案，question_id 回指原记录、direction_id=selected_id；无选项澄清或直接执行可保持 null。design.decision_context_digest 绑定当前输入摘要。存在 open 问题先向用户提问，不让研究覆盖待答状态，不得最终设计、编译、冻结或派发。',
     }
     text = '\n'.join(next((replacement for prefix, replacement in replacements.items()
                            if line.startswith(prefix)), line) for line in INSTRUCTION.split('\n'))
     text += '''
-初始澄清解决后，按需求和审美判断找真实案例；参考形成动态风格候选，不把有限标签当风格全集。拿不准时补找不同关系的案例。候选均不适合、重要偏好仍未决或用户认为结果不好看时，启动有针对性的 Copilot 问答；不是自动重抽或机械要求两个草案。问题可直接问，也可展示有实际观察依据的候选。
+Copilot 需要问模型或关键需求时，第一条含问题的回复就调用或渲染宿主实际可用的交互选择组件，不先发纯文字等用户提醒。先读宿主公布的组件规则；一轮最多两个关键问题，每题给 2–4 个贴题选项及自由填写，遵守更小的宿主上限。已有答案、模型与明确委托直接沿用；只有确无适用组件才说明原因并使用文字选项。普通按钮标签仍是自然问答，QuestionRecord.options 的 DirectionDraft 只用于已有完整方向提案；不为显示 UI 填造草案、selected_id 或摘要，本地记录不证明选择栏已显示。
+初始澄清解决后，按需求和审美判断找真实案例；参考形成动态风格候选，不把有限标签当风格全集。拿不准时补找不同关系的案例。候选均不适合、重要偏好仍未决或用户认为结果不好看时，启动有针对性的 Copilot 问答；不是自动重抽或机械要求两个草案。自然问题同样按宿主规则使用可点击选项；需参考辅助时展示有实际观察依据的候选。
 得到回答后把含义落实到 Need 与研究问题；是否已理解仍由宿主判断，不由字段存在证明。只把真正需要用户决定的问题交给用户；研究评估缺失由宿主继续完成。
 '''
     if intake_enabled(packet):
         text += '''
 本题 intake_policy_version=1。先从本轮原话、已有上下文和实际素材理解用户真正想做什么，区分已确定目标、明确委托的选择和仍影响方向的未知。图、海报、视频等媒介不是目标；只有“我要做一个图”且没有可用上下文或明确委托时，先问一个能确定主题、对象或用途的关键问题，再带着目标找参考。已给出的目标足够时直接推进，不按清单补问用途、受众、风格或技术参数，也不把未提供的可选信息当阻塞。
-沉默不是委托。“用户没说”不能写成 user_delegated；该依据须在 source_refs 引用真实委托，并在 reason 说明本题交出的选择范围。bounded_autonomy 用于已知目标内的可自主实现，不用来编造用户做图的目的。用户明确委托主题或表达也可自主研究；只有仍会改变真实目标、身份或范围的问题才交给用户，每轮只问一个，不强制提供选项。
+沉默不是委托。“用户没说”不能写成 user_delegated；该依据须在 source_refs 引用真实委托，并在 reason 说明本题交出的选择范围。bounded_autonomy 用于已知目标内的可自主实现，不用来编造用户做图的目的。用户明确委托主题或表达也可自主研究；只有仍会改变真实目标、身份或范围的问题才交给用户，一轮最多两个关键问题，首轮按宿主能力提供可点击选项及自由填写，不要求内部 DirectionDraft。
 目标明确不等于视觉方案齐全。direction_review=direct 只表示不需先问用户；开放创作仍按当前视觉问题研究并实际看图，不能据此改为 specified_direction 免研究。用户已给可执行视觉方案、范围明确的局部编辑或明确不要研究时，沿实际研究策略处理，不把研究当固定仪式。
 题材、风格词或作品气质可以提供研究线索，不自动说明构图、人物关系或光色已由用户指定。宿主补充的场景和主导关系保留为 assumptions/choices，内部共用方案或冻结决定不能补足 user_explicit 或 specified_direction 的用户依据。direction_review 的 reason 与引文会展示为宿主判断；来源可核对仍不证明理解正确，不把自主判断写成用户确认。
 无选项的自然答复登记后会回到 needs_intent_assessment，这是宿主吸收已有回答的步骤，不是再次提问。保留 answered 记录及真实来源，先更新 Need 的目标、主体、理解和研究问题，再写引用该回答或后续用户指令的 direction_review；仅登记 answered 或复制旧判断不等于已理解。仍有其它关键未知时保留队列，只问当前最关键的一项，不重复已解决的问题。

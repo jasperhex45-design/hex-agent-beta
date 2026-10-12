@@ -32,7 +32,8 @@ _STAGE_STEPS = {'needs_parse': 'intent', 'needs_input': 'intent', 'needs_intent_
                 'ready_to_export': 'deliver', 'generation_failed': 'deliver',
                 'needs_review_requirements': 'check_requirements', 'needs_image_check': 'image_check',
                 'needs_review_input': 'visual_review', 'needs_visual_review': 'visual_review',
-                'quality_not_met': 'visual_review', 'needs_generation': 'execute'}
+                'quality_not_met': 'visual_review', 'needs_generation': 'execute',
+                'needs_bounded_repair': 'image_check'}
 _GATES = {'intent': 'provenance.validate_need', 'references': 'reference_gate.validate_reference_policy',
           'design': 'workflow.validate_solution', 'compile': 'model_adaptation.validate_adaptation',
           'verify': 'workflow.freeze_contract', 'authorize': 'generation_authorization.read_authorization',
@@ -68,7 +69,8 @@ def definition(workflow_profile: str | None = None) -> dict:
                                         'stop': 'no_new_submission_preserve_reservations'}}}
     if workflow_profile == 'full-flow-v1':
         body.update(version=3, completion_policy=workflow_profile)
-        body['limits'].update(drive_max_steps=8, drive_hard_limit=32)
+        body['limits'].update(drive_max_steps=8, drive_hard_limit=32,
+                              bounded_local_repair='v2_explicit_user_grant_once_no_model_calls')
     return {**body, 'definition_digest': digest(body)}
 
 
@@ -81,7 +83,7 @@ def _input_hashes(run: Path) -> dict:
              'host-image-tests.json', 'image-tests.json', 'selection.json',
              'result.json', 'export-manifest.json', 'user-feedback.json',
              'relative-preference.json', 'native-budget-transfer.json', 'native-budget-receipt.json',
-             'generation-stop.json')
+             'generation-stop.json', 'bounded-repair.json', 'bounded-repair/repaired.png')
     result = {name: sha((run / name).read_bytes()) if (run / name).is_file() else None for name in names}
     for directory in ('comfy', 'pippit'):
         for name in ('execution.json', 'actual-arguments.json', 'submit-response.json', 'submission-started.json'):
@@ -115,6 +117,16 @@ def _repair_contract(run: Path, status: dict, packet: dict) -> dict:
         return {**body, 'state': 'await_original_request' if command and command.startswith('execute-') else 'query_same_request',
                 'next_entrypoints': [command] if command else []}
     from .visual_decision import record_only
+    if (packet.get('workflow_policy', {}).get('version') == 2 and status['candidates']
+            and record_only(packet)):
+        from .bounded_repair import evaluate
+        assessment = evaluate(run)
+        return {**body, 'format': 'hex.repair-contract.v2', 'state': assessment['state'],
+                'eligible_under_existing_allowance': assessment['eligible'],
+                'remaining_attempts': assessment.get('remaining_attempts', remaining),
+                'assessment': assessment, 'supported_scope': assessment['scope'],
+                'next_entrypoints': ['host.execute_repair'] if assessment['eligible'] else [],
+                'notice': '仅支持有独立用户授权的同比分辨率缩小；原run先占用再执行，首稿保留，修后仍须按原合同复核。'}
     if record_only(packet) and status['candidates']:
         return {**body, 'state': 'explicit_task_revision_required',
                 'next_entrypoints': ['record-feedback', 'refresh', 'grant-native-revision']}
@@ -255,11 +267,13 @@ def drive(run: Path, *, max_steps: int = 8) -> dict:
 
     No arbitrary command execution, model dispatch, generation, guessed OCR
     applicability, or synthetic visual judgment is permitted in this loop.
+    The v2 bounded local repair step verifies its separate user grant before
+    reserving one existing slot; it cannot call a model or retry a failed repair.
     Every operation reloads and validates the existing task evidence.
     """
     from .run_status import inspect_run
     from .resume import resume_run
-    from .workflow_policy import check, prepare_review, complete
+    from .workflow_policy import check, prepare_review, complete, repair
     if type(max_steps) is not int or not 1 <= max_steps <= 32:
         raise AgentError('drive --max-steps 必须为 1 至 32；停止不推进的循环')
     run = Path(run).resolve()
@@ -308,6 +322,8 @@ def drive(run: Path, *, max_steps: int = 8) -> dict:
                 result = check(run, request_id)
             elif operation == 'prepare-review':
                 result = prepare_review(run, request_id)
+            elif operation == 'repair':
+                result = repair(run)
             elif operation == 'complete':
                 result = complete(run)
             else:

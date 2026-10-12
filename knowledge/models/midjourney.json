@@ -1,37 +1,63 @@
 {
   "id": "midjourney",
-  "version": 1,
+  "version": 2,
   "label": "MidJourney",
   "language": "en",
   "status": "experimental",
-  "provider_version": "family-profile; account/version to be confirmed",
-  "last_checked": "2026-09-19",
+  "provider_version": "Official default V8.2 checked 2026-10-12; Edit Model V8.1/V8.2; Omni Reference V7; exact user version and mode must remain explicit",
+  "last_checked": "2026-10-12",
   "review_after_days": 30,
   "writing_rules": [
-    "使用精炼英语描述主体、环境、构图、光照、颜色和材质。",
-    "优先正向明确的可见效果，不写冗长问答或自我解释。",
-    "同一visual spec的内容不可因语言压缩被改写；硬锁定项单独准确翻译。"
+    "官方建议：普通生成用精炼、具体的最终画面描述，按需写主体、数量、动作、媒介、环境、构图、光线、颜色与材质；不写冗长问答或自我解释。",
+    "HEX整理的普通生成骨架（不是官方固定语法）：[主体、数量与动作]，[媒介/画面类型]，[环境]，[构图与景别]，[关键光线与色彩]，[必要风格特征]。依language编译为英语，删除无关槽位。",
+    "官方Image Prompt写法：正文描述完整目标画面，补足参考中没有的必要内容；不把普通Image Prompt写成精确编辑接口。",
+    "官方Style Reference写法：主要描述目标内容，只补必要且与参考相容的风格词。sref传递颜色、媒介、纹理和光线气质，不承担人物身份或产品比例锁定。",
+    "HEX整理的V8.1/V8.2 Edit Model骨架：将[图中明确对象/区域]改为[目标状态]，保留[关键身份、结构、位置与构图]；多图时标明各自职责。官方允许该模式接受修改指令，不把普通生成的禁命令习惯套到Edit Model。",
+    "V7身份引用使用对应Omni模式，V8不沿用V7的oref或V6的cref；编译前依据本题实际版本区分操作模式。",
+    "同一visual spec不可因语言压缩而改写；数量、准确文案、身份及修改范围逐项保留。优先正向可见效果，不把保留措辞当成像素保护保证。"
   ],
   "setup_rules": [
-    "具体版本与参数在使用界面设置，正文不自动拼接版本号或参数。",
-    "Style Reference用于风格而不是身份；精确编辑需根据当前界面的Edit/引用方式配置。"
+    "按当前版本和模式读取 knowledge/model-prompts/midjourney.md；同版本同入口复用缓存，版本变化、冲突或未覆盖功能才定向补查。",
+    "未明确本题模型时先问；只说Midjourney而版本差异影响参考/编辑能力时，确认实际界面型号。V8.2是核验日官方默认，不替代用户选择。",
+    "普通Image Prompt、Style Reference与Edit Model分别放到正确入口。V8.1/V8.2 Edit Model官方支持最多4张参考；现有HEX工具是否支持仍需另核。",
+    "用户只要干净正文或要求不含双横线参数时，不把参数拼入正文，必要网页设置另列；这是格式偏好，不是平台不支持参数。",
+    "确需参数时按实际版本核验兼容性；Style Weight（sw）与Stylize（s）分开，不套用户历史固定数值，也不把旧Quality或多提示词语法默认加给V8。"
   ],
   "limitations": [
-    "官方说明不等于本项目已验证效果；首次需按目标模型小样实测。",
-    "GPT测试只能验证方向，不能证明此模型会复现同样结果。"
+    "本卡仅核验官方提示方法和版本边界，没有目标模型成图证据；不以GPT测试证明Midjourney复现效果。",
+    "参考、编辑指令或强保留措辞不保证像素、身份、细节文字或车辆结构完全不变。",
+    "模型知识卡不证明帐号权限、界面特性和可用工具已接通；用户目标优先于文档默认版本。"
   ],
   "sources": [
     {
       "label": "Midjourney Prompt Basics",
       "url": "https://docs.midjourney.com/hc/en-us/articles/32023408776205-Prompt-Basics",
       "kind": "official",
-      "checked_at": "2026-09-19"
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Midjourney Version",
+      "url": "https://docs.midjourney.com/hc/en-us/articles/32199405667853-Version",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Midjourney Image Prompts",
+      "url": "https://docs.midjourney.com/hc/en-us/articles/32040250122381-Image-Prompts",
+      "kind": "official",
+      "checked_at": "2026-10-12"
     },
     {
       "label": "Midjourney Style Reference",
       "url": "https://docs.midjourney.com/hc/en-us/articles/32180011136653-Style-Reference",
       "kind": "official",
-      "checked_at": "2026-09-19"
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "Midjourney Edit Model",
+      "url": "https://docs.midjourney.com/hc/en-us/articles/48495453462797-Edit-Model",
+      "kind": "official",
+      "checked_at": "2026-10-12"
     }
   ],
   "evaluation_files": []

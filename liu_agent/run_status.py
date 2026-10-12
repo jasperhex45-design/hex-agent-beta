@@ -76,7 +76,7 @@ def _budget(run: Path, attempts: list[dict], blockers: list[str]) -> dict:
                 elif shared:
                     owner = Path(shared['budget_source'])
                     maximum = min(maximum, read_authorization(owner, read_packet(owner))['max_images'])
-                used = budget['attempted_images']
+                used = budget.get('reserved_image_slots', budget['attempted_images'])
                 budget.update(product_cap=2, max_images=maximum,
                               remaining_images=max(0, maximum-used) if used is not None else None,
                               authorization_status='recorded' if maximum else 'not_recorded')
@@ -187,6 +187,11 @@ def _verify_export(run: Path, packet: dict, contract: dict, solution: Solution,
         status = execution_quality_status(status, facts, bool(trials))
     expected = {'status': status, 'packet_digest': packet['digest'], 'acceptance': contract,
                 'trials': trials, 'selected_trial_round': selected['round'] if selected and not packet['brief'].get('model_comparison') else None}
+    asset = (completion or {}).get('derived_delivery', {}).get('asset')
+    if result.get('delivery_asset') != asset:
+        raise AgentError('导出最终资产与本地变换、最终检查或评审不一致')
+    if asset is not None:
+        expected['delivery_asset'] = asset
     from .feedback import apply_feedback, apply_relative_preference, verified_feedback
     if (run/'user-feedback.json').exists():
         verified_feedback(run)
@@ -289,6 +294,12 @@ def _export_files_valid(run: Path, *, verified_relative: bool = False) -> bool:
             return False
         raise AgentError('导出JSON与交付清单不一致；先核对被改写的结果')
     expected = {'result.html', 'result.md', *[f'prompts/{key}.txt' for key in result['prompts']]}
+    if result.get('delivery_asset'):
+        from .bounded_repair import delivery_asset
+        asset = delivery_asset(run)
+        if asset != result['delivery_asset']:
+            raise AgentError('交付资产与当前本地变换不一致')
+        expected.update({asset['file'], asset['parent']['file'], 'bounded-repair.json'})
     if result.get('model_adaptation'):
         expected.add('design-explanation.md')
     hashes = manifest.get('files')

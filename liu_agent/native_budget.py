@@ -324,7 +324,9 @@ def _has_revision(run: Path) -> bool:
 
 
 def has_transfer(run: Path) -> bool:
-    return _has_original_transfer(run) or _has_revision(run) or _has_next_revision(run)
+    from .bounded_repair import has_reservation
+    return (_has_original_transfer(run) or _has_revision(run) or _has_next_revision(run)
+            or has_reservation(run))
 
 
 def _revision_evidence(parent: Path, child: Path, source_id: str) -> dict:
@@ -566,6 +568,9 @@ def _next_revision_budget(run: Path, record: dict, visited: frozenset[Path]) -> 
 def budget_for_run(run: Path) -> dict | None:
     run = Path(run).resolve()
     try:
+        from .bounded_repair import has_reservation, budget_for_run as repair_budget
+        if has_reservation(run):
+            return repair_budget(run)
         if _has_next_revision(run):
             return _next_revision_budget(run, read_json(run/NEXT_REVISION_FILE), frozenset())
         return _base_budget(run, frozenset())

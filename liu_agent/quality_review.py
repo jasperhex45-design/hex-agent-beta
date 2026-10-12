@@ -90,8 +90,8 @@ def validate_holistic(contract, evaluation) -> None:
     if whole.image_access != 'viewed' and evaluation.decision != 'uncertain':
         raise AgentError('未实际看到图像只能记录uncertain，不能建议就绪或定向返修')
     if evaluation.decision == 'ready_for_user':
-        if whole.review_context != 'isolated':
-            raise AgentError('作者同上下文或未知上下文的自评不能建议视觉就绪')
+        from .delivery_review import require_review_context
+        require_review_context(contract, evaluation.model_dump())
         if any(item.verdict != 'met' for item in whole.judgments):
             raise AgentError('整体观感、视觉可信或表达存在失败/不确定，不能建议视觉就绪')
 
@@ -118,12 +118,13 @@ def goal_first_payload(packet: dict, contract: dict, refs: list, candidate_sha: 
                         if key in contract}
     from .host_references import review_context
     host_context = review_context(packet)
+    from .delivery_review import self_check_allowed
     # References retain their declared role, never prior observations or ratings.
     image_list = [{key: ref[key] for key in ('id', 'role', 'file', 'sha256') if key in ref}
                   for ref in refs]
     return {
         **host_context,
-        'review_mode': 'goal_first_isolated',
+        'review_mode': 'goal_first_self_check' if self_check_allowed(contract) else 'goal_first_isolated',
         'brief': {key: brief[key] for key in ('title', 'request', 'domain', 'scope', 'medium') if key in brief},
         'original_request': contract['request'],
         **({'selected_decision': deepcopy(contract.get('selected_decision'))}

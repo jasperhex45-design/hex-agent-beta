@@ -1,0 +1,54 @@
+{
+  "id": "flux2",
+  "version": 1,
+  "label": "FLUX.2 pro / max / dev — prompt knowledge",
+  "language": "en",
+  "status": "experimental",
+  "provider_version": "FLUX.2 pro/max official prompting guide; dev capabilities from official flux2 repo; exact user model and surface required; no generator connection implied",
+  "last_checked": "2026-10-12",
+  "review_after_days": 30,
+  "writing_rules": [
+    "官方pro/max建议：以主体、动作、风格、环境组织自然语言，最重要内容靠前；按需补构图、光线、颜色和材质。",
+    "HEX整理的新建骨架（不是官方固定语法）：[主要主体]正在[动作/姿态]，采用[媒介/视觉方式]，位于[场景]；[构图、光线、关键颜色和材质关系]；[必要文字原文与位置]。依language编译为英语，删除无关槽位。",
+    "HEX整理的单图编辑骨架：将图1中的[明确对象/区域]由[原状态]改为[目标状态]；保留[主体结构、位置、构图与保护项]；让[修改部分]与原场景的[光影/材质]连贯。",
+    "HEX整理的多参考骨架：图1作为[底图/主体]，图2只提供[物件/材质/风格]，图3提供[另一职责]；把[允许内容]放在[位置和空间关系]，保留[重要身份与结构]。真实图片与职责一一对应。",
+    "官方pro/max指南：文字用引号给原文并说明位置、字形和层级；颜色代码绑定具体对象。色码表达设计意图，不保证每个像素完全等于该数值。",
+    "复杂多元素映射可选择JSON或自然语言；scene、subjects、lighting等示例字段是提示词组织方式，不是API请求字段，也不是质量保证。",
+    "pro/max官方指南不支持独立negative prompt，优先写期望画面状态。不同本地型号和实现另行核验，不套Stable Diffusion权重或Klein采样配置。",
+    "保持本题同一需求、设计关系、数量、准确文字和修改范围；不要因适配模型补出固定题材、相机或审美模板。"
+  ],
+  "setup_rules": [
+    "按实际型号与模式读取 knowledge/model-prompts/flux2.md；同型号同模式用缓存，新版本、来源冲突、接口不支持或未覆盖能力才定向补查。",
+    "未明确本题目标时先问Pro、Max、dev或实际型号名称；用户明确选择Klein时使用flux-klein卡，FLUX.1 Kontext与FLUX 3不作为本卡别名。",
+    "本卡只提供提示词知识，不注册生图工具或证明帐号可用；缺少可用且核验过的执行路线时交付prompt_only，不宣称可调用或已经生成。",
+    "参考数量、尺寸和输出设置按实际型号与平台确认，不套全家族统一值。",
+    "区分官方内置扩写、dev可选扩写、工作流外部PE与HEX写作，避免多次自动补写改变用户意图。"
+  ],
+  "limitations": [
+    "本卡没有目标模型实际生成或视觉评价证据，status保持experimental。",
+    "pro/max专用指南不保证dev或第三方实现支持完全相同的扩展语法、参数和参考数量。",
+    "BFL当前通用提示目录已转向FLUX 3，不能把bounding boxes等新功能外推为FLUX.2能力。",
+    "强保留语句与参考输入不等于像素保护；真实结构、材质、文字和编辑范围仍须在生成后核验。"
+  ],
+  "sources": [
+    {
+      "label": "BFL：FLUX.2 pro/max Prompting Guide",
+      "url": "https://docs.bfl.ai/guides/prompting_guide_flux2",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "BFL官方FLUX.2仓库：dev与Klein能力",
+      "url": "https://github.com/black-forest-labs/flux2",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    },
+    {
+      "label": "BFL文档目录：当前通用指南代际",
+      "url": "https://docs.bfl.ai/llms.txt",
+      "kind": "official",
+      "checked_at": "2026-10-12"
+    }
+  ],
+  "evaluation_files": []
+}

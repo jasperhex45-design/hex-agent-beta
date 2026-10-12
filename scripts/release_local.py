@@ -22,6 +22,7 @@ SOURCE_TREES = {
     'knowledge/core': {'.json'},
     'knowledge/design': {'.json'},
     'knowledge/models': {'.json'},
+    'knowledge/model-prompts': {'.md'},
     'knowledge/art_structure': {'.json', '.md'},
     '.agents/skills/cl-hex-car-photography': {'.md'},
     '.agents/skills/liu-aesthetic-agent': {'.md'},
@@ -48,6 +49,7 @@ PUBLIC_FILES = REQUIRED_FILES | {
     'BETA.md', 'CHANGELOG.md', '.env.example', '.gitignore', '.gitattributes', 'ART_STRUCTURE_START.md',
     '.github/ISSUE_TEMPLATE/beta-feedback.yml',
     'knowledge/color_source_mapping.json', 'knowledge/candidates/card.template.json',
+    'knowledge/research-entrypoints.md',
     'examples/character-brief.json', 'examples/edit-brief.template.json',
     'examples/film-shot-brief.json', 'examples/person-brief.json',
     'examples/prop-brief.json', 'examples/research.template.json',
@@ -67,6 +69,9 @@ PUBLIC_FILES = REQUIRED_FILES | {
     'docs/HEX_QWEN_MASKED_EDIT_20261007.md',
     'docs/CONVERSATION_RUNTIME_20260925.md',
     'docs/ESSENTIAL_CREATION_FEEDBACK.md',
+    'docs/PRIVATE_REFERENCE_LIBRARY.md',
+    'docs/HOST_PORTABILITY.md', 'docs/HEX_CORE_METHOD.md',
+    'scripts/build_skill_package.py', 'scripts/skill_bundle_entry.py',
 }
 EXCLUDED_PARTS = {
     '__pycache__', '.git', '.venv', '.state', '.runtime', 'build', 'dist',
@@ -121,6 +126,8 @@ def build_release(root: Path = ROOT, output_dir: Path | None = None, *,
         parent_source = root.parent / relative
         if (root.name != 'hex-agent' or not parent_source.is_file()
                 or not _ordinary_path(parent_source, root.parent)):
+            if relative.endswith('/agents/openai.yaml'):
+                continue  # Optional display metadata for hosts that consume it.
             raise ValueError('Missing required HEX entry file: ' + relative)
         entries[relative] = parent_source
     version = tomllib.loads((root / 'pyproject.toml').read_text(encoding='utf-8'))['project']['version']

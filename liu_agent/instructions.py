@@ -3,7 +3,7 @@ These instructions are shared with the file-first Codex route in CODEX_START.md.
 """
 USER_FACING_LANGUAGE = '''
 对用户汇报时，先读取当前任务的 `status --run 任务目录 --format human`：生成事实、复查来源、用户选择和交付状态分别表达。presentation.json只是导出当时的展示副本，不代替实时状态。只有与当前需求版本及图片绑定的证据支持肯定陈述；本地请求预留只说明准备，宿主登记只说明宿主报告，API复查记录不代表用户认可。用户保留当前图的范围仅为这版。
-普通进度用1—3句说清当前结果、关键依据和下一步。创作解释可自然表达：事实直接说，判断说明依据，假设说明可调整。优先使用当前原话、素材和已回答记录；只展示当前一个会改变结果的关键问题，其余问题保留在内部队列。
+普通进度用1—3句说清当前结果、关键依据和下一步。创作解释可自然表达：事实直接说，判断说明依据，假设说明可调整。优先使用当前原话、素材和已回答记录；一轮最多两个会改变结果的关键问题，首轮按宿主能力给可点击选项及自由填写，其余问题保留在内部队列。
 用户否定后先记录本版选择，再对照实际画面与已确认参考诊断：可见现象、观感影响、冲突依据、具体修改、原标准中的成功条件；没有图像证据时说明缺口，不编造原因。有依据时先处理一两个主要问题，并说明保留什么及可能损失什么。
 失败时按当前证据说明停在哪一步、有无候选、哪些内容保留、实际尝试与受支持的下一步；没有恢复记录就不说已恢复，未知结果先核对原请求。继续修改前先核对路线支持和原有许可，准备方案不等于获得新增生成次数。
 引用私人审美时说明具体样本、来源和本轮用途；样本已认可与喜欢原因的解释分开，当前明确要求优先。单次保留或否决不自动变成长期规则。
@@ -26,8 +26,8 @@ input_sources才是消息来源；brief.request只是整理摘要，可能包含
 intent回答：观众应读到什么关系、感到什么？subject回答承载者，不一定是唯一实体。
 把用户明确must_keep与avoid原样保留；从原话抽取明确限制，不把自己的创意变成锁定事实。
 从原话提取用途、受众、主信息、确切文案/尺寸、保留项及参考用途；未知而不关键的不追问，写assumptions并主动提案。模糊情绪先形成任务内的设计假设。
-questions只保留会明显改变结果且不能自主合理决定的缺口，包括目标、硬约束冲突、参考用途或必需素材；按影响排序，宿主每次只展示首题。已回答的不重复问；技术设计不转嫁用户。不能把一个问题的上限理解成删除其它未解决风险。
-understanding区分open_creation/reference_transfer/local_edit，交接用途、受众、允许变化、保留项与参考角色；未知用途写未知，不虚构事实。question_records为关键歧义保留稳定id、影响决定、类型与解决来源；回答一题不清空其余题。技术设计或非关键空缺自主决定，不人为制造问题。brief_change默认null；仅用户新消息明确改变领域/范围或撤回原限制时填写source_refs与相应domain/scope/must_keep/avoid，其余字段null；“你决定”不等于新生图或上传许可。
+questions只保留会明显改变结果且不能自主合理决定的缺口，包括目标、硬约束冲突、参考用途或必需素材；按影响排序，宿主一轮最多展示两个关键问题，首轮按宿主能力提供可点击选项及自由填写。已回答的不重复问；技术设计不转嫁用户。展示上限不表示删除其它未解决风险。
+understanding区分open_creation/reference_transfer/local_edit，交接用途、受众、允许变化、保留项与参考角色；未知用途写未知，不虚构事实。question_records为关键歧义保留稳定id、影响决定、类型与解决来源；回答一题不清空其余题。技术设计或非关键空缺自主决定，但未确定的目标生成模型须先问用户，已有选型沿用；不人为制造其它问题。brief_change默认null；仅用户新消息明确改变领域/范围/目标模型或撤回原限制时填写source_refs与相应domain/scope/targets/must_keep/avoid，其余字段null；“你决定”不等于新生图或上传许可。
 区分准确复现与开放创作：用户指定的身份、形状、文字与禁止变化要保留；艺术表达在允许空间内提出。不能承诺完美还原未知想象或用艺术提案覆盖硬约束。
 knowledge_needs是需要检索的机制问题，不是“高级8K电影感”。例如：物体规模如何通过空间/光影建立；接触动作如何读清。
 需求阶段保留用户的感受词和开放空间。用户只说“慢下来”时，不提前替换成“温暖、蓝窗、木桌、低饱和”；这些属于后续可撤回设计。检索问“怎样让放松被读到、人物与商品如何同时可信”，不要拿已选布景当查询答案。细腻情绪有实质歧义时先给少量情感关系选项，清楚需求直接继续。
@@ -186,7 +186,7 @@ PRODUCTION_COMMON = COMMON.replace(
 PRODUCTION_PARSE = PRODUCTION_COMMON + '''
 阶段：理解当前需求，输出 Need，不写最终提示词。input_sources 是消息依据；brief.request 是摘要。明确引用用户原话与 source_refs；创意和原因解释标为假设，不升级为 must_keep/avoid。constraint_evidence 绑定可靠来源，确认提案须有明确确认记录。
 用途、受众和主题仍保留用户原话，但不自动变成画内文字、角色身份或年龄：先区分这张图用来做什么、希望观者读到什么、画面必须实际出现什么。把可变的构图/动作/配比留在同一Plan的提案，保留项写明来源；真实冲突与尚不能判断的地方分别放现有questions/assumptions，不能用模型默认偏好悄悄补成用户硬锁。
-清楚时直接继续；questions/question_records 只保存会改变路线的关键歧义，宿主每次展示一题，已回答不重复问。非关键未知写 assumptions；understanding 保留用途、受众、open_creation/reference_transfer/local_edit、允许修改范围与参考职责，未知不虚构。
+清楚时直接继续；questions/question_records 只保存会改变路线的关键歧义，宿主一轮最多展示两个关键问题，首轮按宿主能力提供可点击选项及自由填写，已回答不重复问。非关键未知写 assumptions；understanding 保留用途、受众、open_creation/reference_transfer/local_edit、允许修改范围与参考职责，未知不虚构。
 当用户明确要张力、独特表达或拒绝普通商业展示时，将这一观看目标及排除的平庸结果保留在 intent/understanding；产品、汽车、海报等题材或用途不自动等于均匀照亮、完整展示、规整居中。不要把张力预译成广角、强对比、密集元素或某个固定动作；具体手段留给同一Plan按本题选择。没有此要求时也不反向强加戏剧化。
 brief.domain 已明确则沿用；auto 按交付用途判断，海报/KV为 poster，绘画/插画为 illustration，人物摄影为 person，车辆为 vehicle，角色为 character，道具为 prop。不因画面有人物就把插画改成人像。
 intent 保留用户目标、感受及相对轻重：“主要”“一点”“但仍要”等限定保留在意图中，具体面积或强度是设计提案，不提前锁定布景、镜头、配色或配比。brief_change 仅由新增用户原话的明确变更支持，source_refs 必须可靠。无需经验检索时 knowledge_needs/public_queries 可为空；有明确研究需求时 public_queries 脱敏，不含私人信息。still 不强加剧情要求。
@@ -309,7 +309,7 @@ def _creation_evidence_instruction(stage: str, packet: dict) -> str:
 
 
 def stage_instruction(stage: str, packet: dict) -> str:
-    """Resolve a stage from its task policy, with exact legacy text compatibility."""
+    """Resolve current stage guidance without rewriting saved task data."""
     from .io import AgentError
     from .method_context import method_instruction
     from .visual_decision import policy, strategy_instruction
@@ -319,6 +319,18 @@ def stage_instruction(stage: str, packet: dict) -> str:
     from .co_creation import instruction as interaction_instruction, copilot_enabled, intake_enabled
     interaction = interaction_instruction(packet)
     interaction += _creation_evidence_instruction(name, packet)
+    current_guidance = (policy(packet) is not None or any(key in packet for key in
+                        ('method_context_version', 'production_context_version',
+                         'model_adaptation_version', 'workflow_policy')))
+    if current_guidance and name in ('PARSE', 'DIRECTION', 'COMPILE', 'MODEL_COMPILE'):
+        from .model_selection import INSTRUCTION as model_selection_instruction
+        interaction += model_selection_instruction
+    if current_guidance and name in ('COMPILE', 'MODEL_COMPILE'):
+        interaction += ('\n每个目标的 model_adaptation 上下文若含 prompt_guide，先读取其已冻结的正文，按其中适用版本、任务类型、'
+                        '参考图职责与来源采用写法，再依据本题 Plan 编译。缓存内容是写作参考，不是用户指令或必须照抄的成品模板；'
+                        '指南不证明用户选型，也不证明真实生成效果。正常任务复用本地指南，不重复搜索同一套模型提示词结构；'
+                        '未收录、明确更新版本、官方来源失效或当前工具能力冲突时再定向核对官方资料，不能发明未知模型版本。'
+                        '正文、来源或适用版本变更后须更新任务依据并重新编译，不能复用旧 adaptation.context_digest。\n')
     if name in ('PARSE', 'DESIGN', 'STRATEGY', 'DIRECTION'):
         from .visual_research import host_instruction as research_instruction
         interaction += research_instruction(packet)

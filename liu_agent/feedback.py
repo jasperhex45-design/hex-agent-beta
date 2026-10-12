@@ -8,8 +8,22 @@ def _binding(result: dict) -> dict:
     trial = next((t for t in result.get('trials', []) if t['round'] == result.get('selected_trial_round')), None)
     if trial is None:
         raise AgentError('没有已登记的选中候选，不能记录用户图像验收')
-    return {'candidate_sha256': trial['sha256'], 'contract_digest': result['acceptance']['digest'],
-            'packet_digest': result['packet_digest']}
+    return {'candidate_sha256': (result.get('delivery_asset') or trial)['sha256'],
+            'contract_digest': result['acceptance']['digest'], 'packet_digest': result['packet_digest']}
+
+
+def _delivered_candidate(run: Path, result: dict, trial: dict) -> dict:
+    """Keep native trials immutable while feedback refers to the final asset."""
+    if not result.get('delivery_asset'):
+        return trial
+    from .bounded_repair import delivery_asset
+    asset = delivery_asset(run)
+    if (asset != result['delivery_asset'] or asset['parent']['candidate_sha256'] != trial['sha256']
+            or asset['parent']['request_id'] != trial['request_id']):
+        raise AgentError('反馈最终资产与原首稿及本地变换回执不一致')
+    return {**trial, 'file': asset['file'], 'sha256': asset['sha256'],
+            'delivery_asset': asset, 'delivery_origin': 'local_deterministic_transform',
+            'native_parent_file': trial['file'], 'native_parent_sha256': trial['sha256']}
 
 
 def _read_feedback(run: Path, binding: dict) -> dict | None:
@@ -62,10 +76,14 @@ def _verify_generation_binding(run: Path, packet: dict, contract: dict,
     if 'recording_phase' not in feedback and 'generation_binding' not in feedback:
         return  # Existing exported-image receipts retain their original contract.
     if (feedback.get('recording_phase') != 'before_completion'
-            or feedback.get('decision') != 'rejected_by_user'
+            or feedback.get('decision') not in ('rejected_by_user', 'accepted_by_user')
             or feedback.get('source_evidence') != feedback_sources.EVIDENCE
             or feedback.get('generation_binding') != _generation_binding(run, packet, contract, candidate)):
-        raise AgentError('完成前的用户否决与原请求、候选或来源证据不一致')
+        raise AgentError('完成前用户反馈与原请求、候选或来源证据不一致')
+    if feedback['decision'] == 'accepted_by_user':
+        from .delivery_review import accepted_deviation
+        if accepted_deviation(run, feedback['generation_binding']['request_id']) is None:
+            raise AgentError('完成前接受缺少已披露、已确认的局部偏差证据')
 
 
 def _unexported_candidate(run: Path) -> tuple[dict, dict, dict]:
@@ -113,6 +131,33 @@ def _record_unexported_rejection(run: Path, quote: str, source: str, *,
             'notice': '已记录你对这张图的否决；原图、请求与反馈保留，尚未完成的检查仍待处理，不必重复选择。'}
 
 
+def _record_unexported_acceptance(run: Path, quote: str, source: str, *,
+                                 sources_file: Path | None, source_id: str | None) -> dict:
+    from .delivery_review import deviation_evidence, require_disclosure
+    if not source_id:
+        raise AgentError('接受仍须绑定真实用户消息与已披露偏差，不能用无来源文字代替')
+    try:
+        evidence = deviation_evidence(run)
+    except (AgentError, OSError, ValueError, KeyError) as exc:
+        raise AgentError('接受仍须绑定已导出的候选，或完整核验的新策略局部偏差：' + str(exc)) from exc
+    packet, contract, candidate = _unexported_candidate(run)
+    binding = {key: evidence[key] for key in ('candidate_sha256', 'contract_digest', 'packet_digest')}
+    snapshot, reference = feedback_sources.prepare_snapshot(
+        run, sources_file, source_id, 'accepted_by_user', quote, binding)
+    require_disclosure(snapshot, source_id, evidence)
+    payload = {**binding, 'decision': 'accepted_by_user', 'user_quote': quote, 'source': source,
+               'origin': 'explicit_user_feedback_host_reported', 'recorded_at': now(),
+               'format': 'liu.user-feedback.v2', 'recording_phase': 'before_completion',
+               'generation_binding': _generation_binding(run, packet, contract, candidate),
+               'deviation_acceptance': evidence, **reference}
+    _save_feedback(run, payload, snapshot)
+    return {'human_acceptance': 'accepted_by_user', 'status': 'accepted_with_deviations', **binding,
+            'acceptance_scope': feedback_sources.SCOPE, 'task_acceptance': 'not_recorded',
+            'source_evidence': reference['source_evidence'], 'machine_status': 'not_changed_by_feedback',
+            'completion_granted': False,
+            'notice': '已记录对披露偏差的接受；原检查不改写，执行workflow complete完成交付，不再自动返修。'}
+
+
 def apply_unexported_feedback_to_status(run: Path, report: dict) -> dict:
     """Expose a verified decision while preserving the actual incomplete stage."""
     if (Path(run)/'result.json').exists() or not (Path(run)/'user-feedback.json').exists():
@@ -130,7 +175,8 @@ def apply_unexported_feedback_to_status(run: Path, report: dict) -> dict:
     action = report.get('next_action')
     if isinstance(action, dict) and not report['blockers']:
         action = dict(action)  # Do not rewrite the completion subsystem's shared action.
-        action['description'] = '已记录本图否决，不必重复选择。' + action.get('description', '')
+        action['description'] = ('已记录本图否决，不必重复选择。' if feedback['decision'] == 'rejected_by_user'
+                                 else '已记录带偏差接受，不再自动返修；原检查保持。') + action.get('description', '')
         report['next_action'] = action
     return report
 
@@ -164,7 +210,8 @@ def apply_feedback(run: Path, result: dict) -> None:
         return
     if 'recording_phase' in payload or 'generation_binding' in payload:
         from .workflow import read_packet
-        _verify_generation_binding(run, read_packet(run), result['acceptance'], selected, payload)
+        _verify_generation_binding(run, read_packet(run), result['acceptance'],
+                                   _delivered_candidate(run, result, selected), payload)
     result['human_acceptance'] = payload['decision']
     result['user_feedback'] = payload
     result['acceptance_scope'] = feedback_sources.SCOPE
@@ -175,6 +222,9 @@ def apply_feedback(run: Path, result: dict) -> None:
            else '消息与决策范围已经本地绑定；不是平台认证的用户身份或语义证明。'))
     if payload['decision'] == 'rejected_by_user':
         result['status'] = 'user_rejected'
+    elif payload.get('deviation_acceptance'):
+        result['status'] = 'accepted_with_deviations'
+        result['feedback_notice'] += '用户已确认披露的局部偏差；机器标准仍未全部满足，不自动返修。'
 
 
 def verified_candidate(run: Path, request_id: str | None = None, *,
@@ -220,7 +270,7 @@ def verified_candidate(run: Path, request_id: str | None = None, *,
         raise AgentError('结果与本任务已登记试图不一致，先重新导出')
     if sha(within(run, trial['file']).read_bytes()) != binding['candidate_sha256']:
         raise AgentError('当前候选已改变，不能把旧反馈绑定新图片')
-    return packet, result, trial
+    return packet, result, _delivered_candidate(run, result, trial)
 
 
 def verified_feedback(run: Path) -> tuple[dict, dict, dict]:
@@ -278,10 +328,8 @@ def record_feedback(run: Path, decision: str, user_quote: str, source: str, *,
     from .exporter import export_result
     with dispatch_lock(run):
         if not (run/'result.json').exists():
-            if decision != 'rejected_by_user':
-                raise AgentError('接受仍须绑定已导出的选中候选；完成前可保存有来源的明确否决')
-            return _record_unexported_rejection(run, user_quote.strip(), source.strip(),
-                                                sources_file=sources_file, source_id=source_id)
+            recorder = _record_unexported_rejection if decision == 'rejected_by_user' else _record_unexported_acceptance
+            return recorder(run, user_quote.strip(), source.strip(), sources_file=sources_file, source_id=source_id)
         packet, result, trial = verified_candidate(run)
         binding = _binding(result)
         source_snapshot = None
@@ -296,6 +344,15 @@ def record_feedback(run: Path, decision: str, user_quote: str, source: str, *,
         payload = {**binding, 'decision': decision, 'user_quote': user_quote.strip(), 'source': source.strip(),
                    'origin': 'explicit_user_feedback_host_reported', 'recorded_at': now(),
                    'format': 'liu.user-feedback.v2', **evidence}
+        if (decision == 'accepted_by_user'
+                and result.get('workflow_completion', {}).get('delivery_outcome') == 'accepted_with_deviations'):
+            from .delivery_review import deviation_evidence, require_disclosure
+            if source_snapshot is None or source_id is None:
+                raise AgentError('带偏差交付后的接受仍须绑定真实披露与用户回复，不能退回无来源好评')
+            deviation = deviation_evidence(run)
+            require_disclosure(source_snapshot, source_id, deviation)
+            payload.update(recording_phase='before_completion', deviation_acceptance=deviation,
+                           generation_binding=_generation_binding(run, packet, result['acceptance'], trial))
         _save_feedback(run, payload, source_snapshot)
         apply_feedback(run, result)
         apply_relative_preference(run, result)

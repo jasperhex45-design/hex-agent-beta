@@ -1,7 +1,7 @@
 """Append-only message provenance. Hashes bind bytes, not semantic truth."""
 from pathlib import Path
 from typing import Literal
-from pydantic import Field
+from pydantic import Field, model_validator
 from .contracts import Strict, Need, ConstraintEvidence, SourceRef
 from .io import AgentError, read_json, digest
 
@@ -9,6 +9,12 @@ from .io import AgentError, read_json, digest
 class GenerationGrant(Strict):
     # Host records an explicit cumulative allowance; intent delegation is not one.
     max_images: int = Field(strict=True, ge=1, le=2)
+
+
+class RepairGrant(Strict):
+    """Explicit permission for one local, proportional reduction, not a redraw."""
+    scope: Literal['downscale_to_requested_size']
+    max_repairs: int = Field(strict=True, ge=1, le=1)
 
 
 class InputMessage(Strict):
@@ -20,6 +26,15 @@ class InputMessage(Strict):
     in_reply_to: str = ''
     confirmed_proposal_ids: list[str] = Field(default_factory=list)
     generation_grant: GenerationGrant | None = None
+    # Omit absent new fields so historical source/grant digests stay unchanged.
+    repair_grant: RepairGrant | None = Field(default=None, exclude_if=lambda value: value is None)
+
+    @model_validator(mode='after')
+    def repair_requires_user_source(self):
+        if self.repair_grant is not None and (self.actor != 'user' or self.origin not in
+                ('host_transcription', 'host_message_record')):
+            raise ValueError('repair_grant 必须绑定宿主记录的真实用户来源，不能使用提案或历史导入')
+        return self
 
 
 class InputSources(Strict):
