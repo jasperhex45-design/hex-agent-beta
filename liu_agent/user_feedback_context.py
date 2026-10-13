@@ -13,7 +13,7 @@ from typing import Literal
 
 from pydantic import Field, ValidationError, model_validator
 
-from . import calibration
+from . import calibration, work_learning
 from .contracts import Strict
 from .feedback import verified_feedback
 from .feedback_recall import _GENERIC_TERMS
@@ -34,6 +34,13 @@ _GENERIC = _GENERIC_TERMS | set(tokens(
 _GENERIC_CHINESE = re.compile('|'.join(re.escape(term) for term in sorted(_GENERIC, key=len, reverse=True)
                                       if re.fullmatch(r'[\u3400-\u9fff]+', term)))
 _ERRORS = (AgentError, OSError, ValueError, KeyError, TypeError)
+
+
+def _learning_call(name, *args, **kwargs):
+    try:
+        return getattr(work_learning, name)(*args, **kwargs)
+    except (ValueError, OSError, KeyError, TypeError) as exc:
+        raise AgentError('私人学习状态不可用：' + str(exc)) from exc
 
 
 class FeedbackSource(Strict):
@@ -83,11 +90,38 @@ def _config(raw, base: Path | None = None) -> FeedbackConfig:
     return config
 
 
-def initialize(packet: dict, kb: Path, *, enabled: bool | None = None) -> None:
+def initialize(packet: dict, kb: Path, *, enabled: bool | None = None, parent: dict | None = None) -> None:
     """Creation-only opt-in from the project's explicitly registered sources."""
     if enabled is not None and type(enabled) is not bool:
         raise AgentError('用户反馈开关须为布尔值')
-    if 'user_feedback_context_version' in packet or enabled is False:
+    if 'user_feedback_context_version' in packet:
+        return
+    if parent is not None:
+        # A linked revision belongs to the original task, not whichever user,
+        # project or TEST workspace happens to be selected at this moment.
+        if 'work_learning' in parent:
+            _learning_call('frozen_context', parent)
+            inherited = deepcopy(parent['work_learning'])
+            inherited['workspace_binding'] = str(work_learning.binding_file(kb).resolve())
+            _learning_call('_current_binding', inherited)
+            if enabled is False:
+                inherited['enabled'] = False
+            packet['work_learning'] = inherited
+            packet['user_feedback_context_version'] = 1
+            packet['user_feedback_config'] = FeedbackConfig(enabled=False).model_dump()
+        elif _version(parent):
+            packet['user_feedback_context_version'] = 1
+            packet['user_feedback_config'] = deepcopy(parent['user_feedback_config'])
+            if enabled is False:
+                packet['user_feedback_config']['enabled'] = False
+        return
+    if _learning_call('initialize', packet, kb, enabled=enabled):
+        # Untagged legacy feedback has no owner/WORK-TEST provenance. Preserve
+        # it on disk, but never mix it into a newly bound personal profile.
+        packet['user_feedback_context_version'] = 1
+        packet['user_feedback_config'] = FeedbackConfig(enabled=False).model_dump()
+        return
+    if enabled is False:
         return
     file = config_path(kb)
     if not file.is_file():
@@ -229,6 +263,7 @@ def _applicable(packet, source, record, evidence):
 
 def refresh(packet: dict) -> None:
     """Refresh selected evidence only on the caller's normal mutable-task path."""
+    _learning_call('refresh', packet)
     if not _version(packet):
         return
     config = _config(packet.get('user_feedback_config'))
@@ -259,6 +294,10 @@ def refresh(packet: dict) -> None:
                'config_digest': digest(config.model_dump()), 'records': rows[:config.max_records],
                'skipped': skipped, 'images_submitted': False, 'generation_authorized': False,
                'status': ('disabled' if not config.enabled else 'recalled' if rows else 'no_relevant_feedback')}
+    personal = _learning_call('frozen_context', packet)
+    if personal:
+        context['personal_learning'] = personal
+        context['status'] = 'recalled' if personal['items'] else 'no_relevant_feedback'
     context['digest'] = digest(context)
     packet['user_feedback_context'] = context
 
@@ -296,11 +335,14 @@ def frozen_context(packet: dict) -> dict:
         if key in seen:
             raise AgentError('用户反馈快照含重复记录')
         seen.add(key)
+    if value.get('personal_learning', {}) != _learning_call('frozen_context', packet):
+        raise AgentError('私人学习上下文与本题快照不一致')
     return deepcopy(value)
 
 
 def require_current(packet: dict, *, stage: str = 'dispatch') -> dict:
     """Before NEW work only: reject stale evidence without rewriting history."""
+    _learning_call('require_current', packet)
     context = frozen_context(packet)
     for row in context.get('records', []):
         try:
@@ -360,4 +402,27 @@ def register_run(config_file: Path, run: Path, *, task_terms: list[str] | None =
         _verify_images(record)
         if source.task_terms and not all(_phrase_present(term, evidence) for term in source.task_terms):
             raise AgentError('反馈登记范围词不属于原始任务')
+    marker = path / 'learning-pending.json'
+    try:
+        learning = _learning_call('capture_run', path, verified_records=records)
+    except _ERRORS as exc:
+        # Original feedback is already durable. Learning can wait, but it must
+        # not fall back to the unscoped legacy index or claim it succeeded.
+        pending = {'status': 'pending', 'reason': str(exc)[:500],
+                   'next_action': 'Restore the original profile binding, then learning capture-run --run RUN.',
+                   'background_worker': False}
+        result = {'status': 'learning_deferred', 'registration_kind': 'private_learning_event',
+                  'feedback_preserved': True, 'learning': pending,
+                  'images_submitted': False, 'generation_authorized': False}
+        try:
+            write_json(marker, pending)
+            result['pending_saved'] = True
+        except OSError as save_error:
+            result.update(pending_saved=False, pending_error=str(save_error)[:240])
+        return result
+    if learning is not None:
+        if marker.exists():
+            write_json(marker, {'status': 'captured', 'learning': learning, 'background_worker': False})
+        return {'status': 'registered', 'registration_kind': 'private_learning_event',
+                'learning': learning, 'images_submitted': False, 'generation_authorized': False}
     return _register(config_file, source)

@@ -1,8 +1,8 @@
 {
-  "version": "0.3.9b8",
+  "version": "0.3.9b9",
   "scope": "product_source_only",
   "channel": "public_beta",
-  "source_commit": "55c0055f5d495a5cdb01eea7192662230deab274",
+  "source_commit": "e28c819c1144a9c3faa35eaf3e39d794789c6cab",
   "notice": "公开 Beta 源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。公开访问不改变现有许可，文件摘要不证明审美或工具可用性。",
   "files": [
     {
@@ -10,8 +10,12 @@
       "sha256": "1b1b51097d8745b3a434ec1010f2154667f36c6d643b1ed39c749d7ba74f5f34"
     },
     {
+      "path": ".agents/skills/hex-work-learning/SKILL.md",
+      "sha256": "a42723cec006b988f14fa5a4003ee8e5c151b9601bfa009438e1b232ab6dfb3d"
+    },
+    {
       "path": ".agents/skills/hex/SKILL.md",
-      "sha256": "808893b59a5e16131a06214c6bacd633ef6c96f550101a32609a53cc67fe317c"
+      "sha256": "76727dca4dd8f469297efae467e3fda55f1db00d011480be8a905ec371798743"
     },
     {
       "path": ".agents/skills/hex/agents/openai.yaml",
@@ -63,15 +67,15 @@
     },
     {
       "path": "BETA.md",
-      "sha256": "e587adc61e082b77b2ef6216fe4b00d76a891ba3e3d3f21ba643b97bbe18d367"
+      "sha256": "db7a34128d46207148b76179ac6997fefcf384df4029305f419181e55981447c"
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "b83f9f5d1ac3a523cf27b0e9006e7a836a069cdc8c503ef1a5deecb760048a8f"
+      "sha256": "357a427f0008793c41e040b03120b28ead51884c6dd88f9b173b93a3a699f193"
     },
     {
       "path": "CODEX_START.md",
-      "sha256": "b49e6737067960f65d1990d632d4aa28fe4ffabd26dfc472d3b135f7674a4e54"
+      "sha256": "3f272acb594d16b218b1dd8af8bd82af10d04a42892df96e4a6260168f23a37d"
     },
     {
       "path": "Hex.ps1",
@@ -83,11 +87,11 @@
     },
     {
       "path": "README.md",
-      "sha256": "a3ca83098dbc903fc137b0d8533605b8a1686b52dabd093479b7aed48d017e5b"
+      "sha256": "953db95eed8881c2f256ede247202d6eb5ef30b44d5dbcd5d15b9e4a01480eca"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "sha256": "73485e4c6489f31aafddeb83c1f282e27c3a7024dd794ad297e743e863fcbf53"
+      "sha256": "c5c80c6a67563688de4d8ac408df4f41a1034fd179955b0f938f20f155b1a74b"
     },
     {
       "path": "cl_hex/__init__.py",
@@ -127,7 +131,7 @@
     },
     {
       "path": "docs/HEX_CORE_METHOD.md",
-      "sha256": "ffb00c24e08b14dd275cb682364c9c78f6b4918b27e751d33deff248c97aa80a"
+      "sha256": "5e6b44b62b3abed93eaeef1166bace51a1b5996bc999991f18ad41792b2f8d2d"
     },
     {
       "path": "docs/HEX_QWEN_MASKED_EDIT_20261007.md",
@@ -144,6 +148,10 @@
     {
       "path": "docs/HOST_PORTABILITY.md",
       "sha256": "51b4ebb26ba881c91ca782bfa27f3ca26abe6cf4744e10383252afc2d6be3b61"
+    },
+    {
+      "path": "docs/INSTALL.md",
+      "sha256": "bc4a941a820abd5259fec004588530c5d345e78d1b9b678e29ecc4b7f38e08f3"
     },
     {
       "path": "docs/KNOWLEDGE_AND_UPDATES.md",
@@ -168,6 +176,10 @@
     {
       "path": "docs/SOURCE_AND_REVIEW_INPUTS.md",
       "sha256": "6435a5c3ae8d394b53f61c61de6b09f01f914c9db15b11833a6db02cfcc72b99"
+    },
+    {
+      "path": "docs/WORK_LEARNING.md",
+      "sha256": "558c205ca920886fad01d2b8db14c487970c545fc4125abe2d6295574a943d98"
     },
     {
       "path": "examples/character-brief.json",
@@ -215,7 +227,7 @@
     },
     {
       "path": "hex_agent/__main__.py",
-      "sha256": "5f2066bb42fec9b14a5148119e36a041f5ad0097fe4c609ffbf11840c10b83c9"
+      "sha256": "d98800cf095b8a0070a1542b8dd288b462d59a6a62029c2d9d9574cc5ef05cc8"
     },
     {
       "path": "hex_agent/blind_comparison.py",
@@ -451,7 +463,7 @@
     },
     {
       "path": "liu_agent/__init__.py",
-      "sha256": "377f582dc5f70492f78f6a25521179937d3b80e27f1f47431a46b8eeae5f922a"
+      "sha256": "995b8722e238f74bbdb407468ee6a36f2d42381adbbc58a1838a85c8bff7135f"
     },
     {
       "path": "liu_agent/__main__.py",
@@ -667,7 +679,7 @@
     },
     {
       "path": "liu_agent/instructions.py",
-      "sha256": "904b0814aa7a65eefe2bccd356f01c179dbfd9ddba154eace230e22d7d7b23d3"
+      "sha256": "2cfb776f4bce134942e9e047ce970d9852de2c3d1f4a0ba230e766a83870f8a0"
     },
     {
       "path": "liu_agent/intent_review.py",
@@ -779,7 +791,7 @@
     },
     {
       "path": "liu_agent/requirement_revision.py",
-      "sha256": "e2b9007430dbf0e5f9404f78840f581ef6b2d7286481fa31035a10d8457241b0"
+      "sha256": "5fee4a3be2bb91beb1b2de46519e794daecfdf1b10e8a7488400203eb4b43139"
     },
     {
       "path": "liu_agent/research.py",
@@ -851,7 +863,7 @@
     },
     {
       "path": "liu_agent/user_feedback_context.py",
-      "sha256": "dda8e6a9a8075d3c2d48c3a72c55df36946e66848d8a81ade401063b27bf031e"
+      "sha256": "15b395a16df0de268ebfe28bf2c96edb4e4669ae583d22adbd125ebdcff2a17e"
     },
     {
       "path": "liu_agent/visual_decision.py",
@@ -882,8 +894,16 @@
       "sha256": "33f8c011788bc8f85da6d08d5d343631593638c0d4998cf6a83e8b7446f87253"
     },
     {
+      "path": "liu_agent/work_learning.py",
+      "sha256": "f959d310cd7d914a71407cdf8220a1f0309a43f3d9a6d8bd21ac5d3c020a7295"
+    },
+    {
+      "path": "liu_agent/work_learning_cli.py",
+      "sha256": "0155ba82704a710f0438f7b0c078f263050cdc2e25f63927673a2da60e477c5b"
+    },
+    {
       "path": "liu_agent/workflow.py",
-      "sha256": "f5dddd1b61b1959845f1fcffb582a1a426b3a0c8757cdcf57d8ac42bed3b820a"
+      "sha256": "0912882e4eb26a2fe8bdb9a3f301d09f530623866ed24fd54f39ad8c3799a166"
     },
     {
       "path": "liu_agent/workflow_policy.py",
@@ -891,7 +911,7 @@
     },
     {
       "path": "pyproject.toml",
-      "sha256": "a22162706a0f6a688ae086440e0c1237112541350ad1ce5b7a8e6c731caa51fa"
+      "sha256": "512b7986e0923bed0f54521c6a5c1ea2225e8fd66507277c74a869cc471cbe75"
     },
     {
       "path": "requirements.txt",
@@ -1055,11 +1075,11 @@
     },
     {
       "path": "scripts/hex_entry.py",
-      "sha256": "8313c97f872c8500e62578e01b1ea61e38e24f313cec254e82d4e62042d485e8"
+      "sha256": "e585fe50c016ff34f949510e4cc59fff392cee3e3d94c4829526b19715a87294"
     },
     {
       "path": "scripts/release_local.py",
-      "sha256": "4c8dac85245a74937d0c1d0d75e36444f4743f83b2d8082b7899e116c2f1a9ee"
+      "sha256": "58d4a637895be4792bafa013c7a8f5647b2461bafcbbe959ace54926ba2ab58b"
     },
     {
       "path": "scripts/runtime/native-requirements.lock.txt",
@@ -1103,7 +1123,7 @@
     },
     {
       "path": "scripts/skill_bundle_entry.py",
-      "sha256": "12f27b7243f7bbb14d78ecb0affa6d2593834561e216f9a73e64046de1f3d707"
+      "sha256": "86556000aa698841e077d634b3ade80f04c681d9d8cfa44740c68609359fc810"
     },
     {
       "path": "scripts/verify_package.py",

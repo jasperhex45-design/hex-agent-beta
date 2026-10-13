@@ -73,7 +73,8 @@ def make_packet(brief_file: Path, out: Path, kb: Path, state: Path, need_file: P
                 previous_need: dict | None = None, execution_profile: str = 'legacy',
                 interaction_profile: str | None = None,
                 knowledge_config: dict | None = None, workflow_profile: str = 'legacy',
-                deliverable_kind: str | None = None, host_reference_descriptors: list[dict] | None = None) -> dict:
+                deliverable_kind: str | None = None, host_reference_descriptors: list[dict] | None = None,
+                feedback_parent: dict | None = None) -> dict:
     from .visual_decision import build_policy, CAR_PROFILES, KNOWLEDGE_PROFILES
     execution_policy = build_policy(execution_profile)
     from .co_creation import policy as interaction_policy, NATURAL_PROFILE
@@ -146,7 +147,7 @@ def make_packet(brief_file: Path, out: Path, kb: Path, state: Path, need_file: P
     packet['prompt_guides'] = freeze_guides(kb, brief.targets)
     # Only newly prepared tasks opt in. Historical packets retain their exact
     # frozen instructions and evidence; feedback is separate from experience.
-    user_feedback_context.initialize(packet, kb, enabled=style_context_enabled)
+    user_feedback_context.initialize(packet, kb, enabled=style_context_enabled, parent=feedback_parent)
     if host_reference_descriptors:
         from .host_references import make_record, validate_context as validate_host_context
         packet['host_visible_references'] = [make_record(packet, row) for row in host_reference_descriptors]
@@ -170,7 +171,7 @@ def make_packet(brief_file: Path, out: Path, kb: Path, state: Path, need_file: P
         packet['intake_policy_version'] = 1
     if previous_need is not None:
         packet['need'] = previous_need
-    if execution_policy is not None and previous_need is None:
+    if execution_policy is not None and previous_need is None and style_context_enabled is not False:
         from .reference_library import initialize
         initialize(packet, kb)
     need = Need.model_validate(read_json(need_file)) if need_file else heuristic_need(brief)
@@ -330,7 +331,10 @@ def refresh_packet(packet: dict, out: Path, kb: Path, state: Path, need: Need, m
     if packet.get('reference_policy_version') == 1:
         packet['reference_policy'] = build_reference_policy(packet)
     private_profile = kb.parent / 'local-library' / 'private-aesthetic-profile.json'
-    if not production and private_profile.is_file():
+    personal_bound = 'work_learning' in packet
+    if personal_bound and (aesthetic_library_path is not None or aesthetic_query is not None):
+        raise AgentError('私人档案任务不使用无 owner/mode 的旧图库召回；请将本题授权素材作为明确参考提供')
+    if not production and not personal_bound and private_profile.is_file():
         # This is a private, local advisory layer. It is included in the
         # packet so the host can choose visible checks; it never sets a pass
         # state and is still overridden by explicit user feedback.
@@ -341,20 +345,26 @@ def refresh_packet(packet: dict, out: Path, kb: Path, state: Path, need: Need, m
                                    'relations': [], 'sources': [], 'cultural_grammars': [],
                                    'missing_dependencies': [], 'notice': '按当前任务自主设计，不强行引用经验。'}
                                   if production else retrieve_design(kb, packet))
-    if production:
-        # Unvalidated experience and private image libraries remain disabled.
-        # Explicit task-scoped user feedback has its own verified projection.
+    if production or personal_bound:
+        # Untagged legacy private data cannot enter an owner-bound task, even
+        # through the opt-in legacy creation route. Explicit current references
+        # still use their separate, authorized input path.
         packet['style_context_config'] = style_context.StyleContextConfig(enabled=False).model_dump()
-    style_context.refresh(packet, kb, library=aesthetic_library_path, query=aesthetic_query,
-                          enabled=False if production else style_context_enabled)
+    style_context.refresh(packet, kb, library=None if personal_bound else aesthetic_library_path, query=aesthetic_query,
+                          enabled=False if production or personal_bound else style_context_enabled)
     if private_profile.is_file() and packet['style_context_config']['enabled']:
         packet['private_style_profile'] = private_style.task_context(private_style.load(private_profile), packet)
     if not packet['style_context_config']['enabled']:
         packet.pop('private_style_profile', None)
     from .reference_library import refresh as refresh_local_references
+    if style_context_enabled is False and 'local_reference_config' in packet:
+        packet['local_reference_config']['enabled'] = False
     refresh_local_references(packet)
-    if style_context_enabled is False and packet.get('user_feedback_context_version') == 1:
-        packet['user_feedback_config']['enabled'] = False
+    if style_context_enabled is False:
+        if packet.get('user_feedback_context_version') == 1:
+            packet['user_feedback_config']['enabled'] = False
+        if 'work_learning' in packet:
+            packet['work_learning']['enabled'] = False
     user_feedback_context.refresh(packet)
     packet["visual_coverage"] = ref_coverage(packet)
     packet.pop("digest", None)

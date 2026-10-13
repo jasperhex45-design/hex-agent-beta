@@ -1,5 +1,14 @@
 # 第三方来源与许可
 
+## 2026-10-13 WORK 经验归纳与研发验收
+
+HEX 的工作学习方法参考以下公开资料；本次核对了所列原始文件。它们用于方法设计，未捆绑上游代码、模型、任务集或运行框架，不构成官方集成或背书。
+
+- [Work2Skill](https://github.com/china-qijizhifeng/Work2Skill) 的 [skill-creator](https://github.com/china-qijizhifeng/Work2Skill/blob/main/AgenticSkillInduction/skills/skill-creator/SKILL.md)：从任务、轨迹和结果证据归纳稳定决定、条件、依赖与完成检查，去除单次记录细节。上游 [MIT License](https://github.com/china-qijizhifeng/Work2Skill/blob/main/LICENSE)，Copyright (c) 2026 Work2Skill contributors。HEX 使用原创的范围化经验数据与宿主提炼指引，不复制 NexAU 的执行接口或 GUI 操作要求。GUI 技能归纳结果不证明 HEX 的审美个人化有效。
+- [AgentSWE](https://github.com/VectorSpaceLab/AgentSWE) 的 [README](https://github.com/VectorSpaceLab/AgentSWE/blob/main/README.md) 与 [DESIGN](https://github.com/VectorSpaceLab/AgentSWE/blob/main/docs/DESIGN.md)：从自然语言需求导出验收，冻结交付物后用未参与开发的案例检查。上游声明 Apache-2.0。HEX 借鉴研发验收思路，未运行官方 AgentSWE 基准，也不把内部回归称为官方成绩。
+
+对应实现为 `liu_agent/work_learning.py`、学习方法及开发库的验收协议。WORK 更新私人经验，不自动上传私人任务或改共用代码；共用能力发布仍需开发者验收。
+
 ## 2026-10-08 可选多模态检索试验
 
 隔离试验适配器参考 [EmbeddingGemma 2 官方模型卡](https://huggingface.co/google/embeddinggemma-2) 和 [Transformers 5.19.0 的官方接口说明](https://huggingface.co/docs/transformers/v5.19.0/en/model_doc/embedding_gemma2)。Google DeepMind 的模型卡标明 Apache 2.0；模型权重、其来源和许可材料仍按上游条款使用，不随 HEX 源码包分发，也不改用 HEX 的主许可。可选 PyTorch、Transformers、Sentence Transformers 依赖保留各自安装包许可；它们不进入基础运行依赖。实际本地 checkpoint 的版本、文件摘要及许可声明随试验报告保留。本段记录接口与来源，不代表已运行模型或完成效果验证。

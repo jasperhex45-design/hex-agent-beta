@@ -108,7 +108,7 @@ def branch_requirements(parent_run: Path, out: Path, kb: Path, state: Path,
                                    if need.brief_change and need.brief_change.scope is not None else {})}
         validate_research_refresh(parent, need.model_dump(), merged, current_brief=changed_brief)
         packet = make_packet(brief_input, staged_run, kb, state, need_input,
-                             sources_file=source_input, previous_need=parent['need'],
+                             sources_file=source_input, previous_need=parent['need'], feedback_parent=parent,
                              execution_profile=inherited_policy['profile'] if inherited_policy else 'legacy',
                              interaction_profile=parent.get('interaction_policy', {}).get('profile'),
                              knowledge_config=parent.get('knowledge_retrieval_config'),

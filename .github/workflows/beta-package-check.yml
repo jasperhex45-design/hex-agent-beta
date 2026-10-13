@@ -58,5 +58,7 @@ jobs:
               subprocess.run([str(python), *args], cwd=root, check=True)
           run('scripts/verify_package.py')
           run('-c', 'import importlib.util; from pathlib import Path; from liu_agent.io import ROOT; import liu_agent.feedback_card, liu_agent.user_feedback_context; assert ROOT == Path.cwd(); assert importlib.util.find_spec("pytest") is None')
+          run('-m', 'hex_agent', 'learning', '--help')
+          run('scripts/hex_entry.py', 'learning', '--help')
           run('-m', 'hex_agent', 'demo', '--out', 'outputs/beta-smoke')
           run('scripts/hex_entry.py', 'codex', 'install', '--dry-run', '--codex-dir', 'outputs/beta-smoke/codex', '--skills-dir', 'outputs/beta-smoke/skills')

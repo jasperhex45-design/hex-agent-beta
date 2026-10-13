@@ -8,7 +8,7 @@ if hasattr(sys.stdout, 'reconfigure'):
 if hasattr(sys.stderr, 'reconfigure'):
     sys.stderr.reconfigure(encoding='utf-8')
 
-from liu_agent.windows_runtime import main
+from hex_agent.__main__ import main
 
 if __name__ == '__main__':
     raise SystemExit(main(sys.argv[1:]))

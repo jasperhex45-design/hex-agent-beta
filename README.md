@@ -1,114 +1,53 @@
-# HEX Beta · 公开测试
+# HEX · 视觉创作助手
 
-跨宿主安装使用可重建的标准 HEX Skill 包，保留完整方法与模型资料；WorkBuddy、豆包工作及其它支持 Skills 的宿主入口与实际能力边界见 [跨宿主安装](docs/HOST_PORTABILITY.md)。导入支持不等于这些客户端已完成实测。
+把你的想法、参考和修改要求，发展成画面方案与目标模型提示词；在工具可用时，继续生成、检查和修改图片。
 
-让宿主模型按你的目标完成视觉创作：理解需求、看参考、形成画面、写适配目标模型的提示词，再根据实际结果检查和修改。
+HEX 运行在你的 AI 助手中，由创作方法、模型资料和可选的 Python 流程工具组成，**不是独立生图模型**。
 
-**[下载 ZIP](https://github.com/jasperhex45-design/hex-agent-beta/archive/refs/heads/main.zip) · [版本与标准 Skill 安装包](https://github.com/jasperhex45-design/hex-agent-beta/releases) · [GitHub 仓库](https://github.com/jasperhex45-design/hex-agent-beta) · [提交反馈](https://github.com/jasperhex45-design/hex-agent-beta/issues/new/choose)**
+**[开始使用](docs/INSTALL.md) · [标准 HEX-Skill 包](https://github.com/jasperhex45-design/hex-agent-beta/releases) · [提交反馈](https://github.com/jasperhex45-design/hex-agent-beta/issues/new/choose)**
 
-当前版本以 [pyproject.toml](pyproject.toml) 为准。本版更新见 [CHANGELOG.md](CHANGELOG.md)。这是公开测试版，任何人都可下载试用；功能范围与真实质量边界见 [BETA.md](BETA.md)。
+## 能做什么
 
-## 让 AI 助手帮你安装
+- **从想法到画面方案。**理解需求、分析参考，明确构图、光色、材质和表达方向。
+- **为选定模型写提示词。**保留身份、数量、准确文字和修改范围，按实际生成或编辑入口组织表达。
+- **根据真实结果继续修改。**保留正确部分，记录反馈与执行依据；有运行能力时支持任务恢复和受控执行。
+- **只做你需要的阶段。**只要参考、方案或提示词，就在该阶段交付，不自动扩展为生图任务。
 
-把下面这段交给**能访问文件、运行终端的 AI 助手**，例如在本机工程中工作的 Codex。仅能聊天的网页会话不能据此直接安装到你的电脑。
+当前 Beta 优先验证汽车静图、有界改图和模型提示词。人物、平面设计与分镜静帧有方法入口，效果仍需各自的真实任务验证。
 
-```text
-请帮我安装 HEX Beta：
-https://github.com/jasperhex45-design/hex-agent-beta
+## 两条开始路径
 
-下载 main 分支 ZIP 到独立目录并解压，或用 Git 克隆到新目录，不覆盖已有工程。进入包含 README.md 的根目录，先读 README.md 和 CODEX_START.md。检查 Python >= 3.11；Windows 运行 .\scripts\bootstrap.ps1，macOS/Linux 运行 sh scripts/bootstrap.sh。
+**日常创作优先选标准 `HEX-Skill` 包；需要直接管理 Python 环境与源码时，再选源码版。**两者使用同一套创作方法与流程工具，实际执行能力取决于宿主。
 
-使用项目 .venv 核对 bootstrap 的 doctor、validate 真实结果；失败就报告具体原因，不宣称安装成功。基础安装不需要下载生图模型、运行开发测试集或配置付费服务。
+| 你的使用方式 | 从哪里开始 |
+| --- | --- |
+| 日常创作（推荐） | 导入标准包中的完整 `hex/`，按[跨宿主指南](docs/HOST_PORTABILITY.md)核对资源和工具能力。 |
+| 自己管理 Python 环境与源码 | 获取 [Beta 源码](https://github.com/jasperhex45-design/hex-agent-beta/archive/refs/heads/main.zip)，准备 Python 3.11+，按[安装指南](docs/INSTALL.md)运行 bootstrap。 |
 
-如果我要在 Codex 中使用集成，先用项目解释器运行 -m hex_agent codex install --dry-run，核对当前项目 .codex 配置和计划改动，再运行 -m hex_agent codex install 并检查实际状态。仓库已有 .agents/skills/hex；不要把依赖或集成配置安装成功当作全局 Skill 或 hooks 已启用。
+安装后直接说明需求，例如：
 
-最后告诉我安装目录、已通过与未通过的检查，以及如何在当前宿主中开始用 HEX。模型与生图额度使用我自己的宿主或已连接服务。
-```
+> 用 HEX。以这张图为编辑输入，保留车身比例、机位和轮毂，只调整车漆质感。先看参考并确认本次模型，再执行，最后用结果图指出是否做到。
 
-## 手动安装
+你不需要填写内部模板。已有模型选择和需求会沿用；缺少影响结果的信息时，HEX 再问必要问题。没有生图工具时，可以先完成方案或提示词。
 
-需要 **Python 3.11 或更新版本**。点击上面的“下载 ZIP”，解压后，在**包含 README.md 的根目录**打开终端。
+## WORK 与 TEST
 
-**Windows PowerShell：**
+**WORK 是你的日常创作**，可按需开启[私人学习](docs/WORK_LEARNING.md)，让相关反馈用于下一次工作。
 
-```powershell
-.\scripts\bootstrap.ps1
-```
+**TEST 是开发者验证功能和效果**，不要求你日常额外生图，测试记录也不自动写入你的私人偏好。
 
-<details>
-<summary>Windows 提示脚本被执行策略阻止时</summary>
+## 使用边界
 
-在同一工程目录逐条运行以下命令。无需激活虚拟环境或修改全局执行策略；已有 `.venv` 时跳过第一条。
+- 模型、账户与生成额度由你自己的宿主或已连接服务提供。
+- 私人学习默认关闭，经同意开启；你可以撤回同意、停用学习，它不训练权重，也没有离线后台。
+- 私人档案只做本机逻辑隔离，不是账号鉴权或操作系统级隐私保护。
 
-```powershell
-py -3 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m hex_agent doctor
-.\.venv\Scripts\python.exe -m hex_agent validate
-```
+本源码已支持私人学习，下载包是否包含以其实际版本为准（[源码版本](pyproject.toml) · [更新记录](CHANGELOG.md)）。验证细节与反馈要求见 [BETA.md](BETA.md)。
 
-如果没有 `py` 启动器，第一条改用已安装的 Python 3.11+ 的 `python` 命令；任一步失败先处理报错。
+## 文档入口
 
-</details>
-
-**macOS / Linux：**
-
-```sh
-sh scripts/bootstrap.sh
-```
-
-也可以用 Git 获取同一份源码，再按系统执行上述安装命令：
-
-```sh
-git clone https://github.com/jasperhex45-design/hex-agent-beta.git
-cd hex-agent-beta
-```
-
-安装将基础依赖放入项目 `.venv`，并执行 `doctor` 与 `validate`；已有项目虚拟环境会被复用。Python 与宿主软件需预先安装。安装不会运行开发测试集、下载模型或自动注册全局 `hex-agent` 命令。当前通过源码目录使用，未发布 PyPI 安装包。
-
-## 开始创作
-
-只说“我要做一个图”时，HEX 先问最影响方向的需求；本次没说使用什么模型时，也先问模型，当前任务已回答过则沿用。明确需求后，再找素材、判断取舍，并按该模型的生成或编辑写法编写。你只要参考、方案或提示词时，就在所需阶段交付。
-
-[模型提示词资料](knowledge/model-prompts/README.md) 缓存官方写法与适用版本，按当前目标读取；[素材与信息入口](knowledge/research-entrypoints.md) 按需求选择 Designeer 的分类、Pinterest 或原始资料。缓存指南不代表模型账户已接通，也不代表效果已经验证。
-
-在支持文件、看图和相应生成工具的宿主中打开整个工程目录，然后说明需求，例如：
-
-> 用 HEX。以这张图为编辑输入，保留车身比例、机位和轮毂，只把漆面做得更平滑通透。先看参考，再执行，最后用结果图指出是否做到。
-
-宿主读取 [CODEX_START.md](CODEX_START.md)，使用统一入口处理文件与流程。你只需说明目标、必须保留的内容和反馈，不需要填写内部模板。
-
-HEX 使用你当前宿主或已连接服务的能力；安装本身不提供模型账户、API Key 或生图额度。没有生图工具时可以完成提示词任务。可选语义检索和 Windows OCR 按需配置，见 [运行环境说明](docs/HEX_WINDOWS_WORKFLOW_20261007.md)。
-
-## 检查安装与 Codex 集成
-
-Windows 使用 `.\.venv\Scripts\python.exe`，macOS / Linux 使用 `.venv/bin/python`：
-
-```text
-PYTHON -m hex_agent doctor
-PYTHON -m hex_agent validate
-PYTHON -m hex_agent demo --out outputs/demo
-```
-
-将 `PYTHON` 替换为上述项目解释器。打开 `outputs/demo/result.html` 查看安装演示；它是内置静态示例，不是模型生成效果。
-
-如需 Codex 集成，在当前工程目录使用上述项目解释器：
-
-```text
-PYTHON -m hex_agent codex install --dry-run
-PYTHON -m hex_agent codex install
-```
-
-先检查 dry-run 对当前项目 `.codex/hooks.json` 与 `hex-integration.json` 的计划改动，再执行第二条。仓库已包含 `.agents/skills/hex`，无需为项目使用额外指定全局 Skill 目录。完整步骤见 [CODEX_START.md](CODEX_START.md)。配置写入成功不证明 hooks 已获信任或生效，以当前宿主实际状态为准。
-
-## 反馈与维护
-
-通过 **[Issues → HEX Beta 反馈](https://github.com/jasperhex45-design/hex-agent-beta/issues/new/choose)** 提交实际问题。**Issues 内容公开，请只上传可公开的素材。**原始需求、结果图和最关键的一处差距，比整包日志更有用；提交方式见 [BETA.md](BETA.md)。
-
-测试版不包含开发测试集。维护者在完整开发库中安装测试工具并按改动执行必要回归。源码目录保留运行所需知识与 schema，单独 wheel 不是完整发行物。
-
-`hex_agent`、`cl_hex` 是入口，`liu_agent` 保留实际实现；旧命令只作兼容。完整命名关系见 [名称说明](docs/PROJECT_IDENTITY.md)。
+[安装与检查](docs/INSTALL.md) · [跨宿主能力](docs/HOST_PORTABILITY.md) · [私人学习](docs/WORK_LEARNING.md) · [共用创作方法](docs/HEX_CORE_METHOD.md) · [操作、续改与恢复](CODEX_START.md) · [模型提示词资料](knowledge/model-prompts/README.md) · [Beta 边界与反馈](BETA.md)
 
 ## 许可
 
-沿用 [CC BY-NC 4.0](LICENSE)，第三方来源与适用范围见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。公开下载不改变这些条款。程序检查通过不等于画面已满足创作要求，效果由实际任务与用户反馈验证。
+有权许可的自有源码和文档采用 [CC BY-NC 4.0](LICENSE)，第三方来源与适用范围见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。公开下载不改变许可条款，也不为用户素材或模型服务提供额外授权。

@@ -12,6 +12,8 @@
 
 需要问时，第一条含问题的回复就使用宿主实际可用的交互选择组件；先读已提供组件的规则，一轮最多两个关键问题，每题 2–4 个贴题选项及自由填写，遵守更小的宿主上限。不先纯文字再等用户要求选择栏；确无适用组件才说明原因并用文字选项降级。普通按钮标签沿自然答复来源记录，不为呈现 UI 造 `DirectionDraft`；本地问答记录不证明按钮已显示。已有答案或明确委托继续使用。
 
+日常任务是 WORK；仅明确研发实验使用 TEST。已启用私人学习时，建任务前按 [学习方法](.agents/skills/hex-work-learning/SKILL.md) 核对本次档案、项目、风格与选定模型，不继承上个客户的选择。匹配经验随 `user_feedback_context.personal_learning` 进入参考研究、方案及编译；当前明确要求始终优先。未启用时正常使用共用能力，不制造风格档案。
+
 已有会话绑定或明确旧任务时直接按第 5 节恢复。新任务在工程 `inputs/` 保存最小 brief、sources 与必要素材，run 使用 `outputs/`；其它目录先核对 `allowed_run_roots`。按真实需求填写目标模型与交付类型，不无故加载未使用的目标：
 
 | 需求与当前能力 | `--deliverable-kind` |
@@ -98,7 +100,7 @@ PY ENTRY workflow complete --run RUN
 
 先查原 `status` / `harness plan`，按真实 `resume` 下一步接续。已核验许可只是内部登记或父子预算关联缺失时，用已有恢复入口修复，不重复问用户。冻结后的续改用 `refresh --out` 建关联版本，保留真实父图、反馈、新 `change_scope/preserve` 与累计预算；必要时传 `--edit-reference` / `--parent-request-id`。变更参考、Need 或模型后重新观察与编译。
 
-真实接受、拒绝、局部认可和相对喜欢用原反馈入口保存；CLI 自动登记适用来源，不把相对更好当最终接受，也不把跨题反馈自动套入本题。
+真实接受、拒绝、局部认可和相对喜欢用原反馈入口保存；CLI 自动登记适用来源，不把相对更好当最终接受，也不把跨题反馈自动套入本题。已绑定档案的任务返回 `registration_kind=private_learning_event`，按学习方法处理新增事件并回读结果，不等 TEST 或额外生图。`learning_deferred` 表示原反馈保留、提炼尚未成功；检查原 run 的 `learning-pending.json`，在原身份/模式可用后用 `learning ... capture-run --run RUN` 重试来源。状态为 pending 时不得宣称已经记住或离线还在学习。
 
 **带偏差收下（新合同）。** 仅一个真实已完成候选、无在途请求，文件/必要 OCR、硬要求、整体目标和基准比较均成立，仅作者非硬性局部拍法存在明确 not_met 时，先用简短人话逐项说明实际 candidate_evidence；不要求向用户照读内部 question 或编号。保存真实 assistant 披露消息和用户明确接受的回复（`in_reply_to` 指向披露消息），沿原 feedback-sources 格式绑定图片、packet、contract 后调用 `record-feedback --decision accepted_by_user --sources FILE --source-id ID --user-quote 原话 --source 来源 --run RUN`。来源绑定不认证宿主实际展示，必须真实问答，不把“好看”猜成知情接受。随后 `workflow complete` 以 `accepted_with_deviations` 结束；原检查/图片/预算不改写，不自动返修，不形成永久偏好。硬要求失败、整体目标未达或看不清不能由此豁免。唯一已完成候选在正式导出前也可用 `record-feedback --decision rejected_by_user --sources FILE --source-id ID` 保存明确否决；仍核验原图、请求与来源，未完成的检查保留，不再要求用户重复评价。多候选不能猜选，拒绝不授予重做预算。专业反馈召回、来源失效和诊断边界按需读上述反馈文档。
 

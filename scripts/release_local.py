@@ -29,6 +29,7 @@ SOURCE_TREES = {
     '.agents/skills/liu-aesthetic-judgment': {'.md'},
     '.agents/skills/liu-art-structure': {'.md'},
     '.agents/skills/hex': {'.md', '.yaml'},
+    '.agents/skills/hex-work-learning': {'.md'},
 }
 ENTRY_FILES = {'.agents/skills/hex/SKILL.md', '.agents/skills/hex/agents/openai.yaml'}
 REQUIRED_FILES = {
@@ -42,6 +43,7 @@ REQUIRED_FILES = {
     'configs/knowledge-windows.json', 'scripts/runtime/native_worker.py',
     'BETA.md', 'scripts/bootstrap.ps1', 'scripts/bootstrap.sh',
     'docs/FEEDBACK_CREATION_CONTEXT.md', 'docs/ESSENTIAL_CREATION_FEEDBACK.md',
+    '.agents/skills/hex-work-learning/SKILL.md', 'docs/WORK_LEARNING.md', 'docs/INSTALL.md',
 }
 # These are runtime instructions, not a copy of the development workspace.
 # A fresh tester should not receive historical checks, outputs or private examples.

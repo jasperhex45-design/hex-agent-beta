@@ -49,6 +49,7 @@ def _digest(path: Path) -> str:
 
 def _is_readable_reference(name: str) -> bool:
     if name in {"AGENTS.md", "CODEX_START.md", "ART_STRUCTURE_START.md",
+                "README.md", "BETA.md", "CHANGELOG.md", "pyproject.toml",
                 "LICENSE", "THIRD_PARTY_NOTICES.md"}:
         return True
     if name.startswith("knowledge/") and name.endswith((".md", ".json")):
@@ -321,7 +322,7 @@ def main(argv: list[str] | None = None) -> int:
     if args == ["--skill-doctor"] or not report["ready"]:
         print(json.dumps(report, ensure_ascii=False, indent=2))
         return 0 if report["ready"] else 2
-    from liu_agent.windows_runtime import main as runtime_main
+    from hex_agent.__main__ import main as runtime_main
     return runtime_main(args)
 
 

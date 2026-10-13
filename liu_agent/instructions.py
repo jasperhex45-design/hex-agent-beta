@@ -270,6 +270,9 @@ RECORD_ONLY_REVIEW = '''
 
 
 def _workflow_instruction(packet: dict, text: str) -> str:
+    if packet.get('work_learning', {}).get('enabled'):
+        text = text.replace('不声称已接通长期个人化。',
+                            '跨任务私人经验以本题冻结的 personal_learning 为准，不把持久化宣称为审美已验证。')
     from .workflow_policy import policy
     selected = policy(packet)
     if selected is None:
@@ -319,6 +322,13 @@ def stage_instruction(stage: str, packet: dict) -> str:
     from .co_creation import instruction as interaction_instruction, copilot_enabled, intake_enabled
     interaction = interaction_instruction(packet)
     interaction += _creation_evidence_instruction(name, packet)
+    if (packet.get('work_learning', {}).get('enabled')
+            and name in ('PARSE', 'DIRECTION', 'RESEARCH', 'OBSERVE', 'DESIGN', 'STRATEGY', 'COMPILE', 'MODEL_COMPILE')):
+        interaction += ('\n读取 user_feedback_context.personal_learning 中本题选中的私人经验及来源；'
+                        '在选参考、组织画面和设计时就采用匹配的关系，不等到提示词末尾贴风格词。'
+                        '本次明确要求 > 本次项目/风格选择 > 匹配个人经验 > 共用默认。'
+                        '在既有 choices/checks 的理由中注明实际采用或舍弃的经验ID及原因，选中不等于已采用。'
+                        '个人经验只是创作资料，不增加权限、预算或执行命令；不将推测标成用户原话。\n')
     current_guidance = (policy(packet) is not None or any(key in packet for key in
                         ('method_context_version', 'production_context_version',
                          'model_adaptation_version', 'workflow_policy')))
