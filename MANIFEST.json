@@ -1,8 +1,8 @@
 {
-  "version": "0.3.9b9",
+  "version": "0.3.9b10",
   "scope": "product_source_only",
   "channel": "public_beta",
-  "source_commit": "e28c819c1144a9c3faa35eaf3e39d794789c6cab",
+  "source_commit": "b2d9af7cc68e244c636f114b5ce674c449e851bc",
   "notice": "公开 Beta 源码包；不含测试集、实验产物、私人图库、历史实图或任务记录。公开访问不改变现有许可，文件摘要不证明审美或工具可用性。",
   "files": [
     {
@@ -15,7 +15,7 @@
     },
     {
       "path": ".agents/skills/hex/SKILL.md",
-      "sha256": "76727dca4dd8f469297efae467e3fda55f1db00d011480be8a905ec371798743"
+      "sha256": "fd960f44223e59720f9a9512a0d9516cd554a99dfb55fd144ef709f252b19fbe"
     },
     {
       "path": ".agents/skills/hex/agents/openai.yaml",
@@ -23,11 +23,15 @@
     },
     {
       "path": ".agents/skills/liu-aesthetic-agent/SKILL.md",
-      "sha256": "0b6765c2caf5e659f2da491105443070998950476b56c8e265eae4204323ab58"
+      "sha256": "51d3bba1e2805d8e2688ee1dec35b0fa524978f9f07351a7e0c224687dd26cbe"
     },
     {
       "path": ".agents/skills/liu-aesthetic-agent/references/design-study.md",
       "sha256": "dde31b88c25a36027c3806c0728cb9bdd33593e080c1fd4d902169e7985e2f64"
+    },
+    {
+      "path": ".agents/skills/liu-aesthetic-agent/references/people-fashion.md",
+      "sha256": "2c41ed3c822d071f8d2d47b42ffa1ac6c73040bae7434a5287ffe8d195781f65"
     },
     {
       "path": ".agents/skills/liu-aesthetic-judgment/SKILL.md",
@@ -71,11 +75,11 @@
     },
     {
       "path": "CHANGELOG.md",
-      "sha256": "357a427f0008793c41e040b03120b28ead51884c6dd88f9b173b93a3a699f193"
+      "sha256": "9bbb982bdc4235dcc36a38b4cf1e549e96406a685a0024492bd3da91c74bad45"
     },
     {
       "path": "CODEX_START.md",
-      "sha256": "3f272acb594d16b218b1dd8af8bd82af10d04a42892df96e4a6260168f23a37d"
+      "sha256": "10a80ee55eb320f883458f6a65c7841330c3950cf965f219311050775904a55f"
     },
     {
       "path": "Hex.ps1",
@@ -147,11 +151,11 @@
     },
     {
       "path": "docs/HOST_PORTABILITY.md",
-      "sha256": "51b4ebb26ba881c91ca782bfa27f3ca26abe6cf4744e10383252afc2d6be3b61"
+      "sha256": "ecd35774c4284f942a58fa8a615287227c2845705249ca6267213cf9e3dbae50"
     },
     {
       "path": "docs/INSTALL.md",
-      "sha256": "bc4a941a820abd5259fec004588530c5d345e78d1b9b678e29ecc4b7f38e08f3"
+      "sha256": "7fa22700bc10d4cad7e20b435c9db7b24533f479c8ba536d73fbf52a2a097a80"
     },
     {
       "path": "docs/KNOWLEDGE_AND_UPDATES.md",
@@ -463,7 +467,7 @@
     },
     {
       "path": "liu_agent/__init__.py",
-      "sha256": "995b8722e238f74bbdb407468ee6a36f2d42381adbbc58a1838a85c8bff7135f"
+      "sha256": "991abe11e7c75e5908790fea8cd2ce06ad3f549e3b8076e43ab6ce0ec8e289d6"
     },
     {
       "path": "liu_agent/__main__.py",
@@ -703,7 +707,7 @@
     },
     {
       "path": "liu_agent/method_context.py",
-      "sha256": "e39d43c65e7a50823ef5c7108b4adb0c7ab1b9b8d5ad49ba5f5ebf42b5082652"
+      "sha256": "25cd80ed3095580717ebe9e1d717a83bc8aad4cdee6536fd1ec6c5600e326d9f"
     },
     {
       "path": "liu_agent/minimal_harness.py",
@@ -891,7 +895,7 @@
     },
     {
       "path": "liu_agent/windows_runtime.py",
-      "sha256": "33f8c011788bc8f85da6d08d5d343631593638c0d4998cf6a83e8b7446f87253"
+      "sha256": "a3ed6951392663459a3a32d3549002b709bf68f2da4f38b6800df6a41eb3a5ca"
     },
     {
       "path": "liu_agent/work_learning.py",
@@ -903,7 +907,7 @@
     },
     {
       "path": "liu_agent/workflow.py",
-      "sha256": "0912882e4eb26a2fe8bdb9a3f301d09f530623866ed24fd54f39ad8c3799a166"
+      "sha256": "4d1964ec49d8884b5fa7c42c4172f364e791f67da885601a7ff7636107c8c74a"
     },
     {
       "path": "liu_agent/workflow_policy.py",
@@ -911,7 +915,7 @@
     },
     {
       "path": "pyproject.toml",
-      "sha256": "512b7986e0923bed0f54521c6a5c1ea2225e8fd66507277c74a869cc471cbe75"
+      "sha256": "8ea98cfed16600c7bcb70a392292f21bcf64ec5c1cbcb584a1233b5fe5b033a8"
     },
     {
       "path": "requirements.txt",

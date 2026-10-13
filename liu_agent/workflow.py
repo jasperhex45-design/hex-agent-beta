@@ -162,6 +162,7 @@ def make_packet(brief_file: Path, out: Path, kb: Path, state: Path, need_file: P
     if execution_policy is not None:
         packet['visual_decision_policy'] = execution_policy
         packet['method_context_version'] = 1
+        packet['people_method_version'] = 1
         packet['production_context_version'] = 2
         if retrieval_config is not None:
             packet['knowledge_retrieval_config'] = retrieval_config

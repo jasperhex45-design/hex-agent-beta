@@ -38,6 +38,18 @@ METHODS = {
     'scoped-repair': (
         '反馈修复：核对绑定当前图的具体差距及 preserve；先定位需求、参考、设计、编译、输入或结果哪层失效，只修改有证据的一两个重点。缺乏图像或反馈依据时先核对，不以机器解释冒充用户原话，不扩大续改范围或许可。',
         'REVISE'),
+    'people-observe': (
+        '人物静图：只据当前可见证据分别记录人物身份保留项、脸向与视线、姿态支点、手与物体的接触、衣料张力和遮挡；未知部位不猜。参考若仅供风格借鉴，不锁走原人的姿势或服装。核对光线在皮肤、衣料与背景上产生的不同反应；肤质细节以实际景别和分辨率可见为限，不从缩略图声称看到了毛孔。',
+        'PRODUCTION_OBSERVE'),
+    'people-design': (
+        '人物与时尚静图：先明确本题重在人物状态、服装展示、场景关系或形式表达，再选择有作用的机位、裁切、姿态与空间层次；不默认全身、正脸、固定焦段或禁止看镜头。写实目标下核对支撑、接触、遮挡与衣料受力；有意夸张服从本题目标。让皮肤、衣料和背景各有清楚的光材质职责，主体可突出也可融入。肤质按观看尺度和修饰用途设计，不以更白、更多纹理或一律去磨皮代替判断；只把采用的关系落入现有choices/checks，不增设审批或生图轮次。',
+        'PRODUCTION_DESIGN'),
+    'people-edit': (
+        '人物局部修改：沿当前change_scope、preserve及allowed_operations核对授权。仅肤质或服装材质有问题时，不顺带改脸形、表情、身材、姿态、服装设计、背景或机位；光向等变化也须属于原允许操作。记录所改区域的可见问题和范围外保留项，不能把技术合格推断为整体时尚感成立；改动依据不足时保留未知。',
+        'PRODUCTION_DESIGN'),
+    'people-compile': (
+        '人物静图编译：只转译已采用的设计，保留有作用的脸向、视线、接触、裁切以及服装与环境的光色关系；未采用的检查项不塞进正文。肤质描述随景别与目标处理，不机械叠加细节词；摄影参数、负面语法与参考职责依当前目标模型卡和实际入口，不把某模型语法或固定焦段当通用审美。保持用户硬锁及允许的表达弹性。',
+        'PRODUCTION_COMPILE'),
     'identity-boundary': (
         '身份图只决定本题主体事实；摄影或风格案例只提供被允许的方法。多视图身份保持不等于全部机位锁定，指定单图编辑的保留项优先。',
         'PRODUCTION_DESIGN'),
@@ -129,6 +141,9 @@ def build_method_context(packet: dict, stage: str, *, revision: dict | None = No
     """
     if not enabled(packet):
         return None
+    people_version = packet.get('people_method_version')
+    if 'people_method_version' in packet and (type(people_version) is not int or people_version != 1):
+        raise AgentError('people_method_version 无效；不能静默替换人物方法')
     name = stage.lower() if isinstance(stage, str) else ''
     name = _ALIASES.get(name, name)
     if name not in _STAGES:
@@ -163,6 +178,12 @@ def build_method_context(packet: dict, stage: str, *, revision: dict | None = No
                 supporting.append(scope_method)
         if revision is not None:
             supporting.append('revision-boundary')
+    people_applicable = (people_version == 1 and need.get('domain', brief.get('domain')) == 'person'
+                         and brief.get('medium', 'still') == 'still')
+    if people_applicable and name in ('observe', 'design', 'model_compile'):
+        supporting.append({'observe': 'people-observe',
+                           'design': 'people-edit' if mode == 'local_edit' else 'people-design',
+                           'model_compile': 'people-compile'}[name])
     basis = {'scope': brief.get('scope', 'create'), 'domain': need.get('domain', brief.get('domain')),
              'medium': brief.get('medium', 'still'), 'purpose': understanding.get('purpose'),
              'change_scope': understanding.get('change_scope'),
@@ -170,6 +191,8 @@ def build_method_context(packet: dict, stage: str, *, revision: dict | None = No
              'must_keep': deepcopy(need.get('must_keep', [])),
              'allowed_operations': deepcopy(packet.get('allowed_operations', [])),
              'revision': deepcopy(revision)}
+    if people_applicable:
+        basis['people_method_version'] = people_version
     if research_versioned:
         basis['visual_research_version'] = packet['visual_research_version']
         basis['visual_research'] = deepcopy(need.get('visual_research'))

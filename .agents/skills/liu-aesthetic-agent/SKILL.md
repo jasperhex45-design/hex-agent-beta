@@ -17,6 +17,8 @@ description: HEX 通用静态视觉方法的兼容入口，保留 hex-aesthetic-
 
 ## 形成有效画面
 
+静态人物与时尚摄影按需读 [人物方法](references/people-fashion.md)，补充人物状态、接触与衣料、肤质尺度及服装与环境的光色检查；不要求同时采用全部检查，不把固定焦段、肤质或风格当默认答案。局部修改继续服从原范围。Harness 的新生产任务按版本标记将精简规则送入现有观察、设计和编译；指导方式直接使用本页方法，不要求外部 Skill、Python 或 Codex CLI。
+
 沿当前 Need / Plan / choices 设计，静态图保持 `narrative=null`。从主体关系、空间尺度、动作、视觉重心、光影、色彩和媒介中选真正影响本题的手段。写具体可见关系、配合作用、代价与失败条件；不要求填齐全部维度，也不用“高级”“电影感”代替设计。
 
 分清用户锁定、画面成立所必需、允许变化与可以省略的内容。`spec.locked_facts` 保留 `need.must_keep`，operations 不越界，`evidence_targets` 对应 checks。允许变化保持弹性，不在编译时变成硬限制。提案需要比较时使用现有 `creative_directions`，不固定数量或为每案生图。

@@ -2,7 +2,9 @@
 
 本文件保存 Harness 的操作顺序，文件名不限制对话模型或宿主。标准 Skill 包与新会话的无执行能力分支先读 [跨宿主入口](docs/HOST_PORTABILITY.md) 和 [共用方法](docs/HEX_CORE_METHOD.md)；指导方式不执行或伪造下方命令，已有任务仍沿原合同恢复。首次启动读第 1–2 节，此后按当前 `next_action` 和 `host_context` 读取所需章节；安装、特殊素材和历史接口不作为每题前置。共同边界见 [AGENTS.md](AGENTS.md)，已加载的内容无需重读。
 
-下文 `PY`、`ENTRY`、`RUN` 等由宿主替换为主 Skill 已核验的解释器、随包 `scripts/hex.py` 或源码 `scripts/hex_entry.py` 和真实绝对路径；工程目录中也可用项目解释器执行 `-m hex_agent`。用户不填写内部占位符。
+下文 `PY`、`ENTRY`、`RUN` 等由宿主替换为主 Skill 已核验的解释器、随包 `scripts/hex.py` 或源码 `scripts/hex_entry.py` 和真实绝对路径；工程目录中也可用项目解释器执行 `-m hex_agent`。用户不填写内部占位符。本地 macOS/Linux 源码环境使用 `.venv/bin/python`，Windows 使用 `.venv/Scripts/python.exe`；标准包使用宿主现有解释器，不要求 `.venv` 或 `Hex.ps1`。客户端系统不等于远端沙箱系统，路径依据实际执行位置。
+
+没有命令工具、Python 或沙箱临时不可用时，不先运行这些命令；新任务用当前可读资料指导，已有任务保留原合同与具体阻塞。执行服务在 Python 启动前拒绝请求时，停止无依据换 shell/重试，不自动归因 HEX 或 Mac，也不要求转用 Codex CLI。恢复须有服务恢复或新的定位证据；只有第 6 节的可选 Codex 集成需要相关宿主支持。
 
 用户要求整理 Pinterest 收藏、本地素材或艺术风格库时，直接按 [私人艺术风格库](docs/PRIVATE_REFERENCE_LIBRARY.md) 使用 `PY ENTRY references`；此类维护不建创作 run。已发布集合由新任务沿既有参考入口选择，实际分析和创作继续使用当前宿主。
 
@@ -104,7 +106,7 @@ PY ENTRY workflow complete --run RUN
 
 **带偏差收下（新合同）。** 仅一个真实已完成候选、无在途请求，文件/必要 OCR、硬要求、整体目标和基准比较均成立，仅作者非硬性局部拍法存在明确 not_met 时，先用简短人话逐项说明实际 candidate_evidence；不要求向用户照读内部 question 或编号。保存真实 assistant 披露消息和用户明确接受的回复（`in_reply_to` 指向披露消息），沿原 feedback-sources 格式绑定图片、packet、contract 后调用 `record-feedback --decision accepted_by_user --sources FILE --source-id ID --user-quote 原话 --source 来源 --run RUN`。来源绑定不认证宿主实际展示，必须真实问答，不把“好看”猜成知情接受。随后 `workflow complete` 以 `accepted_with_deviations` 结束；原检查/图片/预算不改写，不自动返修，不形成永久偏好。硬要求失败、整体目标未达或看不清不能由此豁免。唯一已完成候选在正式导出前也可用 `record-feedback --decision rejected_by_user --sources FILE --source-id ID` 保存明确否决；仍核验原图、请求与来源，未完成的检查保留，不再要求用户重复评价。多候选不能猜选，拒绝不授予重做预算。专业反馈召回、来源失效和诊断边界按需读上述反馈文档。
 
-完整流程与 execution profile 独立；显式 legacy 执行策略仍完成原 native Eval/比较，默认生产策略不重复两套评审。没有 `workflow_policy` 的旧包沿 `status/resume/finalize` 恢复，不补新默认或宣称已通过新验收。明确停止用原 `stop-generation`，普通暂停用当前 `codex pause`；锁残留按来源接口的 `recover-lock` 核对，不删账本。API 长调用期间可登记停止，后续付费文本/图像调用在入口与实际交给 provider 前重新检查；已交给 provider 的请求不宣称被撤销，保留真实返回或 unknown 并查询原请求。最后本地检查与 provider 调用之间仍有极短并发窗口，不能把本地停止称为服务端原子取消。Comfy 节点预检发现新增必填参数时保持原 pending 预留、不上传或提交，不填入默认参数篡改冻结输入。
+完整流程与 execution profile 独立；显式 legacy 执行策略仍完成原 native Eval/比较，默认生产策略不重复两套评审。没有 `workflow_policy` 的旧包沿 `status/resume/finalize` 恢复，不补新默认或宣称已通过新验收。明确停止用原 `stop-generation`；普通暂停保留当前阶段与真实接续资料，只有已显式选择并实际绑定 Codex 集成时使用 `codex pause`。其它宿主不运行该命令；无持久化能力就说明交接尚未保存，不宣称自动恢复。锁残留按来源接口的 `recover-lock` 核对，不删账本。API 长调用期间可登记停止，后续付费文本/图像调用在入口与实际交给 provider 前重新检查；已交给 provider 的请求不宣称被撤销，保留真实返回或 unknown 并查询原请求。最后本地检查与 provider 调用之间仍有极短并发窗口，不能把本地停止称为服务端原子取消。Comfy 节点预检发现新增必填参数时保持原 pending 预留、不上传或提交，不填入默认参数篡改冻结输入。
 
 ## 6. 只在 Codex 安装或绑定需要时读取
 

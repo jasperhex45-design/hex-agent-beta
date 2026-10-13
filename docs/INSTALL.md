@@ -5,13 +5,18 @@
 | 你要怎样使用 | 获取什么 | 下一步 |
 | --- | --- | --- |
 | 日常创作（推荐） | [版本页](https://github.com/jasperhex45-design/hex-agent-beta/releases)中实际提供的标准 `HEX-Skill` 包 | 按下方“标准 Skill”安装，并核对当前宿主能力。 |
-| 自己管理 Python 环境与源码 | [Beta 源码 ZIP](https://github.com/jasperhex45-design/hex-agent-beta/archive/refs/heads/main.zip)、发行源码包，或已有完整开发库 | 找到运行工程根，准备 Python 3.11+，运行对应系统的 bootstrap。 |
+| 自己管理 Python 环境与源码 | [Beta 源码 ZIP](https://github.com/jasperhex45-design/hex-agent-beta/archive/refs/heads/main.zip)、发行源码包，或已有完整开发库 | 找到运行工程根，准备 Python 3.11+，在具备执行能力且允许安装依赖时运行对应系统的 bootstrap。 |
+| 只得到 wheel 或成功 `import hex_agent` | Python 模块层面的产物/检查 | 当前 wheel 不含完整知识、schema 与 Skill 资源；模块导入成功不等于完整产品或宿主 Skill 已安装，使用上面对应的完整发行物。 |
 
 标准 Skill 包与源码 ZIP 不是同一种包，不要只复制一份 `SKILL.md` 或把源码 ZIP 直接当作 Skill 导入。本指南不要求下载生图模型、安装开发测试集或配置付费服务。
 
 ## 标准 Skill：交给当前宿主导入
 
-标准包包含完整的 `hex/`，包括根 `SKILL.md`、runner、运行资源、可读方法和模型资料。按宿主真实的本地技能导入或技能目录入口安装，保留相对目录；具体 WorkBuddy、豆包工作及其它宿主入口见[跨宿主指南](HOST_PORTABILITY.md)。导入方式有文档依据不代表每个客户端已经完成实测。
+标准包包含完整的 `hex/`，包括根 `SKILL.md`、runner、运行资源、可读方法和模型资料。按宿主真实的本地技能导入或技能目录入口安装，保留相对目录；具体豆包工作、WorkBuddy、Codex、Claude 入口见[跨宿主指南](HOST_PORTABILITY.md)。这四个宿主使用同一核心，不要求改用 Codex CLI。导入方式有文档依据不代表每个客户端或 Mac 版本已经完成实测。
+
+Claude 自定义 Skills 还要求其 Code execution and file creation 功能开启，企业策略须允许 Skills；这与 HEX 文本本身无需 Python 是两回事。普通指导性读取不能当作正式 Skill 安装成功。ChatGPT 网页的 Skills 当前采用插件分发路径，不能把 Codex/桌面本地 Skill 目录或本 ZIP 直接等同网页已安装。
+
+网页版直接按[网页导入边界](HOST_PORTABILITY.md#网页端导入后使用不启动本地安装流程)核对当前入口：Claude 的 ZIP 上传与自身执行开关有官方依据；豆包工作网页专属菜单和 ZIP 细则尚未核验，不能猜菜单或宣称已安装。无需为了网页使用先 clone、bootstrap 或启动本机 CLI。
 
 可以对助手说：
 
@@ -26,7 +31,9 @@
 python scripts/hex.py --skill-doctor
 ```
 
-它会校验并展开本包运行资源，再核对本地运行依赖。缺依赖时先说明缺口，在获得授权后按[跨宿主指南](HOST_PORTABILITY.md)使用该包声明的运行环境；不要在 Skill 根猜测执行源码 bootstrap。检查通过不证明外部账户、生成工具或宿主交互组件已可用。没有执行能力时仍可使用指导方式，但不能宣称已保存完整任务或跨会话私人经验。
+这里的 `python` 代表当前宿主已核验的 Python 3.11+；本地 macOS 可能使用 `python3` 或已有 `.venv/bin/python`，不要猜 Windows 路径。它会校验并展开本包运行资源，再核对本地运行依赖。展开需要实际 Skill 目录可写；写入被拒就报告限制，保留原安装。缺依赖时先说明缺口，在获得授权后按[跨宿主指南](HOST_PORTABILITY.md)使用该包声明的运行环境；不要在 Skill 根猜测执行源码 bootstrap。检查通过不证明外部账户、生成工具或宿主交互组件已可用。
+
+无 Python、无命令沙箱或沙箱暂不可用时，不把 doctor 作为读取方法的前置步骤。通过真实可用的文件/资源工具打开 `references/runtime/docs/HEX_CORE_METHOD.md` 与本题模型卡；新任务可指导，已有 run 保留原合同与阻塞，不能伪造持久化、回执或跨会话私人经验。`sandbox is unavailable` 等命令启动失败不证明缺依赖或 Mac 不兼容；先保留原报错和发生阶段，停止无依据换 shell/路径/宿主重试，待服务恢复或有新证据再核查。
 
 </details>
 
@@ -45,7 +52,7 @@ python scripts/hex.py --skill-doctor
 | 独立 Beta 仓库、其源码 ZIP 或发行源码包 | 解压后的产品根：同层有 `README.md`、`CODEX_START.md`、`pyproject.toml`、`scripts/`。 |
 | 完整开发仓库 | 进入仓库内的 **`hex-agent/`** 子目录；外层也有 README，但不是运行工程根。 |
 
-以下源码命令都从这个运行工程根执行。不要仅凭“有 README”判断目录，也不要在 `docs/` 中运行。
+以下源码命令都从这个运行工程根执行。不要仅凭“有 README”判断目录，也不要在 `docs/` 中运行。源码的 `.agents/skills/hex` 引用同一完整工程，不能仅复制这一个目录当作标准包；跨宿主搬运请选择标准包。源码 bootstrap 会安装依赖，助手执行时须遵守当前下载管理和授权规则，不能在沙箱不可用时盲目调用。
 
 也可以用 Git 获取同一份 Beta 源码：
 
@@ -93,7 +100,9 @@ py -3 -m venv .venv
 sh scripts/bootstrap.sh
 ```
 
-脚本使用 `python3` 创建或复用 `.venv`，检查 Python 版本、安装基础依赖，并运行 `doctor` 与 `validate`。按具体报错修复环境，不把部分步骤通过当作全部成功。
+脚本使用 `python3` 创建或复用 `.venv`，检查 Python 版本、安装基础依赖，并运行 `doctor` 与 `validate`。macOS/Linux 使用 `.venv/bin/python`，`Hex.ps1` 与 `.venv/Scripts/python.exe` 是 Windows 入口，不用于 Mac。不要跨系统复制虚拟环境；发现 Windows 环境或失效的解释器时保留现状并说明需要本机环境，不直接覆盖。按具体报错修复环境，不把部分步骤通过当作全部成功。
+
+客户端在 Mac 上不证明工具执行也在 Mac：云端或网页宿主应先核对沙箱实际系统与路径。Mac 真机安装和完整生成流程本次未测；Darwin 分支模拟只验证参数路由。可选 Paddle OCR/离线 research 仍有 Windows 专用启动路径，不将它们或 `windows_runtime` 这个历史模块名当成整个 HEX 能否使用的判断。需要这些扩展但不可用时保留检查阻塞，不自动取消既定验收。
 
 基础安装不下载生图模型，不运行开发测试集，也不会自动注册全局 `hex-agent` 命令。当前按源码目录使用，未发布 PyPI 安装包；单独 wheel 不是包含知识与 schema 的完整发行物。
 

@@ -1,6 +1,6 @@
 ---
 name: hex
-description: HEX 视觉创作、模型提示词和素材信息研究的统一入口。用户要求“用HEX”“按HEX全流程”“继续HEX”，或在已采用HEX的任务中制作汽车、人像、平面设计、分镜静帧及改图时使用；也用于素材/方法检索和私人参考库整理。先分析需求，关键意图不清先问，未指定目标模型且本任务无既有选择时必须问，再找素材、判断取舍、按模型缓存指南编写提示词与交付。用户明确不用HEX，或只讨论架构、维护源码时，不创建视觉任务。
+description: HEX 视觉创作、模型提示词、素材研究与私人参考库入口。用于“用HEX”“按HEX全流程”“继续HEX”，以及已采用HEX的汽车、人像、平面、分镜静帧和改图任务。先理解需求，关键意图或目标模型未定先问，再研究、判断、按模型指南交付。明确不用HEX或仅维护源码、讨论架构时不建视觉任务。
 ---
 
 # HEX：需求分析 → 问询 → 素材研究 → 判断 → 模型提示词
@@ -31,7 +31,11 @@ description: HEX 视觉创作、模型提示词和素材信息研究的统一入
 
 **先定位同一份 Skill 的可读资料。** 同目录已有 `installation.json` 时先读它，验证 `runtime_root`、`python_executable`、`entry_script` 与运行范围绑定，以该真实运行根作为 `RESOURCE_ROOT`；绑定或资料缺失就报告具体缺口，保留原安装，不静默切换另一份 HEX。没有该绑定的标准包以同目录 `references/runtime/` 为 `RESOURCE_ROOT`，无需 Python 即可读方法与八类模型指南；实际读取按 `bundle.json` 的 `readable_resources` 将逻辑 `source` 映射到包内 `path`。领域入口在可读镜像中为 `METHOD.md`，不再作为第二个可安装 Skill；原运行包/源码中的领域入口仍为 `SKILL.md`。资源由宿主工具注入时用它提供的资源标识读取同一内容。仓库副本从本 Skill 目录向上三级找到根，同时存在 `scripts/hex_entry.py` 和 `hex_agent/__main__.py` 时该根就是资料/工程根，否则核对其 `hex-agent/` 子目录。只用实际存在的路径，不猜旧安装。
 
-本题尚未加载时读取 `RESOURCE_ROOT/docs/HOST_PORTABILITY.md` 的能力分支和 `RESOURCE_ROOT/docs/HEX_CORE_METHOD.md`。首轮问询在这一步之前就应正常呈现，不要求先安装 Python、绑定 Codex hooks 或建立 run 才能问用户。
+本题尚未加载时读取 `RESOURCE_ROOT/docs/HOST_PORTABILITY.md` 的能力分支和 `RESOURCE_ROOT/docs/HEX_CORE_METHOD.md`。优先使用宿主原生文件/资源读取工具，不为读 Markdown 先运行 shell、解压内嵌运行 ZIP 或安装依赖。首轮问询在这一步之前就应正常呈现，不要求先安装 Python、绑定 Codex hooks 或建立 run 才能问用户。
+
+**分清导入、指引、执行环境与沙箱服务。** 标准 Skill、源码、wheel 和 Python 模块导入是不同入口；源码 `.agents/skills/hex` 不能脱离同一工程单独搬走当完整标准包。Codex CLI、hooks 和 PowerShell 均非跨宿主前提，只在用户显式选择相应集成时使用。客户端运行在 Mac 不证明工具沙箱也是 macOS；本地 macOS 源码环境使用 `.venv/bin/python`，不沿用 Windows 的 `.venv/Scripts/python.exe`。网页端先核对自己的 Skill 导入、启用开关与资源工具，不默认 clone/bootstrap；浏览器能显示技能不证明 Python、生成接口或跨会话持久化可用。
+
+**无执行能力或沙箱临时不可用时停止无依据重试。** 先保留实际工具、原始报错与是否进入 Python 的证据；宿主返回 `sandbox is unavailable` 等启动失败时，不靠换 shell、猜路径、反复 doctor 或安装 Codex 试运气，也不据此判定 HEX 依赖或 macOS 不兼容。有明确新证据或宿主恢复后才做针对性检查。新任务仍可沿当前可读核心与模型资料开展指导；资源也读不到时说明缺失并请求提供所需文本，不能声称读过或已经安装。已有 run、预算、锁和待定请求保留阻塞，不能重开或改指导方式绕过。
 
 - **Harness 执行：** 宿主具有文件/Python 能力时，标准包先用当前可用的 Python 3.11+ 执行同目录 `scripts/hex.py --skill-doctor`，核验并展开随包运行资源。报告通过后使用同一个 runner 和实际 `runtime_root`；不换另一份工程。已有 `installation.json` 的安装按其真实绑定验证解释器、入口、运行根与 `allowed_run_roots`，绑定缺失就报告缺口。源码副本验证依赖与真实解释器后使用 `scripts/hex_entry.py`，`.venv` 只是可用的解释器位置之一。实际运行继续第 3 节。
 - **HEX 指导：** 新任务没有执行能力，或已选宿主生图服务的工具接口尚未适配时，明确当前采用指导方式，按核心方法完成问询、研究、判断和提示词。读可用模型卡；未知内置后端只用 `knowledge/model-prompts/unknown-service.md` 的通用表达，不冒用模型档案。宿主确有已选择且已理解参数的原生工具时，可在真实授权范围交付图片，并说明未经过 HEX Harness 验证；否则交付可复制提示词和具体能力缺口。不能编造 run、冻结、派发、回执或“全流程通过”。

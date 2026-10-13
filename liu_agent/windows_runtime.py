@@ -46,7 +46,7 @@ def runtime_status():
         return (ROOT / relative).is_file()
     return {
         'format': 'hex.windows-runtime.v1', 'system': sys.platform,
-        'entry': 'Hex.ps1 / python -m hex_agent',
+        'entry': 'Hex.ps1 / python -m hex_agent' if sys.platform == 'win32' else 'python -m hex_agent',
         'stages': {
             'understand_and_design': 'current_host_using_existing_Need_and_Plan',
             'knowledge': {'backend': 'native_cpu_onnx',

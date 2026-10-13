@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-2022]
+        os: [ubuntu-24.04, windows-2022, macos-15, macos-15-intel]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     env:
@@ -43,14 +43,14 @@ jobs:
         shell: pwsh
         working-directory: ${{ env.HEX_BETA_PACKAGE_ROOT }}
         run: .\scripts\bootstrap.ps1
-      - name: Install the Linux package
+      - name: Install the POSIX package (Linux/macOS)
         if: runner.os != 'Windows'
         working-directory: ${{ env.HEX_BETA_PACKAGE_ROOT }}
         run: sh scripts/bootstrap.sh
       - name: Verify installed package, demo and host integration plan
         shell: python
         run: |
-          import os, subprocess
+          import json, os, platform, subprocess, zipfile
           from pathlib import Path
           root = Path(os.environ['HEX_BETA_PACKAGE_ROOT'])
           python = root / ('.venv/Scripts/python.exe' if os.name == 'nt' else '.venv/bin/python')
@@ -62,3 +62,18 @@ jobs:
           run('scripts/hex_entry.py', 'learning', '--help')
           run('-m', 'hex_agent', 'demo', '--out', 'outputs/beta-smoke')
           run('scripts/hex_entry.py', 'codex', 'install', '--dry-run', '--codex-dir', 'outputs/beta-smoke/codex', '--skills-dir', 'outputs/beta-smoke/skills')
+          # Check the same portable Skill on each OS; no host account or image call.
+          out = Path(os.environ['RUNNER_TEMP']) / 'hex-portable-skill'
+          built = json.loads(subprocess.check_output([
+              str(python), 'scripts/build_skill_package.py', '--output-dir', str(out),
+              '--source-commit', os.environ['GITHUB_SHA']], cwd=root, text=True))
+          with zipfile.ZipFile(built['zip']) as archive:
+              archive.extractall(out / 'unpacked')
+          skill = out / 'unpacked' / 'hex'
+          report = json.loads(subprocess.check_output([
+              str(python), str(skill / 'scripts/hex.py'), '--skill-doctor'], cwd=out, text=True))
+          assert report['ready'] and report['source_commit'] == os.environ['GITHUB_SHA']
+          assert Path(report['runtime_root']).resolve() == (skill / 'runtime').resolve()
+          assert report['generation_calls'] == 0 and report['network_used'] is False
+          print(json.dumps({'system': platform.system(), 'architecture': platform.machine(),
+                            'portable_skill_ready': report['ready'], 'version': report['version']}))
