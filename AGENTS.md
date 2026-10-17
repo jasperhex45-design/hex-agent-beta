@@ -13,3 +13,12 @@
 - **按需加载。** Harness 模式使用当前阶段 `host_context` 与必要方法，更新后取得新上下文。普通创作不全文加载历史、私人图库、完整知识库或所有阶段说明，不以 pytest 为前置。Windows 检索/OCR 和离线研究能力仅按当前机器核验，见 [运行环境](docs/HEX_WINDOWS_WORKFLOW_20261007.md)。
 
 维护前保护现有差异；独立任务可并行，共享业务代码指定写入者。验证受影响入口与必要失败分支，共享合同变化再验 schema，不伪造日志、图片或用户反馈。发布保留许可与来源，不包含凭据、缓存、无关私人材料或未授权图片。
+
+## Cursor Cloud specific instructions
+
+源码根就是仓库根（同层有 `pyproject.toml` 与 `scripts/bootstrap.sh`）。依赖装在项目 `.venv` 里。从仓库根使用 `.venv/bin/python`，不要改用未装依赖的系统 `python3`，也不要假设全局已注册 `hex-agent`。
+
+- 环境检查：`.venv/bin/python -m hex_agent doctor` 与 `.venv/bin/python -m hex_agent validate`。`schema_validation` 为 `passed` 表示知识与模型配置通过；这两条命令不看图，`visual_validation` 保持 `not_performed`。
+- 离线产品演示：`.venv/bin/python -m hex_agent demo --out outputs/demo`。打开 `outputs/demo/result.html`。这是作者编写的静态示例，不调用模型，也不需要 API 密钥。
+- 公开 Beta 树没有 `tests/`，基础安装不含 pytest。
+- 没有需要常驻的开发服务器。上述检查不要下载模型权重，也不要配置生图账户。
