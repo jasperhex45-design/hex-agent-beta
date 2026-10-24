@@ -73,4 +73,4 @@
 
 内部 CLI、来源绑定、增量格式与回读检查统一使用 [WORK 学习 Skill](../.agents/skills/hex-work-learning/SKILL.md)，不要要求用户填写模板，也不要从本文另造命令。标准 Skill 包按自己的资源映射读取同一方法；若方法或执行能力缺失，应报告具体缺口，不切换到另一份未知安装。
 
-普通创作沿[共用方法](HEX_CORE_METHOD.md)与[操作入口](../CODEX_START.md)继续。安装问题见[安装指南](INSTALL.md)，功能与反馈边界见 [BETA.md](../BETA.md)。
+普通创作沿[共用方法](HEX_CORE_METHOD.md)与[操作入口](RUNTIME.md)继续。安装问题见[安装指南](INSTALL.md)，功能与反馈边界见 [README 的局限与边界](../README.md#局限与边界)。

@@ -26,3 +26,10 @@ reports/
 .codex/hex-integration.json
 .codex/hex-install-backups/
 *.local.json
+
+# Built into release packages; not tracked
+/MANIFEST.json
+# Private reference material never enters this public repo
+pins.csv
+pinterest-*/
+car-refs/

@@ -5,7 +5,7 @@
 | 你要怎样使用 | 获取什么 | 下一步 |
 | --- | --- | --- |
 | 日常创作（推荐） | [版本页](https://github.com/jasperhex45-design/hex-agent-beta/releases)中实际提供的标准 `HEX-Skill` 包 | 按下方“标准 Skill”安装，并核对当前宿主能力。 |
-| 自己管理 Python 环境与源码 | [Beta 源码 ZIP](https://github.com/jasperhex45-design/hex-agent-beta/archive/refs/heads/main.zip)、发行源码包，或已有完整开发库 | 找到运行工程根，准备 Python 3.11+，在具备执行能力且允许安装依赖时运行对应系统的 bootstrap。 |
+| 自己管理 Python 环境与源码 | [Beta 源码 ZIP](https://github.com/jasperhex45-design/hex-agent-beta/archive/refs/heads/main.zip)或发行源码包 | 找到运行工程根，准备 Python 3.11+，在具备执行能力且允许安装依赖时运行对应系统的 bootstrap。 |
 | 只得到 wheel 或成功 `import hex_agent` | Python 模块层面的产物/检查 | 当前 wheel 不含完整知识、schema 与 Skill 资源；模块导入成功不等于完整产品或宿主 Skill 已安装，使用上面对应的完整发行物。 |
 
 标准 Skill 包与源码 ZIP 不是同一种包，不要只复制一份 `SKILL.md` 或把源码 ZIP 直接当作 Skill 导入。本指南不要求下载生图模型、安装开发测试集或配置付费服务。
@@ -49,8 +49,7 @@ python scripts/hex.py --skill-doctor
 
 | 你的目录来源 | 在哪里运行安装与检查命令 |
 | --- | --- |
-| 独立 Beta 仓库、其源码 ZIP 或发行源码包 | 解压后的产品根：同层有 `README.md`、`CODEX_START.md`、`pyproject.toml`、`scripts/`。 |
-| 完整开发仓库 | 进入仓库内的 **`hex-agent/`** 子目录；外层也有 README，但不是运行工程根。 |
+| 独立 Beta 仓库、其源码 ZIP 或发行源码包 | 解压后的产品根：同层有 `README.md`、`docs/RUNTIME.md`、`pyproject.toml`、`scripts/`。 |
 
 以下源码命令都从这个运行工程根执行。不要仅凭“有 README”判断目录，也不要在 `docs/` 中运行。源码的 `.agents/skills/hex` 引用同一完整工程，不能仅复制这一个目录当作标准包；跨宿主搬运请选择标准包。源码 bootstrap 会安装依赖，助手执行时须遵守当前下载管理和授权规则，不能在沙箱不可用时盲目调用。
 
@@ -59,12 +58,6 @@ python scripts/hex.py --skill-doctor
 ```sh
 git clone https://github.com/jasperhex45-design/hex-agent-beta.git
 cd hex-agent-beta
-```
-
-如果已有完整开发库，从其外层进入：
-
-```sh
-cd hex-agent
 ```
 
 这些是获取源码的替代路径，不需要全部执行；让 AI 助手代办时，应遵守当前宿主的下载管理入口与授权要求。
@@ -114,7 +107,7 @@ sh scripts/bootstrap.sh
 请帮我安装 HEX Beta：
 https://github.com/jasperhex45-design/hex-agent-beta
 
-按当前宿主的下载管理和权限要求，把源码下载或克隆到独立目录，不覆盖已有工程。先读 README.md 和 docs/INSTALL.md。独立 Beta 源码使用产品根；完整开发库先进入 hex-agent/。核对同层存在 CODEX_START.md、pyproject.toml 和 scripts/，不要只看 README 判断目录。
+按当前宿主的下载管理和权限要求，把源码下载或克隆到独立目录，不覆盖已有工程。先读 README.md 和 docs/INSTALL.md。在源码根目录核对同层存在 docs/RUNTIME.md、pyproject.toml 和 scripts/，不要只看 README 判断目录。
 
 检查 Python >= 3.11；Windows 运行 .\scripts\bootstrap.ps1，macOS/Linux 运行 sh scripts/bootstrap.sh。使用项目 .venv 核对 doctor、validate 的真实结果；失败就报告具体原因，不宣称安装成功。基础安装不要下载生图模型、运行开发测试集或配置付费服务。
 
@@ -173,15 +166,15 @@ https://github.com/jasperhex45-design/hex-agent-beta
 .venv/bin/python -m hex_agent codex install
 ```
 
-完整开发库的根 Skill 位于外层 `.agents/skills/hex`，独立产品源码包在自己的根目录携带同一入口；项目使用不需要额外指定全局 Skill 目录。安装回执与配置写入只证明对应动作完成，hooks 是否获信任、实际执行及自动会话绑定仍须在当前宿主核对。专属安装、绑定与状态检查统一见 [CODEX_START.md](../CODEX_START.md)。
+源码包在自己的根目录携带 `.agents/skills/hex` 入口；项目使用不需要额外指定全局 Skill 目录。安装回执与配置写入只证明对应动作完成，hooks 是否获信任、实际执行及自动会话绑定仍须在当前宿主核对。专属安装、绑定与状态检查统一见 [操作入口](RUNTIME.md)。
 
 ## 开始使用与遇到缺口时
 
-在当前宿主打开安装好的 Skill 或完整源码工程，对它说“用 HEX”，说明目标、参考、必须保留的内容和本次模型。助手依据[共用创作方法](HEX_CORE_METHOD.md)工作；能够执行完整流程时再沿[操作入口](../CODEX_START.md)推进。
+在当前宿主打开安装好的 Skill 或完整源码工程，对它说“用 HEX”，说明目标、参考、必须保留的内容和本次模型。助手依据[共用创作方法](HEX_CORE_METHOD.md)工作；能够执行完整流程时再沿[操作入口](RUNTIME.md)推进。
 
 - 没有生图工具时可以交付方案或提示词，不声称已生成图片。
 - 标准包、源码或工具接口未适配时，按[跨宿主能力分支](HOST_PORTABILITY.md)说明能完成与不能验证的部分；已有任务不能靠换方式绕过原状态。
 - 私人学习需另外取得真实同意，不因安装成功自动开启，见[私人学习说明](WORK_LEARNING.md)。
-- 可选的本地检索和 Windows OCR 按需配置，见[运行环境说明](HEX_WINDOWS_WORKFLOW_20261007.md)。
+- 可选的本地检索和 Windows OCR 按需配置，见[运行环境说明](WINDOWS_RUNTIME.md)。
 
-反馈问题与公开素材边界见 [BETA.md](../BETA.md)。
+反馈问题与公开素材边界见 [README 的局限与边界](../README.md#局限与边界)。

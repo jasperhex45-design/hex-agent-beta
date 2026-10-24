@@ -1,6 +1,6 @@
 # Windows 使用与可选本地组件
 
-先按 [README.md](../README.md) 完成基础安装，再按 [CODEX_START.md](../CODEX_START.md) 使用 HEX；工程目录可使用 `Hex.ps1`。下列本地检索、OCR 和研究环境均为可选组件；测试包不含模型权重、虚拟环境或作者机器的配置。
+先按 [README.md](../README.md) 完成基础安装，再按 [操作入口](RUNTIME.md) 使用 HEX；工程目录可使用 `Hex.ps1`。下列本地检索、OCR 和研究环境均为可选组件；测试包不含模型权重、虚拟环境或作者机器的配置。
 
 ## 日常入口
 

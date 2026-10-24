@@ -1,5 +1,5 @@
 {
-  "format": "liu.art-structure-method-map.v1",
+  "format": "liu.cultural-grammar-method-map.v1",
   "notice": "只记录案例方法到运行时结构语法的显式兼容关系；不把案例名称当作风格词，也不宣称艺术史等价。",
   "mappings": [
     {"method_id": "space.bounded_multiple_viewpoints", "grammar_ids": ["grammar.planometric_space"], "confidence": "high", "rationale": "案例方法与多视点/平面化关系直接对应。", "gap": "不覆盖所有中国画的散点透视。"},

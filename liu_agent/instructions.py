@@ -1,5 +1,5 @@
 """A single creative agent, not multiple review personas.
-These instructions are shared with the file-first Codex route in CODEX_START.md.
+These instructions are shared with the file-first route in docs/RUNTIME.md.
 """
 USER_FACING_LANGUAGE = '''
 对用户汇报时，先读取当前任务的 `status --run 任务目录 --format human`：生成事实、复查来源、用户选择和交付状态分别表达。presentation.json只是导出当时的展示副本，不代替实时状态。只有与当前需求版本及图片绑定的证据支持肯定陈述；本地请求预留只说明准备，宿主登记只说明宿主报告，API复查记录不代表用户认可。用户保留当前图的范围仅为这版。

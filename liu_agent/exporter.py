@@ -451,11 +451,6 @@ def export_result(result: dict, run: Path) -> None:
         _export_production(result, run)
         return
     d, spec = result['design'], result['spec']
-    # The art-structure record is an immutable, task-local evidence snapshot.
-    # Load it here so the result page exposes the actual methods and limits
-    # that shaped the prompt, instead of leaving them hidden in a sidecar.
-    from .art_structure.core import record_for_design
-    art_record = record_for_design(run, d)
     presentation = build_presentation(run, result=result)
     write_json(run / 'presentation.json', presentation)
     label = presentation['facets']['execution']
@@ -488,21 +483,6 @@ def export_result(result: dict, run: Path) -> None:
                   f"层次：{grammar['layer_plan']}", f"尺度关系：{grammar['scale_relation']}",
                   f"时间模型：{grammar['time_model']}", f"表面范围：{grammar['surface_scope']}",
                   '状态：实验性；只记录结构操作，不代表掌握某一绘画传统或复刻名作。']
-    if art_record:
-        decisions = {x['case_id']: x for x in art_record['spatial_plan']['decisions']}
-        parts += ['### 艺术结构案例证据']
-        for case in art_record.get('source_cases', []):
-            decision = decisions.get(case.get('id'), {})
-            parts += [
-                f"案例：{case.get('artist', '')} · {case.get('title', '')}",
-                f"结构方法：{case.get('method_id', '')}",
-                f"本次动作：{decision.get('action_zh', '')}",
-                f"迁移假设：{case.get('transfer_hypothesis', '')}",
-                '不可迁移：' + '；'.join(case.get('do_not_transfer', [])),
-                '不适用条件：' + '；'.join(case.get('avoid_when', [])),
-                f"控制测试：{case.get('controlled_test', '')}",
-            ]
-        parts += ['证据边界：上述案例是馆方文字研究与本项目转译假设，未逐图看图，不是生成参考，也不证明视觉质量。']
     for c in d['choices']:
         parts += [f"### {c['goal']}", c['action'], '配合：'+c['cooperation'], '代价：'+c['tradeoff']]
     if adaptation_md:
@@ -535,20 +515,6 @@ def export_result(result: dict, run: Path) -> None:
         design_html += '<details><summary>实验性空间语法（结构操作，不是风格标签）</summary>'
         design_html += ''.join(f'<div class="fact"><b>{esc(label)}</b>{esc(value)}</div>' for label, value in grammar_items)
         design_html += '<p class="caption">实验性；不代表掌握某一绘画传统或复刻名作。</p></details>'
-    if art_record:
-        decisions = {x['case_id']: x for x in art_record['spatial_plan']['decisions']}
-        evidence_html = '<details><summary>艺术结构案例证据</summary>'
-        for case in art_record.get('source_cases', []):
-            decision = decisions.get(case.get('id'), {})
-            evidence_html += '<div class="fact">'
-            evidence_html += f'<b>{esc(case.get("artist", ""))} · {esc(case.get("title", ""))} · {esc(case.get("method_id", ""))}</b>'
-            evidence_html += f'<p class="small">本次动作：{esc(decision.get("action_zh", ""))}</p>'
-            evidence_html += f'<p class="small">迁移假设：{esc(case.get("transfer_hypothesis", ""))}</p>'
-            evidence_html += '<p class="caption">不可迁移：' + esc('；'.join(case.get('do_not_transfer', []))) + '</p>'
-            evidence_html += '<p class="caption">不适用条件：' + esc('；'.join(case.get('avoid_when', []))) + '</p>'
-            evidence_html += f'<p class="caption">控制测试：{esc(case.get("controlled_test", ""))}</p></div>'
-        evidence_html += '<p class="caption">馆方文字研究，未逐图看图；不是生成参考，也不证明视觉质量。</p></details>'
-        design_html += evidence_html
     cam_labels={'shot_size':'景别','viewpoint_and_distance':'观察位置与距离','focal_equivalent_mm':'等效焦距提案（mm，非测量值）','framing_and_scale':'取入范围与比例','focus_and_depth':'清晰范围','reason':'为什么这样取景'}
     design_html += '<details><summary>镜头与取景依据</summary>'+''.join(f'<div class="fact"><b>{esc(cam_labels[k])}</b>{esc(v)}</div>' for k,v in d['camera'].items() if v is not None)+'</details>'
     design_html += '<details><summary>执行用画面说明</summary>'+''.join(f'<div class="fact"><b>{label}</b>{esc(spec[key])}</div>' for key,label in labels.items())+'</details>'

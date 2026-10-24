@@ -396,7 +396,7 @@ def refresh_packet(packet: dict, out: Path, kb: Path, state: Path, need: Need, m
 需求摘要（可能包含Agent整理，不作为用户原始消息证明）：{brief.request}
 用户消息来源：packet.input_sources；缺少时先通过refresh --sources补齐，不能从本摘要反推用户授权。
 
-先读项目 CODEX_START.md 与 .agents/skills/liu-aesthetic-agent/SKILL.md。
+先读项目 docs/RUNTIME.md 与 .agents/skills/liu-aesthetic-agent/SKILL.md。
 {ins.USER_FACING_LANGUAGE}
 先读 intake.json；它是packet内同名字段的展示副本，以当前packet为准。默认由Agent理解需求，若有关键未决项，每次仅提出next_question，保留其余adaptive_questions，不因类别已确定就跳过约束冲突或素材歧义。页面尚未实现；不要要求用户填写焦距、光比、景深等技术表格。
 先确定primary expression、主体-环境关系和参考用途，再把视觉基因转成可见设计动作与检查项；不要用“艺术、审美、高级”等词代替决定。

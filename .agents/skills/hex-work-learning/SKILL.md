@@ -113,4 +113,4 @@ run 来源身份只排除 receipt 的 `recorded_at`，同原消息、原话和�
 
 候选共用代码/提炼方法 → 冻结版本 → 独立的需求验收 → 开发者决定发布。WORK 私人偏好不等待这项实验。TEST 不自动写入 WORK，初版无“直接晋升私人测试偏好”的接口；要采用其共用方法，应走代码候选与审核。
 
-验收协议见[开发仓库的 WORK 学习验收](https://github.com/jasperhex45-design/hex-agent/blob/main/hex-agent/experiments/work-learning-acceptance/README.md)；发布包不包含 experiments 或测试集，不要求用户在 RESOURCE_ROOT 找它们。可见单元测试不是隐藏验收，也不是原生图盲评。没有真实用户、多次工作和实际图片证据，就不声称风格已稳定形成或优于原生。
+验收协议在私有开发库中维护，本公开仓库是发行版；发布包不包含 experiments 或测试集，不要求用户在 RESOURCE_ROOT 找它们。可见单元测试不是隐藏验收，也不是原生图盲评。没有真实用户、多次工作和实际图片证据，就不声称风格已稳定形成或优于原生。

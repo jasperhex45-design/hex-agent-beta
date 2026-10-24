@@ -48,8 +48,8 @@ def _digest(path: Path) -> str:
 
 
 def _is_readable_reference(name: str) -> bool:
-    if name in {"AGENTS.md", "CODEX_START.md", "ART_STRUCTURE_START.md",
-                "README.md", "BETA.md", "CHANGELOG.md", "pyproject.toml",
+    if name in {"CONTRIBUTING.md",
+                "README.md", "CHANGELOG.md", "pyproject.toml",
                 "LICENSE", "THIRD_PARTY_NOTICES.md"}:
         return True
     if name.startswith("knowledge/") and name.endswith((".md", ".json")):
