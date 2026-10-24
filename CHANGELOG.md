@@ -4,7 +4,7 @@
 
 ## 未发行 · 作品集整理
 
-- 公开仓库只保留产品主线与汽车方向：移除艺术结构、研究试验、Pinterest 同步和未验证题材的示例；新增自包含的 `hex-car-nano` Skill，汽车入口支持 `nano` 的 `prompt_only`。
+- 公开仓库只保留产品主线与汽车方向：移除艺术结构、研究试验、Pinterest 同步和未验证题材的示例。
 - 操作入口改为 `docs/RUNTIME.md`，运行环境说明改为 `docs/WINDOWS_RUNTIME.md`；README 重写为产品首页。
 
 ## 0.3.9b10 · 2026-10-13

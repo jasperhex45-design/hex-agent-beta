@@ -24,7 +24,6 @@ SOURCE_TREES = {
     'knowledge/models': {'.json'},
     'knowledge/model-prompts': {'.md'},
     '.agents/skills/cl-hex-car-photography': {'.md'},
-    '.agents/skills/hex-car-nano': {'.md'},
     '.agents/skills/liu-aesthetic-agent': {'.md'},
     '.agents/skills/liu-aesthetic-judgment': {'.md'},
     '.agents/skills/hex': {'.md', '.yaml'},

@@ -56,7 +56,7 @@ def validate_vehicle_identity(brief: dict, refs: list[dict], need: dict | None =
         raise AgentError('车型身份仍未确定；不能通过 open 绕过未解决的身份问题')
 
 
-def normalize_brief(raw: dict, origin: Path, *, deliverable_kind: str | None = None) -> dict:
+def normalize_brief(raw: dict, origin: Path) -> dict:
     """Retain explicit model, scope, rights and order; never choose a model."""
     if not isinstance(raw, dict):
         raise AgentError('汽车 brief 必须是 JSON 对象')
@@ -68,10 +68,8 @@ def normalize_brief(raw: dict, origin: Path, *, deliverable_kind: str | None = N
     require_explicit_targets(value)
     if (not isinstance(value['targets'], list) or len(value['targets']) != 1
             or not isinstance(value['targets'][0], str)
-            or value['targets'][0] not in (*TOOLS, 'nano')):
-        raise AgentError('汽车候选入口仅支持单个 seedream、image 目标，或仅交付提示词的 nano 目标；不静默切换模型')
-    if value['targets'][0] == 'nano' and deliverable_kind != 'prompt_only':
-        raise AgentError('汽车入口 nano 仅支持 --deliverable-kind prompt_only 提示词交付；未绑定生图工具')
+            or value['targets'][0] not in TOOLS):
+        raise AgentError('汽车候选入口仅支持单个 seedream 或 image 目标；不静默切换模型')
     if value.get('medium', 'still') != 'still' or value.get('model_comparison', False):
         raise AgentError('汽车候选入口只做静态单图，不接管视频或双模型实验')
     refs = value.get('references', [])
@@ -96,11 +94,11 @@ def prepare(brief_file: Path, out: Path, kb: Path, state: Path, *,
     from .generation_spec import host_capabilities
     from .workflow import make_packet, save_packet
     brief_file = brief_file.resolve()
-    value = normalize_brief(read_json(brief_file), brief_file.parent, deliverable_kind=deliverable_kind)
+    value = normalize_brief(read_json(brief_file), brief_file.parent)
     Brief.model_validate(value)
     target = value['targets'][0]
-    tool = TOOLS.get(target)
-    runtime = host_capabilities(tool) if tool is not None else None  # Adapter facts, NOT a live probe.
+    tool = TOOLS[target]
+    runtime = host_capabilities(tool)  # Configured adapter facts, NOT a live probe.
     if value.get('vehicle_identity') == 'open' and knowledge_config is None:
         # The explicit unspecified-vehicle route receives methods on every host.
         # This reads only existing local, scope-filtered cards; no external
@@ -115,8 +113,7 @@ def prepare(brief_file: Path, out: Path, kb: Path, state: Path, *,
                              sources_file=sources_file.resolve(), execution_profile=profile,
                              knowledge_config=knowledge_config, workflow_profile=workflow_profile,
                              deliverable_kind=deliverable_kind)
-    if runtime is not None:
-        packet.setdefault('compilation_runtimes', {})[target] = runtime
+    packet.setdefault('compilation_runtimes', {})[target] = runtime
     packet = save_packet(packet, out)
     return {'run': str(out), 'packet_digest': packet['digest'], 'target': target,
             'configured_tool': tool, 'live_tool_checked': False,
@@ -152,8 +149,6 @@ reservation, an authorization, or evidence that a provider has been called.
         packet = read_packet(run)
         if (policy(packet) or {}).get('profile') not in CAR_PROFILES:
             raise AgentError('只检查显式新建的汽车候选任务；旧任务按原入口恢复')
-        if packet['brief']['targets'] == ['nano']:
-            raise AgentError('汽车入口 nano 仅支持 prompt_only 提示词交付；未绑定生图工具，不能预览或冻结生图输入')
         if packet.get('model_adaptation_version') != 1:
             raise AgentError('汽车候选必须使用现有模型适配合同')
         if read_dispatches(run) or any((run / name).exists() for name in

@@ -74,12 +74,9 @@ def validate_context(packet: dict) -> None:
                 or brief.get('medium', 'still') != 'still'
                 or not isinstance(brief.get('targets'), list)
                 or len(brief['targets']) != 1
-                or brief['targets'][0] not in ('seedream', 'image', 'nano')
+                or brief['targets'][0] not in ('seedream', 'image')
                 or brief.get('model_comparison', False)):
             raise AgentError('汽车候选仅用于车辆静态单图；其他任务使用原入口，不自动迁移')
-        if (brief['targets'][0] == 'nano'
-                and (packet.get('workflow_policy') or {}).get('deliverable_kind') != 'prompt_only'):
-            raise AgentError('汽车入口 nano 仅支持 prompt_only 提示词交付；未绑定生图工具')
         from .car_photography import validate_vehicle_identity
         validate_vehicle_identity(brief, packet.get('references', []), packet.get('need'))
         identities = [r for r in packet.get('references', [])

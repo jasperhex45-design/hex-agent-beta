@@ -43,10 +43,6 @@ flowchart LR
 
 **Skill 是一份说明书；HEX 是按说明书干活、会记账、会返工的执行者。** 汽车 Skill 是 HEX 加载的领域模块之一。
 
-### 代表 Skill：汽车 × Nano
-
-[`.agents/skills/hex-car-nano/SKILL.md`](.agents/skills/hex-car-nano/SKILL.md) 可以单独导入宿主，不依赖 Python：先问 3 个问题（车型身份、modern / retro、人车关系），按语义槽位做摄影决定，再按 Nano 的写法输出自然段提示词（新建、参考生成、保身份改图三套骨架）。在完整 HEX 流程中，汽车入口对 `nano` 只支持 `prompt_only`。
-
 ## 快速开始
 
 ```sh
