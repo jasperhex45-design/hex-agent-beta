@@ -77,3 +77,11 @@ jobs:
           assert report['generation_calls'] == 0 and report['network_used'] is False
           print(json.dumps({'system': platform.system(), 'architecture': platform.machine(),
                             'portable_skill_ready': report['ready'], 'version': report['version']}))
+      - name: Run unit tests on the source checkout
+        shell: python
+        run: |
+          import os, subprocess
+          from pathlib import Path
+          root = Path(os.environ['HEX_BETA_PACKAGE_ROOT'])
+          python = root / ('.venv/Scripts/python.exe' if os.name == 'nt' else '.venv/bin/python')
+          subprocess.run([str(python), '-m', 'unittest', 'discover', '-s', 'tests', '-v'], check=True)

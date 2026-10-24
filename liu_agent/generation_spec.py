@@ -118,7 +118,7 @@ def host_capabilities(tool_name: str = "image_gen.imagegen") -> dict:
             "service_model_name": "Seedream 5.0 Pro", "checked_at": "2026-09-27",
             "source_type": "cli_help_and_live_model_discovery",
             "sources": ["pippit-tool-cli 1.0.35 generate-image --help", "model describe Seedream 5.0 Pro --type image",
-                        "evidence/hex-car-v1-20260927/seedream-model-live.json"],
+                        "2026-09-27 live model discovery record (kept in the private development repository)"],
             "account_access": "verify_before_execution", "operations": ["generation", "edit"],
             "reference_images": {"support": "supported", "ordered": True,
                                  "max_images": MAX_REFERENCE_IMAGES,

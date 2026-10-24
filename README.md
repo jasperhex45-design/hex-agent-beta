@@ -53,6 +53,12 @@ sh scripts/bootstrap.sh          # Windows: .\scripts\bootstrap.ps1
 
 日常使用推荐从 [Releases](https://github.com/jasperhex45-design/hex-agent-beta/releases) 导入标准 `HEX-Skill` 包，然后在宿主里说“用 HEX……”。详见[安装与检查](docs/INSTALL.md)和[跨宿主能力](docs/HOST_PORTABILITY.md)。
 
+### 装好之后怎么用
+
+1. **选宿主。** 以 Codex 为例：把 Releases 中的 `HEX-Skill-*.zip` 按本地技能导入（保留 `hex/` 目录），然后直接说“用 HEX 给这台车做一张……”。其他宿主见[跨宿主能力](docs/HOST_PORTABILITY.md)。
+2. **装运行依赖。** Skill 包里的流程工具要求宿主使用的 Python（3.11+）装有 `requirements.txt` 中的精确版本：`pip install httpx==0.28.1 pydantic==2.13.4 Pillow==12.3.0`；版本不符时 `python hex/scripts/hex.py --skill-doctor` 会报告 `"ready": false`。
+3. **只要提示词也可以。** 没有 Python 或生图工具时，HEX 仍可读方法与模型资料，交付方案和提示词；操作细节见 [docs/RUNTIME.md](docs/RUNTIME.md)。
+
 ## 示例：怎么开口
 
 > 用 HEX。以这张图为编辑输入，保留车身比例、机位和轮毂，只调整车漆质感。先看参考并确认本次模型，再执行，最后用结果图指出是否做到。

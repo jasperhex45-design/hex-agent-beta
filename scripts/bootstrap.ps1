@@ -26,4 +26,4 @@ if ($LASTEXITCODE -ne 0) { throw "Doctor failed." }
 & $Python -m hex_agent validate
 if ($LASTEXITCODE -ne 0) { throw "Configuration validation failed." }
 Write-Host "HEX installed. Local runtime and configuration checks passed."
-Write-Host "Open docs/RUNTIME.md in your host to start creating."
+Write-Host "Next: import the HEX-Skill zip from Releases into your host (e.g. Codex) and ask it to use HEX; run commands: docs/RUNTIME.md."
