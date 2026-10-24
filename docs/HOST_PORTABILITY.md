@@ -7,7 +7,7 @@
 | 层次 | 要核对的证据 | 不应据此推断 |
 | --- | --- | --- |
 | 导入布局 | 文件名、ZIP 根 `hex/SKILL.md`、完整相对资源、宿主实际导入回执 | 源码 ZIP、wheel、单个 Skill 文件等同完整标准包 |
-| 指引与选型 | 实际加载的 HEX 入口、用户所选宿主/模型与可选集成 | 文件名 `CODEX_START.md`、`agents/openai.yaml` 要求转 Codex CLI 或 OpenAI 生图 |
+| 指引与选型 | 实际加载的 HEX 入口、用户所选宿主/模型与可选集成 | 文件名 `docs/RUNTIME.md`、`agents/openai.yaml` 要求转 Codex CLI 或 OpenAI 生图 |
 | Python/执行能力 | 命令工具是否存在、真实解释器及版本、依赖与可写目录检查结果 | `import hex_agent` 成功就是完整安装，或本地缺 Python 就无法读方法 |
 | 宿主沙箱服务 | 原始错误、发生阶段、是否已启动 Python、宿主服务恢复证据 | `sandbox is unavailable` 自动等于 HEX 依赖缺失或 macOS 路径错误 |
 
@@ -27,7 +27,7 @@
 python scripts/build_skill_package.py --output-dir OUTPUT
 ```
 
-命令在 `hex-agent/` 工程根执行；正式发布额外传已核验的 `--source-commit`。不传时来源提交保持未声明，不能伪装已发布。构建产物不包含旧任务、图片、私人图库、测试集、密钥或依赖环境。
+命令在源码根目录执行；正式发布额外传已核验的 `--source-commit`。不传时来源提交保持未声明，不能伪装已发布。构建产物不包含旧任务、图片、私人图库、测试集、密钥或依赖环境。
 
 ## 分别在这些入口安装
 

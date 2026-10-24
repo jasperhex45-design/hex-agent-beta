@@ -93,11 +93,6 @@ class DurableProvider:
 
     def __init__(self, run: Path, delegate, state: dict):
         self.run, self.delegate, self.state = Path(run), delegate, state
-        if state.get('provider_adapter') == 'liu_agent.art_structure.bridge.ArtProvider':
-            if type(delegate).__module__+'.'+type(delegate).__name__ != state['provider_adapter']:
-                raise AgentError('艺术结构API任务必须恢复原ArtProvider，不能静默移除适配器')
-            if not state.get('adapter_config') or delegate.recovery_config() != state['adapter_config']:
-                raise AgentError('艺术结构恢复配置或证据指纹已改变；停止调用并核对原配置')
         self.context = {'packet': None, 'plan': None, 'texts': None, 'solution': None, 'round': 0}
         self.budget = delegate.budget
         if not hasattr(self.budget, '_prepaid'):
@@ -297,28 +292,9 @@ def restore_provider(run: Path, base_provider):
     run = Path(run).resolve()
     state = load_api_state(run)
     original = state.get('provider_adapter')
-    if original != 'liu_agent.art_structure.bridge.ArtProvider':
-        if original not in ('liu_agent.provider.OpenAIProvider', type(base_provider).__module__+'.'+type(base_provider).__name__):
-            raise AgentError('未知API适配器；不能用默认provider替换原调用路线')
-        return base_provider
-    config = state.get('adapter_config')
-    if not config or config.get('kind') != 'art_structure':
-        raise AgentError('艺术结构旧记录缺少原适配器完整配置；不能静默回退默认模型')
-    from .art_structure.bridge import ArtProvider
-    adapter = ArtProvider(base_provider, run, catalog=Path(config['catalog']), query=config['query'],
-                          feedback_root=Path(config['feedback_root']) if config['feedback_root'] else None)
-    if adapter.recovery_config() != config:
-        raise AgentError('艺术结构目录、指导或反馈证据已改变；不能按默认配置继续收费请求')
-    plans = [r for r in state['requests'] if r['phase'] in ('design', 'revise') and r['state'] == 'completed']
-    if plans:
-        from .art_structure.core import frozen_spatial_contract, record_for_design
-        plan = Plan.model_validate(read_json(within(run, plans[-1]['output']['file'])))
-        adapter.current = record_for_design(run, plan.design.model_dump())
-        adapter.first_checks = frozen_spatial_contract(adapter.current)
-        context_path = run/'art-structure/context.json'
-        if context_path.exists():
-            adapter.context = read_json(context_path)
-    return adapter
+    if original not in ('liu_agent.provider.OpenAIProvider', type(base_provider).__module__+'.'+type(base_provider).__name__):
+        raise AgentError('未知API适配器；不能用默认provider替换原调用路线')
+    return base_provider
 
 
 def _saved_response(run, state, phase, request):
@@ -361,9 +337,6 @@ def _resume_design(run, state, provider):
     packet = read_packet(run)
     settings = state.get('settings', {})
     durable = DurableProvider(run, provider, state) if provider is not None else None
-    if durable and state.get('provider_adapter') == 'liu_agent.art_structure.bridge.ArtProvider':
-        if type(provider).__module__+'.'+type(provider).__name__ != state['provider_adapter']:
-            raise AgentError('此任务使用艺术结构适配器；恢复缺失阶段须提供同一ArtProvider授权接口')
 
     def structured(phase, instruction, payload, model, images=()):
         request = {'instruction': instruction, 'payload': payload, 'output_type': model.__name__,
@@ -463,15 +436,6 @@ def _resume_design(run, state, provider):
         validate_design(packet, plan.spec, plan.design)
         if durable:
             durable.checkpoint(plan=plan)
-            # A cached projected Plan must also restore the optional adapter's
-            # spatial state before a missing compile phase uses that adapter.
-            if state.get('provider_adapter') == 'liu_agent.art_structure.bridge.ArtProvider':
-                from .art_structure.core import frozen_spatial_contract, record_for_design
-                provider.current = record_for_design(run, plan.design.model_dump())
-                provider.first_checks = frozen_spatial_contract(provider.current)
-                context_file = run/'art-structure/context.json'
-                if context_file.exists():
-                    provider.context = read_json(context_file)
         targets = list(dict.fromkeys(packet['brief']['targets']+(['image'] if state['limits']['image_tests'] else [])))
         compile_payload = compilation_input(packet, plan.spec, plan.design, targets)
         write_json(run/'compilation-input.json', compile_payload)

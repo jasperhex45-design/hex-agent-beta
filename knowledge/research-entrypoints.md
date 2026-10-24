@@ -6,7 +6,7 @@
 
 使用 [Designeer](https://www.designeer.xyz/) 作为综合素材与设计信息导航。它帮助发现作品站、资源库、方法与工具；按本题需求选择入口，再到原站取得可用内容。用户指定的具体来源与现有适用素材优先，已有可靠原始来源时直接访问，不强制绕行导航。
 
-Pinterest 继续承担摄影、人物、汽车、艺术风格等视觉发现任务。需要字体、材质、组件、动效或工具信息时，选择相应资源入口，不只在 Pinterest 找图片。不要因导航偏重设计工程，就把摄影、海报或电影静帧的表达套成网页风格。
+外部参考板可承担摄影、人物、汽车、艺术风格等视觉发现任务。需要字体、材质、组件、动效或工具信息时，选择相应资源入口，不只在参考板找图片。不要因导航偏重设计工程，就把摄影、海报或电影静帧的表达套成网页风格。
 
 ## Designeer 的入口与分工
 
@@ -14,7 +14,7 @@ Pinterest 继续承担摄影、人物、汽车、艺术风格等视觉发现任�
 
 | 本题缺口 | 入口与已见栏目 | HEX 在其中寻找什么 |
 | --- | --- | --- |
-| 整体风格、作品案例、版式、界面流程 | [Inspiration（首页）](https://www.designeer.xyz/) → Design Galleries | 找与表达目标有关的作品站或案例，再实际看作品。可按需进入 Pinterest、Behance、Designspiration、Inspiration Grid、posts.design、Are.na 等已收录来源。 |
+| 整体风格、作品案例、版式、界面流程 | [Inspiration（首页）](https://www.designeer.xyz/) → Design Galleries | 找与表达目标有关的作品站或案例，再实际看作品。可按需进入 Behance、Designspiration、Inspiration Grid、posts.design、Are.na 等已收录来源。 |
 | 设计原理、排版方法、设计工具信息 | 首页 → Reading / Interface Design | 找原作者文章、书籍、教程、设计画布与工作方法；从原文提炼本题可执行的做法。 |
 | 字体、字形与字级 | [Visuals](https://www.designeer.xyz/visuals) → Type | 查字体与实际字样；采用前从字体原站确认语言覆盖和使用条件。 |
 | 配色、色阶与可读性 | Visuals → Color | 查配色工具和色彩资料，按本题情绪与阅读需求选择；不把工具默认色盘当成审美结论。 |

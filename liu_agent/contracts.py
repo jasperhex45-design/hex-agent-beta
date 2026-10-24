@@ -675,7 +675,7 @@ class PrivateAestheticProfile(Strict):
     status: Literal["experimental_private_baseline"]
     confirmed_positive_card_ids: list[str]
     explicit_negative_count: int = Field(ge=0)
-    pinterest_observation_count: int = Field(ge=0)
+    external_observation_count: int = Field(ge=0)
     rules: list[PrivateStyleRule] = Field(min_length=1, max_length=12)
     review_policy: Literal["advisory_user_final"]
     source_record: str = Field(min_length=1, max_length=300)

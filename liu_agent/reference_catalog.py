@@ -89,19 +89,6 @@ def _scope(value: str) -> str:
     return ReferenceFeedback.valid_scope(value)
 
 
-def _require_pinterest_permission(record: dict, boards: list[str]) -> None:
-    if not isinstance(record, dict) or not isinstance(record.get('evidence'), str) or len(record['evidence'].strip()) < 12:
-        raise AgentError('Pinterest 长期入库需要实际平台处理权限的依据，不能从登录成功推定')
-    permitted = record.get('board_ids')
-    operations = record.get('operations')
-    if not isinstance(permitted, list) or not all(isinstance(x, str) for x in permitted):
-        raise AgentError('处理权限记录缺少明确的 board_ids')
-    if not isinstance(boards, list) or not boards or not all(isinstance(x, str) for x in boards) or not set(boards).issubset(set(permitted)):
-        raise AgentError('只可同步处理权限记录明确包含的画板')
-    if not isinstance(operations, list) or not all(isinstance(x, str) for x in operations) or not {'download_images', 'persistent_storage', 'visual_analysis'}.issubset(operations):
-        raise AgentError('Pinterest 图库需要图片下载、长期存储和视觉分析的适用权限；仅 API 读取权限不足')
-
-
 class ReferenceCatalog:
     def __init__(self, root: Path):
         self.root = root.expanduser().resolve()
@@ -184,10 +171,8 @@ class ReferenceCatalog:
             db.close()
 
     def ingest(self, data: bytes, *, source_key: str, kind: str, details: dict) -> dict:
-        if kind not in {'local', 'pinterest'} or not source_key:
+        if kind != 'local' or not source_key:
             raise AgentError('参考来源类型或标识无效')
-        if kind == 'pinterest':
-            _require_pinterest_permission(details.get('permission_record', {}), details.get('board_ids', []))
         suffix, width, height = _image_info(data)
         source_hash = sha(data)
         reference_id = 'ref_' + source_hash[:24]
@@ -482,110 +467,6 @@ class ReferenceCatalog:
                 'preference_context': [{'card_id': r['card']['id'], 'preferences': r['preferences']}
                                        for r in selected if r['preferences']]}
 
-    def _ingest_pinterest_page(self, page: dict, board_id: str, permission_record: dict) -> tuple[list, list, list]:
-        from .pinterest_source import download_image
-        imported, failed, skipped = [], [], list(page.get('skipped', []))
-        for pin in page['items']:
-            pin_id = pin.get('pin_id')
-            if not pin_id:
-                skipped.append({'reason': 'pin_id_missing'})
-                continue
-            if pin.get('image_status') != 'available' or not pin.get('image_url'):
-                skipped.append({'pin_id': pin_id, 'reason': 'image_unavailable_or_unsupported_media'})
-                continue
-            source_key = 'pinterest:' + board_id + ':' + pin_id
-            details = {'pin_id': pin_id, 'title': pin.get('title') or '',
-                       'source_url': pin['pin_url'], 'origin_url': pin.get('source_url'),
-                       'board_ids': [board_id], 'author': None,
-                       'description': pin.get('description') or '', 'alt_text': pin.get('alt_text'),
-                       'image_url': pin['image_url'],
-                       'permission_record': permission_record, 'generation_authorized': False}
-            try:
-                with self._db() as db:
-                    existing = db.execute('''SELECT s.*,a.path,a.sha256,a.withdrawn FROM sources s
-                        JOIN assets a ON a.id=s.asset_id WHERE source_key=?''', (source_key,)).fetchone()
-                if existing:
-                    if existing['withdrawn']:
-                        skipped.append({'pin_id': pin_id, 'reason': 'reference_withdrawn'})
-                        continue
-                    old = json.loads(existing['details'])
-                    if old.get('image_url') == pin['image_url']:
-                        self._verify_source({'source_path': str(self.root / existing['path']),
-                                             'source_sha256': existing['sha256']})
-                        unchanged = old == details
-                        if not unchanged:
-                            with self._db() as db:
-                                db.execute('UPDATE sources SET details=?,updated_at=? WHERE source_key=?',
-                                           (_json(details), now(), source_key))
-                        imported.append({'pin_id': pin_id, 'status': 'unchanged' if unchanged else 'metadata_updated',
-                                         'reference_id': existing['asset_id']})
-                        continue
-                data = download_image(pin['image_url'], permission_record=permission_record, board_id=board_id,
-                                      max_bytes=MAX_EVALUATION_SOURCE_BYTES)
-                imported.append({'pin_id': pin_id, **self.ingest(data, source_key=source_key, kind='pinterest', details=details)})
-            except UnsupportedReferenceImage as exc:
-                skipped.append({'pin_id': pin_id, 'reason': 'unsupported_image_format', 'message': str(exc)})
-            except (AgentError, OSError) as exc:
-                failed.append({'pin_id': pin_id, 'reason': str(exc)})
-        return imported, failed, skipped
-
-    def sync_pinterest(self, client, *, board_ids: list[str], permission_record: dict,
-                       max_pages: int = 2, max_items: int = 100, resume: bool = True) -> dict:
-        from .pinterest_source import PinterestError, collect_board
-        _require_pinterest_permission(permission_record, board_ids)
-        if len(board_ids) != len(set(board_ids)) or not 1 <= len(board_ids) <= 20:
-            raise AgentError('每轮选择 1–20 个不重复画板')
-        if (isinstance(max_pages, bool) or not isinstance(max_pages, int) or not 1 <= max_pages <= 100
-                or isinstance(max_items, bool) or not isinstance(max_items, int) or not 1 <= max_items <= 25000):
-            raise AgentError('每轮每画板上限为 1–100 页、1–25000 项')
-        results = []
-        for board_id in board_ids:
-            key = 'pinterest:' + board_id
-            with self._db() as db:
-                row = db.execute('SELECT payload FROM sync_state WHERE source_key=?', (key,)).fetchone()
-            checkpoint = json.loads(row['payload']) if row and resume else {}
-            bookmark = checkpoint.get('bookmark')
-            imported, failures, skipped = [], [], []
-            pages, consumed, has_more, seen_bookmarks = 0, 0, True, set()
-            while pages < max_pages and consumed < max_items and has_more:
-                seen_bookmarks.add(bookmark)
-                try:
-                    # Commit each completed page before requesting another. A
-                    # later 429/403 cannot erase already imported earlier pages.
-                    page = collect_board(client, board_id, bookmark=bookmark, max_pages=1,
-                                         max_items=max_items - consumed)
-                    next_bookmark = page.get('next_bookmark')
-                    if next_bookmark is not None and next_bookmark in seen_bookmarks:
-                        raise PinterestError('PAGINATION_STALLED', 'Pinterest repeated a completed bookmark.')
-                except PinterestError as exc:
-                    failures.append({'reason': str(exc), 'error': exc.as_dict()})
-                    with self._db() as db:
-                        db.execute('INSERT INTO sync_state VALUES (?,?) ON CONFLICT(source_key) DO UPDATE SET payload=excluded.payload',
-                                   (key, _json({'bookmark': bookmark, 'updated_at': now(), 'retry_page': True})))
-                    break
-                saved, failed, omitted = self._ingest_pinterest_page(page, board_id, permission_record)
-                imported.extend(saved)
-                failures.extend(failed)
-                skipped.extend(omitted)
-                pages += page['pages']
-                consumed += len(page['items']) + len(page.get('skipped', []))
-                # A failed image page is replayed; successfully saved assets are
-                # deduplicated. Unsupported or intentionally withdrawn media is
-                # a recorded skip and does not block unrelated later pages.
-                bookmark = bookmark if failed else next_bookmark
-                has_more = bool(failed) or page.get('has_more', False)
-                with self._db() as db:
-                    db.execute('INSERT INTO sync_state VALUES (?,?) ON CONFLICT(source_key) DO UPDATE SET payload=excluded.payload',
-                               (key, _json({'bookmark': bookmark, 'updated_at': now(), 'retry_page': bool(failed)})))
-                if failed:
-                    break
-            results.append({'board_id': board_id, 'items': imported, 'failures': failures, 'skipped': skipped,
-                            'pages': pages, 'next_bookmark': bookmark, 'has_more': has_more})
-        return {'status': 'sync_incomplete' if any(r['failures'] for r in results) else 'synced',
-                'scan_complete': not any(r['has_more'] for r in results),
-                'boards': results, 'visual_analysis_performed': False,
-                'permission_evidence_independently_verified': False}
-
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description='HEX 私人参考库：增量导入、真实观察、版本发布与带图反馈')
@@ -615,13 +496,6 @@ def main(argv=None) -> int:
     withdraw = commands.add_parser('withdraw')
     withdraw.add_argument('--reference-id', required=True)
     withdraw.add_argument('--user-quote', required=True)
-    pinterest = commands.add_parser('sync-pinterest')
-    pinterest.add_argument('--board-id', action='append', required=True)
-    pinterest.add_argument('--permission-record', type=Path, required=True)
-    pinterest.add_argument('--token-env', default='PINTEREST_ACCESS_TOKEN')
-    pinterest.add_argument('--max-pages', type=int, default=2)
-    pinterest.add_argument('--max-items', type=int, default=100)
-    pinterest.add_argument('--restart', action='store_true')
     args = parser.parse_args(argv)
     try:
         if args.command == 'init':
@@ -649,19 +523,10 @@ def main(argv=None) -> int:
                                          scope=args.scope, domains=args.domain)
             elif args.command == 'withdraw':
                 result = catalog.withdraw(args.reference_id, args.user_quote)
-            else:
-                from .pinterest_source import PinterestClient
-                permission = read_json(args.permission_record)
-                _require_pinterest_permission(permission, args.board_id)
-                with PinterestClient(token_env=args.token_env) as client:
-                    result = catalog.sync_pinterest(client, board_ids=args.board_id,
-                                permission_record=permission, max_pages=args.max_pages,
-                                max_items=args.max_items, resume=not args.restart)
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if result.get('status') in {'sync_incomplete', 'imported_with_errors'} else 0
+        return 1 if result.get('status') in {'imported_with_errors'} else 0
     except (AgentError, OSError, ValueError, sqlite3.Error) as exc:
-        from .pinterest_source import PinterestError
-        error = exc.as_dict() if isinstance(exc, PinterestError) else {'status': 'error', 'message': str(exc)}
+        error = {'status': 'error', 'message': str(exc)}
         print(json.dumps(error, ensure_ascii=False))
         return 1
 

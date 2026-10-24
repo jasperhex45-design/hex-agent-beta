@@ -97,7 +97,7 @@ def task_context(profile: PrivateAestheticProfile | dict, packet: dict) -> dict:
         'rules': rules, 'selection': selection, 'not_selected': not_selected,
         'evidence_status': {
             'confirmed_positive_card_ids': list(profile.confirmed_positive_card_ids),
-            'pinterest_observation_count': profile.pinterest_observation_count,
+            'external_observation_count': profile.external_observation_count,
             'source_record': profile.source_record,
             'saved_collection_approval': 'preserved',
             'notice': '用户已认可收藏的正向参考地位保持不变；规则解释、喜欢原因及本次适用性仍待验证。',
@@ -178,7 +178,7 @@ def verify(path: Path, aesthetic_library: Path | None = None) -> dict:
         cards = {card.id for card in library.cards}
         missing = sorted(set(profile.confirmed_positive_card_ids) - cards)
         referenced = {e for rule in profile.rules for e in rule.evidence_ids}
-        # Rule evidence can refer to user screenshot IDs and Pinterest records,
+        # Rule evidence can refer to user screenshot IDs and external reference records,
         # so only validate card IDs when they use the curated-card namespace.
         missing_rule_cards = sorted(
             e for e in referenced
@@ -193,7 +193,7 @@ def verify(path: Path, aesthetic_library: Path | None = None) -> dict:
         "rules": len(profile.rules),
         "confirmed_positive_cards": len(profile.confirmed_positive_card_ids),
         "explicit_negative_count": profile.explicit_negative_count,
-        "pinterest_observation_count": profile.pinterest_observation_count,
+        "external_observation_count": profile.external_observation_count,
         "review_policy": profile.review_policy,
         "aesthetic_library_checked": cards is not None,
         "notice": "私人模块只提供可追溯的审美方向与可见复查点；用户最终反馈覆盖模型建议。",
