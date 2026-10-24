@@ -3,10 +3,8 @@
   "request": "设计一张虚构银色轿车的品牌图，建筑和色彩大胆一些，既有张力又看得清车身，不照搬任何在售车型。",
   "domain": "vehicle",
   "scope": "create",
+  "vehicle_identity": "open",
   "targets": [
-    "image",
-    "nano",
-    "midjourney",
     "seedream"
   ],
   "must_keep": [],

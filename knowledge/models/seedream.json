@@ -87,7 +87,6 @@
     }
   ],
   "evaluation_files": [
-    "docs/MODEL_COMPARISON_DECISION_20260927.md",
-    "evidence/hex-car-v1-20260927/seedream-model-live.json"
+    "docs/MODEL_COMPARISON_DECISION_20260927.md"
   ]
 }
